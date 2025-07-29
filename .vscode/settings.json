@@ -1,0 +1,32 @@
+{
+  // Faylni saqlaganingizda VS Code avtomatik kodni formatlaydi (ya'ni tartibga soladi, masalan, bo‘sh joylar, verguldan keyingi bo‘shliq va hokazo).
+  "editor.formatOnSave": true,
+
+  // Faylni saqlaganda ESLint'ning barcha mavjud tuzatishlarini avtomatik bajarsin degan buyruq.
+  "editor.codeActionsOnSave": {
+    // ESLint topgan xatoliklarni avtomatik tuzatish uchun — ESLint ni faqat ko‘rsatib qo‘ymay, to‘g‘rilab ham qo‘yadi.
+    "source.fixAll.eslint": true
+  }
+}
+
+
+// 🎯 Nima foydasi bor?
+// Har safar Ctrl+S bosganingda kod:
+
+// ✅ Tiniq, chiroyli (Prettier bilan)
+
+// ✅ Qoidalarga mos (ESLint bilan)
+// bo‘ladi.
+
+// Xatoliklar avtomatik tuzatiladi, vaqt tejaysan.
+
+// Jamoa bilan ishlaganda kod bir xil formatda bo‘ladi, tortishuvlar bo‘lmaydi.
+
+
+
+// 🔌 Eslatma:
+// Ishlashi uchun VS Code’da quyidagilar extension sifatida o‘rnatilgan bo‘lishi kerak:
+
+// ESLint extension
+
+// Prettier – Code formatter extension
