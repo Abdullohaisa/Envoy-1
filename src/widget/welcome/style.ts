@@ -34,12 +34,8 @@ export const WelcomePageStyles = StyleSheet.create({
   },
   contentBox: {
     paddingHorizontal: screens.width * 0.04,
-    gap: 8,
     zIndex: 2,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 600,
+    gap: 10,
   },
   mainButtonBox: {
     height: screens.height * 0.15,
@@ -47,6 +43,8 @@ export const WelcomePageStyles = StyleSheet.create({
     borderTopRightRadius: 30,
     overflow: "hidden",
     padding: 5,
+    paddingTop: screens.width * 0.04,
+    paddingHorizontal: screens.width * 0.04,
   },
   mainButton: {
     height: 75,

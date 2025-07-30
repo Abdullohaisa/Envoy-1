@@ -8,7 +8,7 @@ import Animated, {
 import { WelcomePageStyles as styles } from "./style";
 import { useThemeColors } from "@/theme/useThemeColors";
 import ArrowIcon from "@/assets/icon/arrow";
-import AppText from "@/components/Texts/AppText";
+import AppText from "@/components/Texts/Text";
 
 interface Props {
   handleNext: () => void;

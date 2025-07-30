@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextProps, TextStyle, View } from "react-native";
 import React, { ReactNode } from "react";
-import AppText from "./AppText";
+import AppText from "./Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 
 interface Props {
@@ -30,9 +30,8 @@ export default AppTitle;
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 24, // katta o'qilishi uchun
-    fontWeight: "bold", // sarlavha sifatida ko'rinishi uchun
-    textAlign: "center", // markazda bo'lishi uchun
-    marginVertical: 12, // yuqoridan-pastdan bo‘sh joy
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

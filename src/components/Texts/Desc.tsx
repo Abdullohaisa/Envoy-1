@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextProps, View } from "react-native";
 import React, { ReactNode } from "react";
-import AppText from "./AppText";
+import AppText from "./Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 
 interface Props {

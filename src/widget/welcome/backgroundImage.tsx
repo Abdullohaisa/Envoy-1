@@ -1,6 +1,7 @@
 import { Image, View, StyleSheet } from "react-native";
 import React, { useEffect } from "react";
 import Animated, {
+  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -10,26 +11,37 @@ import { screens } from "@/shared/token";
 import { themeAtom } from "@/theme/theme";
 import { useAtomValue } from "jotai";
 
-const WelcomeBackgroundImage = ({ activePage }: { activePage: number }) => {
+const WelcomeBackgroundImage = ({
+  activePage,
+  welcomeScrollX,
+}: {
+  activePage: number;
+  welcomeScrollX: any;
+}) => {
   const current = useAtomValue(themeAtom);
   const AnimatedImage = Animated.createAnimatedComponent(Image);
+  const imageOpacity = { active: 1, inactive: 0 };
 
-  const opacities = welcomePages.map(() => useSharedValue(0));
-
-  useEffect(() => {
-    opacities.forEach((opacity, index) => {
-      opacity.value = withTiming(index === activePage ? 1 : 0, {
-        duration: 500,
-      });
-    });
-  }, [activePage]);
 
   return (
     <View style={styles.container}>
       {welcomePages.map((page, index) => {
-        const animatedStyle = useAnimatedStyle(() => ({
-          opacity: opacities[index].value,
-        }));
+        const animatedStyle = useAnimatedStyle(() => {
+          const inputRange = [
+            (index - 1) * screens.width,
+            index * screens.width,
+            (index + 1) * screens.width,
+          ];
+
+          const opacity = interpolate(welcomeScrollX.value, inputRange, [
+            imageOpacity.inactive,
+            imageOpacity.active,
+            imageOpacity.inactive,
+          ]);
+          return {
+            opacity,
+          };
+        });
 
         return (
           <AnimatedImage

@@ -11,14 +11,9 @@ const Layout = () => {
   }, []);
 
   return (
-    <>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: "#000" },
-        }}
-      />
-    </>
+    <Stack
+      screenOptions={{ headerShown: false, animation: "ios_from_right" }}
+    />
   );
 };
 

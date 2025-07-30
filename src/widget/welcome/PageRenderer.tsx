@@ -6,9 +6,9 @@ import { WelcomePageStyles as styles } from "./style";
 import { useThemeColors } from "@/theme/useThemeColors";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import AppImage from "@/components/Image/Image";
-import AppText from "@/components/Texts/AppText";
-import AppDesc from "@/components/Texts/AppDesc";
-import AppTitle from "@/components/Texts/AppTitle";
+import AppText from "@/components/Texts/Text";
+import AppDesc from "@/components/Texts/Desc";
+import AppTitle from "@/components/Texts/Title";
 
 interface Props {
   ref: React.RefObject<FlatList<any> | null>;

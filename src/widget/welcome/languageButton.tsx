@@ -2,7 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import React from "react";
 import { WelcomePageStyles as styles } from "./style";
 import { useThemeColors } from "@/theme/useThemeColors";
-import AppText from "@/components/Texts/AppText";
+import AppText from "@/components/Texts/Text";
 
 const WelcomeLanguageButton = () => {
   const Colors = useThemeColors();
