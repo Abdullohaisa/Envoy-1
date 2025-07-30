@@ -8,6 +8,7 @@ import WelcomeButton from "@/widget/welcome/button";
 import WelcomePageRenderer from "@/widget/welcome/PageRenderer";
 import WelcomeBackgroundImage from "@/widget/welcome/backgroundImage";
 import { useSharedValue } from "react-native-reanimated";
+import WelcomeLanguageButton from "@/widget/welcome/languageButton";
 
 export default function Welcome() {
   const ref = useRef<FlatList>(null);
@@ -38,7 +39,10 @@ export default function Welcome() {
 
   return (
     <View style={styles.container}>
-      <WelcomeBackgroundImage activePage={activePage} welcomeScrollX={welcomeScrollX} />
+      <WelcomeBackgroundImage
+        activePage={activePage}
+        welcomeScrollX={welcomeScrollX}
+      />
 
       <WelcomePageRenderer
         ref={ref}
@@ -53,8 +57,8 @@ export default function Welcome() {
         handlePrev={handlePrev}
         activePage={activePage}
       />
-      {/* 
-      <WelcomeLanguageButton /> */}
+
+      <WelcomeLanguageButton welcomeScrollX={welcomeScrollX} />
     </View>
   );
 }

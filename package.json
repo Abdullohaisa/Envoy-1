@@ -20,6 +20,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "~53.0.20",
     "expo-constants": "~17.1.7",
@@ -32,11 +33,12 @@
     "react": "19.0.0",
     "react-hook-form": "^7.61.1",
     "react-native": "0.79.5",
+    "react-native-mask-text": "^0.15.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.12.0",
-    "zod": "^4.0.11"
+    "zod": "^4.0.13"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

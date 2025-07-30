@@ -1,10 +1,7 @@
 import { Image, View, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
 import Animated, {
   interpolate,
   useAnimatedStyle,
-  useSharedValue,
-  withTiming,
 } from "react-native-reanimated";
 import { welcomePages } from "./pages";
 import { screens } from "@/shared/token";
@@ -21,7 +18,6 @@ const WelcomeBackgroundImage = ({
   const current = useAtomValue(themeAtom);
   const AnimatedImage = Animated.createAnimatedComponent(Image);
   const imageOpacity = { active: 1, inactive: 0 };
-
 
   return (
     <View style={styles.container}>
@@ -61,6 +57,11 @@ const WelcomeBackgroundImage = ({
           width: screens.width,
           height: screens.height,
         }}
+      />
+      <Image
+        source={welcomePages[activePage].img}
+        style={{ zIndex: -1 }}
+        blurRadius={1000}
       />
     </View>
   );

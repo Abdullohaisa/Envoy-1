@@ -1,18 +1,12 @@
-import {
-  Button,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import React, { useRef, useState } from "react";
 import AppText from "@/components/Texts/Text";
 import { screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AppButton from "@/components/Buttons/Button";
+import Login from "@/widget/auth/login";
+import Register from "@/widget/auth/register";
+import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 
 const authPages = [
   { id: 1, title: "Login" },
@@ -64,54 +58,17 @@ export default function Auth() {
           setActivePage(index);
         }}
       >
-        {/* Login Page */}
-        <View style={styles.page}>
-          <TextInput
-            placeholder="Telefon raqami"
-            keyboardType="phone-pad"
-            style={[
-              styles.input,
-              { borderColor: Colors.primary, color: Colors.textPrimary },
-            ]}
-            placeholderTextColor={Colors.textSecondary}
-          />
-          <TextInput
-            placeholder="Parol"
-            secureTextEntry
-            style={[
-              styles.input,
-              { borderColor: Colors.primary, color: Colors.textPrimary },
-            ]}
-            placeholderTextColor={Colors.textSecondary}
-          />
-          <AppText style={[styles.forgot, { color: Colors.primary }]}>
-            Parolni unutdingizmi?
-          </AppText>
-        </View>
+        <Login />
 
-        {/* Register Page */}
-        <View style={styles.page}>
-          <TextInput
-            placeholder="Telefon raqami"
-            keyboardType="phone-pad"
-            style={[
-              styles.input,
-              { borderColor: Colors.primary, color: Colors.textPrimary },
-            ]}
-            placeholderTextColor={Colors.textSecondary}
-          />
-        </View>
+        <Register />
       </ScrollView>
 
       {/* Umumiy pastdagi button */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "position"}
-        keyboardVerticalOffset={10}
+      <KeyboardResponsiveView
+        style={{ paddingHorizontal: screens.width * 0.04 }}
       >
-        <View style={styles.buttonContainer}>
-          <AppButton text={activePage === 0 ? "Kirish" : "Ro'yxatdan o'tish"} />
-        </View>
-      </KeyboardAvoidingView>
+        <AppButton text={activePage === 0 ? "Kirish" : "Ro'yxatdan o'tish"} />
+      </KeyboardResponsiveView>
     </View>
   );
 }
