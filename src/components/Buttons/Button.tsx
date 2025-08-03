@@ -73,12 +73,12 @@ const AppButton = ({
         styles.button,
         {
           backgroundColor:
-            loading || disabled ? Colors.secondary : Colors.primary,
+            loading || disabled ? Colors.Boxbackground : Colors.primary,
         },
         style,
         buttonAnimatedStyle,
       ]}
-      disabled={!loading || disabled}
+      disabled={loading || disabled}
       {...props}
     >
       <Animated.Text style={[styles.text, textStyle, textAnimatedStyle]}>

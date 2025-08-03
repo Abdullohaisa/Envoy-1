@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import AnimatedErrorText from "../Texts/AnimatedErrorText";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { lightImpact } from "@/utils/hapticks";
 
 type AppInputProps = {
   label: string;
@@ -56,18 +57,23 @@ const AppInput: React.FC<AppInputProps> = ({
     };
   });
 
+  const handleSecure = () => {
+    setSecure(!secure);
+    lightImpact();
+  };
+
   return (
     <View style={styles.wrapper}>
       <View
         style={[
           styles.container,
           {
-            backgroundColor: Colors.background,
+            backgroundColor: Colors.pageBackground,
             borderColor: error
               ? "red"
               : isFocused || focused
                 ? "#00BEFF"
-                : "#333",
+                : Colors.borderColor,
           },
         ]}
       >
@@ -75,7 +81,7 @@ const AppInput: React.FC<AppInputProps> = ({
           style={[
             animatedLabelStyle,
             {
-              backgroundColor: Colors.background,
+              backgroundColor: Colors.pageBackground,
               paddingHorizontal: 4,
               borderRadius: 5,
             },
@@ -91,13 +97,15 @@ const AppInput: React.FC<AppInputProps> = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           secureTextEntry={secure}
-          placeholderTextColor="#aaa"
+          placeholderTextColor={Colors.borderColor}
           style={[styles.input, style]}
         />
 
         {password && (
-          <Pressable onPress={() => setSecure(!secure)} style={styles.toggle}>
-            {!secure ? <EyeOpenIcon /> : <EyeCloseIcon />}
+          <Pressable onPress={handleSecure} style={styles.toggle}>
+            <EyeOpenIcon isSecure={secure} color={Colors.textSecondary} />
+
+            {/* <EyeCloseIcon isOpen={secure} color={Colors.textSecondary} /> */}
           </Pressable>
         )}
       </View>

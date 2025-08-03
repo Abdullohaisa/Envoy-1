@@ -44,7 +44,7 @@ const WelcomeButton = ({ handleNext, handlePrev, activePage }: Props) => {
 
   return (
     <View
-      style={[styles.mainButtonBox, { backgroundColor: Colors.background }]}
+      style={[styles.mainButtonBox, { backgroundColor: Colors.pageBackground }]}
     >
       <Pressable
         onPress={handleNext}
@@ -58,7 +58,7 @@ const WelcomeButton = ({ handleNext, handlePrev, activePage }: Props) => {
           onPress={handlePrev}
           style={[
             styles.back,
-            { backgroundColor: Colors.background },
+            { backgroundColor: Colors.pageBackground },
             backAnimatedStyle,
           ]}
         >

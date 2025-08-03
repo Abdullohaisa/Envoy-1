@@ -1,23 +1,26 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { screens } from "@/shared/token";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import { useForm, Controller } from "react-hook-form";
-import { LoginSchemaType, loginSchema } from "@/shared/validation.scheme";
+import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const Register = () => {
+const Register = ({
+  onSubmitRef,
+}: {
+  onSubmitRef: React.MutableRefObject<() => void>;
+}) => {
   const [phoneFocused, setPhoneFocused] = useState(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginSchemaType>({
-    resolver: zodResolver(loginSchema()),
+  } = useForm<PhoneSchemaType>({
+    resolver: zodResolver(phoneSchema()),
     defaultValues: {
       phone: "",
-      password: "",
     },
   });
 
@@ -25,9 +28,13 @@ const Register = () => {
     const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
     const payload = {
       phone: formattedPhone,
-      password: data.password,
     };
+    console.log(payload);
   };
+
+  useEffect(() => {
+    onSubmitRef.current = handleSubmit(onSubmit);
+  }, [handleSubmit]);
 
   return (
     <View style={styles.container}>

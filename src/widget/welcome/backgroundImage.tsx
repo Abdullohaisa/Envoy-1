@@ -59,7 +59,7 @@ const WelcomeBackgroundImage = ({
         }}
       />
       <Image
-        source={welcomePages[activePage].img}
+        source={welcomePages[activePage]?.img}
         style={{ zIndex: -1 }}
         blurRadius={1000}
       />

@@ -1,15 +1,30 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { screens } from "@/shared/token";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import AppInput from "@/components/Input/Input";
 import { useForm, Controller } from "react-hook-form";
 import { LoginSchemaType, loginSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthRequestLogin } from "@/service/auth/types";
+import { useAtom } from "jotai";
+import { authAtom } from "@/service/auth/controller";
+import Toast from "react-native-toast-message";
+import AppText from "@/components/Texts/Text";
+import { useThemeColors } from "@/theme/useThemeColors";
+import { router } from "expo-router";
+import { AppRoutes } from "@/constants/routes";
 
-const Login = () => {
+interface LoginProps {
+  onSubmitRef: React.MutableRefObject<() => void>;
+}
+
+const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
+  const Colors = useThemeColors();
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loginState, setLogin] = useAtom(authAtom);
+  console.log(loginState)
 
   const {
     control,
@@ -17,19 +32,39 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema()),
+    // mode: "onChange", // bu juda muhim!
     defaultValues: {
       phone: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
-    const payload = {
+  const onSubmit = (data: LoginSchemaType) => {
+    const formattedPhone = "+998" + data.phone.replace(/\D/g, "");
+    const payload: AuthRequestLogin = {
       phone: formattedPhone,
       password: data.password,
     };
+    setLogin(payload, "login");
+    console.log(payload);
   };
+
+  useEffect(() => {
+    onSubmitRef.current = handleSubmit(onSubmit);
+  }, [handleSubmit]);
+
+  useEffect(() => {
+    if (loginState.error?.error) {
+      Toast.show({
+        type: "error",
+        text1: loginState.error?.error,
+        position: "top",
+        visibilityTime: 3000, // 3 sekund
+        autoHide: true,
+        topOffset: 50,
+      });
+    }
+  }, [loginState.error]);
 
   return (
     <View style={styles.container}>
@@ -38,7 +73,7 @@ const Login = () => {
         name="phone"
         render={({ field: { onChange, value } }) => (
           <AppPhoneInput
-            label={"Telefon raqam"}
+            label="Telefon raqam"
             value={value}
             onChangeText={onChange}
             onFocus={() => setPhoneFocused(true)}
@@ -66,6 +101,17 @@ const Login = () => {
           />
         )}
       />
+      <AppText
+        onPress={() => router.push(AppRoutes.auth.resetPassword)}
+        style={{
+          textAlign: "right",
+          fontSize: 14,
+          color: Colors.primary,
+          textDecorationLine: "underline",
+        }}
+      >
+        Parol esdan chiqdimi
+      </AppText>
     </View>
   );
 };

@@ -1,25 +1,74 @@
 import Svg, { Path } from "react-native-svg";
 import { useThemeColors } from "@/theme/useThemeColors";
+import Animated, {
+  useSharedValue,
+  useAnimatedProps,
+  withTiming,
+  Easing,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+import React, { useEffect } from "react";
 
-function EyeCloseIcon(props: any) {
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+type EyeCloseIconProps = {
+  color?: string;
+  isOpen?: boolean;
+};
+
+function EyeCloseIcon({ color, isOpen = false }: EyeCloseIconProps) {
   const Colors = useThemeColors();
+
+  // chiziq animatsiyasi uchun qiymatlar
+  const dashOffset = useSharedValue(isOpen ? 20 : 0);
+  const iconScale = useSharedValue(1);
+
+  useEffect(() => {
+    dashOffset.value = withTiming(isOpen ? 20 : 0, {
+      duration: 300,
+      easing: Easing.out(Easing.exp),
+    });
+
+    iconScale.value = withTiming(0.95, { duration: 150 }, () => {
+      iconScale.value = withTiming(1, { duration: 150 });
+    });
+  }, [isOpen]);
+
+  const animatedLineProps = useAnimatedProps(() => ({
+    strokeDashoffset: dashOffset.value,
+    strokeOpacity: isOpen ? 0 : 1,
+  }));
+
+  const animatedIconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }],
+  }));
+
   return (
-    <Svg
+    <AnimatedSvg
       width={28}
       height={28}
       viewBox="0 0 32 32"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
+      style={animatedIconStyle}
     >
+      {/* Ko‘z shakli */}
       <Path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M23.94 20.486a25.595 25.595 0 002.977-3.065c.518-.628.777-.943.777-1.421 0-.478-.259-.793-.776-1.42C25.024 12.28 20.848 8 16 8c-1.305 0-2.56.31-3.737.808l3.224 3.225a4 4 0 014.48 4.48l3.974 3.973zm-2.444 1.798l-3.089-3.089a4 4 0 01-5.602-5.602l-3.251-3.251c-1.943 1.373-3.505 3.063-4.471 4.237-.518.628-.777.943-.777 1.421 0 .478.26.793.777 1.42C6.976 19.72 11.153 24 16 24c1.98 0 3.85-.715 5.496-1.716z"
-        fill={props.color ? props.color : Colors.primary}
+        d="M23.774 8c0-.35-.191-.59-.575-1.073C21.465 4.747 17.105 0 12 0 6.896 0 2.536 4.746.802 6.927.417 7.41.225 7.651.225 8c0 .35.192.59.576 1.073C2.535 11.253 6.895 16 12 16c5.105 0 9.465-4.746 11.2-6.927.383-.483.575-.724.575-1.073zM12 12a4 4 0 100-8 4 4 0 000 8z"
+        fill={color ? color : Colors.primary}
       />
-      <Path d="M6.667 2.667L28 24" stroke={Colors.primary} strokeWidth={2} />
-    </Svg>
+
+      {/* Ustidan chiziq */}
+      <AnimatedPath
+        d="M6.667 2.667L28 24"
+        stroke={color || Colors.primary}
+        strokeWidth={2}
+        strokeDasharray={30}
+        animatedProps={animatedLineProps}
+      />
+    </AnimatedSvg>
   );
 }
 

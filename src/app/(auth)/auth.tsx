@@ -1,55 +1,46 @@
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useRef, useState } from "react";
-import AppText from "@/components/Texts/Text";
 import { screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AppButton from "@/components/Buttons/Button";
 import Login from "@/widget/auth/login";
 import Register from "@/widget/auth/register";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
+import AuthTabs from "@/widget/auth/Tabs";
+import { useSharedValue } from "react-native-reanimated";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/service/auth/controller";
 
-const authPages = [
-  { id: 1, title: "Login" },
-  { id: 2, title: "Register" },
+export const authPages = [
+  { id: 1, title: "Dasturga kirish" },
+  { id: 2, title: "Ro'yxatdan o'tish" },
 ];
 
 export default function Auth() {
   const Colors = useThemeColors();
   const [activePage, setActivePage] = useState<number>(0);
   const ref = useRef<ScrollView>(null);
-
-  const handleScrollTo = (index: number) => {
-    ref.current?.scrollTo({ x: screens.width * index, animated: true });
-  };
+  const scrollX = useSharedValue(0); // 👈 scroll qiymati
+  const loginSubmitRef = useRef<() => void>(() => {});
+  const registerSubmitRef = useRef<() => void>(() => {});
+  const { isLoading } = useAtomValue(authAtom);
 
   return (
-    <View style={[styles.container, { backgroundColor: Colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: Colors.pageBackground }]}
+    >
       {/* Tablar */}
-      <View style={styles.tabs}>
-        {authPages.map((page, index) => (
-          <Pressable
-            key={page.id}
-            onPress={() => handleScrollTo(index)}
-            style={[
-              styles.tab,
-              {
-                borderBottomWidth: activePage === index ? 1 : 0,
-                borderColor: Colors.primary,
-              },
-            ]}
-          >
-            <AppText style={{ color: Colors.textPrimary }}>
-              {page.title}
-            </AppText>
-          </Pressable>
-        ))}
-      </View>
+      <AuthTabs ref={ref} activePage={activePage} scrollX={scrollX} />
 
       {/* Scroll pages */}
       <ScrollView
         ref={ref}
         pagingEnabled
         horizontal
+        onScroll={(e) => {
+          scrollX.value = e.nativeEvent.contentOffset.x; // 👈 scroll holatini yozamiz
+        }}
+        scrollEventThrottle={16}
         showsHorizontalScrollIndicator={false}
         keyboardDismissMode="on-drag"
         onMomentumScrollEnd={(e) => {
@@ -58,16 +49,26 @@ export default function Auth() {
           setActivePage(index);
         }}
       >
-        <Login />
+        <Login onSubmitRef={loginSubmitRef} />
 
-        <Register />
+        <Register onSubmitRef={registerSubmitRef} />
       </ScrollView>
 
       {/* Umumiy pastdagi button */}
       <KeyboardResponsiveView
         style={{ paddingHorizontal: screens.width * 0.04 }}
       >
-        <AppButton text={activePage === 0 ? "Kirish" : "Ro'yxatdan o'tish"} />
+        <AppButton
+          text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
+          loading={isLoading}
+          onPress={() => {
+            if (activePage === 0) {
+              loginSubmitRef.current(); // Login formani submit qiladi
+            } else {
+              registerSubmitRef.current(); // Register formani submit qiladi
+            }
+          }}
+        />
       </KeyboardResponsiveView>
     </View>
   );
@@ -77,15 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  tabs: {
-    flexDirection: "row",
-    marginTop: screens.height * 0.05,
-  },
-  tab: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 15,
-  },
+
   page: {
     paddingTop: 30,
     width: screens.width,

@@ -47,11 +47,7 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
       left: 16,
       top: interpolate(animatedLabel.value, [0, 1], [16, -8]),
       fontSize: interpolate(animatedLabel.value, [0, 1], [16, 12]),
-      color: interpolateColor(
-        animatedLabel.value,
-        [0, 1],
-        ["#aaa", "#00BEFF"]
-      ),
+      color: interpolateColor(animatedLabel.value, [0, 1], ["#aaa", "#00BEFF"]),
       paddingHorizontal: 4,
     };
   });
@@ -73,12 +69,12 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
         style={[
           styles.container,
           {
-            backgroundColor: Colors.background,
+            backgroundColor: Colors.pageBackground,
             borderColor: error
               ? "red"
               : isFocused || focused
-              ? "#00BEFF"
-              : "#333",
+                ? "#00BEFF"
+                : Colors.borderColor,
           },
         ]}
       >
@@ -87,7 +83,7 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             labelStyle,
             {
               borderRadius: 5,
-              backgroundColor: Colors.background,
+              backgroundColor: Colors.pageBackground,
             },
           ]}
         >
@@ -95,7 +91,19 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
         </Animated.Text>
 
         <View style={styles.maskedInputContainer}>
-          <Animated.Text style={[styles.prefix, prefixStyle]}>
+          <Animated.Text
+            style={[
+              styles.prefix,
+              {
+                borderRightColor: error
+                  ? "red"
+                  : isFocused || focused
+                    ? "#00BEFF"
+                    : "#d9cbcb",
+              },
+              prefixStyle,
+            ]}
+          >
             +998
           </Animated.Text>
           <MaskedTextInput
@@ -139,6 +147,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     position: "absolute",
     paddingLeft: 16,
+    borderRightWidth: 1,
+    paddingRight: 8,
   },
   maskedInput: {
     color: "#fff",
@@ -146,6 +156,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 0,
     height: 55,
-    paddingLeft: 60,
+    paddingLeft: 70,
   },
 });

@@ -6,6 +6,7 @@ import AppDesc from "@/components/Texts/Desc";
 
 import { WelcomePageStyles as styles } from "./style";
 import { View } from "react-native";
+import AppText from "@/components/Texts/Text";
 
 const WelcomePageItem = ({ item }: { item: WelcomePages }) => {
   const Colors = useThemeColors();
@@ -14,7 +15,6 @@ const WelcomePageItem = ({ item }: { item: WelcomePages }) => {
     <View style={styles.page}>
       <View style={styles.imgBox}>
         <AppImage source={item.img} contentFit="cover" />
-        <View style={{ position: "absolute", bottom: 10, right: 20 }}></View>
       </View>
       <View style={styles.contentBox}>
         <AppTitle style={{ color: Colors.primary }}>{item.title}</AppTitle>
