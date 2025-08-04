@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View, Dimensions } from "react-native";
 import React from "react";
-import { authPages } from "@/app/(auth)/auth";
+
 import { useThemeColors } from "@/theme/useThemeColors";
 import Animated, {
   useAnimatedStyle,
@@ -9,6 +9,7 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { authPages } from "./authPages";
 
 const { width } = Dimensions.get("window");
 

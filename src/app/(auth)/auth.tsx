@@ -11,11 +11,6 @@ import { useSharedValue } from "react-native-reanimated";
 import { useAtomValue } from "jotai";
 import { authAtom } from "@/service/auth/controller";
 
-export const authPages = [
-  { id: 1, title: "Dasturga kirish" },
-  { id: 2, title: "Ro'yxatdan o'tish" },
-];
-
 export default function Auth() {
   const Colors = useThemeColors();
   const [activePage, setActivePage] = useState<number>(0);
@@ -77,33 +72,5 @@ export default function Auth() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-
-  page: {
-    paddingTop: 30,
-    width: screens.width,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    gap: 16,
-  },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 16,
-  },
-  forgot: {
-    marginTop: 10,
-    fontSize: 14,
-    alignSelf: "flex-end",
-  },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 30,
-    flex: 1,
-    width: "100%",
-    paddingHorizontal: screens.width * 0.04,
   },
 });

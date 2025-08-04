@@ -17,16 +17,16 @@ type Props = {
 
 const KeyboardResponsiveView: React.FC<Props> = ({
   children,
-  offset = 30,
+  offset = 10,
   style,
 }) => {
   const keyboardHeight = useKeyboardHeight();
-  const bottom = useSharedValue(30);
+  const bottom = useSharedValue(10);
 
   useEffect(() => {
     const isKeyboardOpen = keyboardHeight > 0;
     bottom.value = withTiming(
-      keyboardHeight > 0 ? keyboardHeight + offset : 30,
+      keyboardHeight > 0 ? keyboardHeight + offset : 10,
       {
         duration: isKeyboardOpen ? 300 : 300,
         easing: Easing.out(Easing.cubic),

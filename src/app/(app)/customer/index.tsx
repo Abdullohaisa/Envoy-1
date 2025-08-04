@@ -22,7 +22,6 @@ async function registerForPushNotificationsAsync() {
     }
 
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log("TOKEN:", token);
   } else {
     alert("Fizik qurilmada sinab ko‘ring");
   }
@@ -41,10 +40,9 @@ export default function NotificationTest() {
   const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => {
-      console.log("Returned token:", token);
-      if (token) setExpoPushToken(token);
-    });
+    // registerForPushNotificationsAsync().then((token) => {
+    //   if (token) setExpoPushToken(token);
+    // });
   }, []);
 
   return (

@@ -29,7 +29,6 @@ const Register = ({
     const payload = {
       phone: formattedPhone,
     };
-    console.log(payload);
   };
 
   useEffect(() => {
@@ -66,8 +65,8 @@ const styles = StyleSheet.create({
     width: screens.width,
     height: screens.height,
     flex: 1,
-    paddingTop: 30,
+    paddingTop: 20,
     justifyContent: "flex-start",
-    paddingHorizontal: 20,
+    paddingHorizontal: screens.width * 0.04,
   },
 });

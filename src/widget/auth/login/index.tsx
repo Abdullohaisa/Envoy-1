@@ -24,7 +24,6 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loginState, setLogin] = useAtom(authAtom);
-  console.log(loginState)
 
   const {
     control,
@@ -46,7 +45,6 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
       password: data.password,
     };
     setLogin(payload, "login");
-    console.log(payload);
   };
 
   useEffect(() => {
@@ -102,7 +100,7 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
         )}
       />
       <AppText
-        onPress={() => router.push(AppRoutes.auth.resetPassword)}
+        onPress={() => router.push(AppRoutes.auth.resetPassword.phone)}
         style={{
           textAlign: "right",
           fontSize: 14,
@@ -123,8 +121,8 @@ const styles = StyleSheet.create({
     width: screens.width,
     height: screens.height,
     flex: 1,
-    paddingTop: 30,
+    paddingTop: 20,
     justifyContent: "flex-start",
-    paddingHorizontal: 20,
+    paddingHorizontal: screens.width * 0.04,
   },
 });

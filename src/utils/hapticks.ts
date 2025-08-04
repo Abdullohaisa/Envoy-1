@@ -1,30 +1,19 @@
 // utils/haptics.ts
 import * as Haptics from "expo-haptics";
 
-export const lightImpact = () => {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-};
+export const vibration = {
+  light: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+  medium: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+  heavy: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy),
 
-export const mediumImpact = () => {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-};
+  selection: () => Haptics.selectionAsync(),
 
-export const heavyImpact = () => {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-};
-
-export const selectionFeedback = () => {
-  Haptics.selectionAsync();
-};
-
-export const notificationSuccess = () => {
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-};
-
-export const notificationWarning = () => {
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-};
-
-export const notificationError = () => {
-  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  notification: {
+    success: () =>
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success),
+    warning: () =>
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning),
+    error: () =>
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error),
+  },
 };

@@ -5,6 +5,17 @@ import { loadThemeAtom } from "@/theme/theme";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppRoutes } from "@/constants/routes";
+import { LogBox, View } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { useThemeColors } from "@/theme/useThemeColors";
+
+LogBox.ignoreLogs([
+  "`expo-notifications` functionality is not fully supported in Expo Go",
+  "expo-notifications was removed from Expo Go with the release of SDK 53",
+]);
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,6 +24,13 @@ const Layout = () => {
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
   const queryClient = new QueryClient();
+  const insetsTop = useSafeAreaInsets().bottom;
+  const Colors = useThemeColors();
+
+  LogBox.ignoreLogs([
+    "`expo-notifications` functionality is not fully supported in Expo Go",
+    "expo-notifications was removed from Expo Go with the release of SDK 53",
+  ]);
 
   useEffect(() => {
     const prepare = async () => {
@@ -24,7 +42,8 @@ const Layout = () => {
         const storedData = await AsyncStorage.getItem("authData");
 
         if (!storedData) {
-          router.replace(AppRoutes.auth.welcome);
+          // router.replace(AppRoutes.auth.welcome);
+          router.replace(AppRoutes.auth.resetPassword.smsCode);
           return;
         }
 
@@ -57,9 +76,21 @@ const Layout = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack
-        screenOptions={{ headerShown: false, animation: "ios_from_right" }}
-      />
+      <View
+        style={{
+          flex: 1,
+          paddingBottom: insetsTop,
+          backgroundColor: Colors.pageBackground,
+        }}
+      >
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: "ios_from_right",
+            navigationBarColor: "red",
+          }}
+        />
+      </View>
     </QueryClientProvider>
   );
 };

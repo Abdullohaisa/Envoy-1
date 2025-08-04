@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import AnimatedErrorText from "../Texts/AnimatedErrorText";
 import { useThemeColors } from "@/theme/useThemeColors";
-import { lightImpact } from "@/utils/hapticks";
+import { vibration } from "@/utils/hapticks";
 
 type AppInputProps = {
   label: string;
@@ -59,7 +59,7 @@ const AppInput: React.FC<AppInputProps> = ({
 
   const handleSecure = () => {
     setSecure(!secure);
-    lightImpact();
+    vibration.light();
   };
 
   return (

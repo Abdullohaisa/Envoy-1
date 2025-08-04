@@ -46,8 +46,12 @@ const AuthLaout = () => {
       >
         <Stack.Screen name="index" />
         <Stack.Screen
-          name="resetPassword/index"
-          options={{ animation: "fade_from_bottom" }}
+          name="reset-password"
+          options={{
+            animation: "fade_from_bottom",
+            presentation: "containedModal",
+            contentStyle: { backgroundColor: Colors.pageBackground },
+          }}
         />
         <Stack.Screen name="auth" />
       </Stack>

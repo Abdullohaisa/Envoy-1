@@ -52,8 +52,6 @@ export const authAtom = atom(
         error: null,
       });
 
-      console.log("==>", data?.role);
-
       tokenManager.set(data.token); // ✅ `dat
 
       router.replace(
