@@ -6,10 +6,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppRoutes } from "@/constants/routes";
 import { LogBox, View } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "@/theme/useThemeColors";
 
 LogBox.ignoreLogs([
@@ -42,8 +39,8 @@ const Layout = () => {
         const storedData = await AsyncStorage.getItem("authData");
 
         if (!storedData) {
-          // router.replace(AppRoutes.auth.welcome);
-          router.replace(AppRoutes.auth.resetPassword.smsCode);
+          router.replace(AppRoutes.auth.welcome);
+          // router.replace(AppRoutes.auth.registerUserInfo);
           return;
         }
 
@@ -52,6 +49,7 @@ const Layout = () => {
 
         if (!token) {
           router.replace(AppRoutes.auth.welcome);
+          // router.replace(AppRoutes.auth.registerUserInfo);
         } else {
           if (role === "Customer") {
             router.replace(AppRoutes.customer.home);

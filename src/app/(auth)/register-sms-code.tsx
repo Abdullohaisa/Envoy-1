@@ -20,16 +20,17 @@ import { AppRoutes } from "@/constants/routes";
 import SmsCodeBox from "@/components/SmsCodeBox/SmsCodeBox";
 import { useAtom, useAtomValue } from "jotai";
 import { smsAtom } from "@/service/sms/controller";
-import { phoneForSmsAtom } from "./phone";
 import AppText from "@/components/Texts/Text";
 import { useTimer } from "@/hooks/useTimer";
+import { phoneForSmsAtom } from "./reset-password/phone";
+import { registerTempValues } from "@/widget/auth/register";
 
-const RPSmsCodePage = () => {
+const RegisterSmsCodePage = () => {
   const [code, setCode] = useState("");
   const [isCodeCorrect, setIsCodeCorrect] = useState<null | boolean>(null);
   const Colors = useThemeColors();
   const [sms, setSms] = useAtom(smsAtom);
-  const phone = useAtomValue(phoneForSmsAtom);
+  const { phone } = useAtomValue(registerTempValues);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const formattedPhone = "+998" + phone.replace(/[^0-9]/g, "");
   const { count, startTimer, scale, opacity } = useTimer(30);
@@ -55,9 +56,6 @@ const RPSmsCodePage = () => {
     }
   };
 
-  console.log(sms);
-  console.log(phone);
-
   const animValues = [
     useSharedValue(0),
     useSharedValue(0),
@@ -77,7 +75,6 @@ const RPSmsCodePage = () => {
       setTimeout(() => {
         setCode((codes) => codes.slice(0, -1));
       }, 100);
-      console.log("a");
     } else if (code.length < 4 && value !== "del") {
       const index = code.length;
       setCode((prev) => prev + value);
@@ -97,7 +94,7 @@ const RPSmsCodePage = () => {
         if (sms.sms == code) {
           setIsCodeCorrect(true);
           setTimeout(() => {
-            router.push(AppRoutes.auth.resetPassword.newPassword);
+            router.push(AppRoutes.auth.registerUserInfo);
           }, 200);
         } else {
           setIsCodeCorrect(false);
@@ -187,6 +184,6 @@ const RPSmsCodePage = () => {
   );
 };
 
-export default RPSmsCodePage;
+export default RegisterSmsCodePage;
 
 const styles = StyleSheet.create({});

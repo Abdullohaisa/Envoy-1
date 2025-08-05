@@ -15,9 +15,13 @@ import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
+import { atom, useSetAtom } from "jotai";
+
+export const phoneForSmsAtom = atom("");
 
 const ResetPasswordPhonePage = () => {
   const [phoneFocused, setPhoneFocused] = useState(false);
+  const setPhone = useSetAtom(phoneForSmsAtom);
 
   const {
     control,
@@ -31,10 +35,7 @@ const ResetPasswordPhonePage = () => {
   });
 
   const onSubmit = (data: PhoneSchemaType) => {
-    const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
-    const payload = {
-      phone: formattedPhone,
-    };
+    setPhone(data.phone);
     router.push(AppRoutes.auth.resetPassword.smsCode);
   };
 

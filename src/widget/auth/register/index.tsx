@@ -5,13 +5,31 @@ import AppPhoneInput from "@/components/Input/PhoneInput";
 import { useForm, Controller } from "react-hook-form";
 import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { atom, useSetAtom } from "jotai";
+import { router } from "expo-router";
+import { AppRoutes } from "@/constants/routes";
 
-const Register = ({
+export interface RegisterTempValues {
+  username: string;
+  phone: string;
+  user_image: null;
+  role: string;
+}
+
+export const registerTempValues = atom<RegisterTempValues>({
+  username: "",
+  phone: "",
+  user_image: null,
+  role: "",
+});
+
+const RegisterPhone = ({
   onSubmitRef,
 }: {
   onSubmitRef: React.MutableRefObject<() => void>;
 }) => {
   const [phoneFocused, setPhoneFocused] = useState(false);
+  const setTempValue = useSetAtom(registerTempValues);
 
   const {
     control,
@@ -24,11 +42,12 @@ const Register = ({
     },
   });
 
-  const onSubmit = (data: any) => {
-    const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
-    const payload = {
-      phone: formattedPhone,
-    };
+  const onSubmit = (data: PhoneSchemaType) => {
+    setTempValue((p: RegisterTempValues) => ({
+      ...p,
+      phone: data.phone,
+    }));
+    router.push(AppRoutes.auth.registerSmsCode);
   };
 
   useEffect(() => {
@@ -58,7 +77,7 @@ const Register = ({
   );
 };
 
-export default Register;
+export default RegisterPhone;
 
 const styles = StyleSheet.create({
   container: {

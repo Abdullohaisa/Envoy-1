@@ -14,7 +14,6 @@ const AuthHedaer = ({ title }: { title: string }) => {
         {
           paddingTop: insetsTop,
           backgroundColor: Colors.Boxbackground,
-          //   height: 76,
         },
       ]}
     >
@@ -35,7 +34,9 @@ export default AuthHedaer;
 const styles = StyleSheet.create({
   header: {
     alignItems: "center",
-    paddingVertical: 14,
+    // paddingVertical: 14,
+    justifyContent: "center",
+    height: 55,
   },
   title: {
     fontSize: 18,

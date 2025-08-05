@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
     if (loginState.error?.error) {
       Toast.show({
         type: "error",
-        text1: loginState.error?.error,
+        text1: "Telefon raqam yoki parol noto'gri",
         position: "top",
         visibilityTime: 3000, // 3 sekund
         autoHide: true,

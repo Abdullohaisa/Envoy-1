@@ -99,7 +99,7 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
                   ? "red"
                   : isFocused || focused
                     ? "#00BEFF"
-                    : "#d9cbcb",
+                    : Colors.Boxbackground,
               },
               prefixStyle,
             ]}

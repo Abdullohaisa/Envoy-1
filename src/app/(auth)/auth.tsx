@@ -4,7 +4,7 @@ import { screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AppButton from "@/components/Buttons/Button";
 import Login from "@/widget/auth/login";
-import Register from "@/widget/auth/register";
+import RegisterPhone from "@/widget/auth/register";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
@@ -46,7 +46,7 @@ export default function Auth() {
       >
         <Login onSubmitRef={loginSubmitRef} />
 
-        <Register onSubmitRef={registerSubmitRef} />
+        <RegisterPhone onSubmitRef={registerSubmitRef} />
       </ScrollView>
 
       {/* Umumiy pastdagi button */}
