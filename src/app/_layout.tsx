@@ -85,7 +85,7 @@ const Layout = () => {
           screenOptions={{
             headerShown: false,
             animation: "ios_from_right",
-            navigationBarColor: "red",
+            contentStyle: { backgroundColor: Colors.pageBackground },
           }}
         />
       </View>

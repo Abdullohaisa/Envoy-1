@@ -7,9 +7,12 @@ import AppDesc from "@/components/Texts/Desc";
 import { WelcomePageStyles as styles } from "./style";
 import { View } from "react-native";
 import AppText from "@/components/Texts/Text";
+import { themeAtom } from "@/theme/theme";
+import { useAtomValue } from "jotai";
 
 const WelcomePageItem = ({ item }: { item: WelcomePages }) => {
   const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
 
   return (
     <View style={styles.page}>
@@ -18,7 +21,11 @@ const WelcomePageItem = ({ item }: { item: WelcomePages }) => {
       </View>
       <View style={styles.contentBox}>
         <AppTitle style={{ color: Colors.primary }}>{item.title}</AppTitle>
-        <AppDesc>{item.desc}</AppDesc>
+        <AppDesc
+          style={{ color: theme === "dark" ? Colors.textSecondary : "#fff" }}
+        >
+          {item.desc}
+        </AppDesc>
       </View>
     </View>
   );

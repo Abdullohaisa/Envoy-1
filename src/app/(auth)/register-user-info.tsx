@@ -27,10 +27,13 @@ import Animated, {
 } from "react-native-reanimated";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
-import { RegisterTempValues, registerTempValues } from "@/widget/auth/register";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  RegisterTempValues,
+  registerTempValues,
+} from "@/widget/auth/register/tempValues";
 
 const RegisterUserInfoPage = () => {
   const topinsets = useSafeAreaInsets().top;
@@ -40,7 +43,7 @@ const RegisterUserInfoPage = () => {
   });
 
   const [tempValue, setTempValue] = useAtom(registerTempValues);
-  const formattedPhone = "+998" + tempValue.phone.replace(/[^0-9]/g, "");
+  const formattedPhone = "+998" + tempValue.phone_email.replace(/[^0-9]/g, "");
   const [role, setRole] = useState<"Customer" | "Driver">("Customer");
   const translateY = useSharedValue(0);
   const marginTop = useSharedValue(topinsets + 55 + 10);
@@ -53,7 +56,7 @@ const RegisterUserInfoPage = () => {
     resolver: zodResolver(registerSchemaStep1()),
     defaultValues: {
       name: "",
-      phone: tempValue.phone,
+      phone: tempValue.phone_email,
     },
   });
 

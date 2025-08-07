@@ -11,7 +11,7 @@ import { screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AppInput from "@/components/Input/Input";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { newPasswordAtom } from "@/service/new-password/controller";
 import { phoneForSmsAtom } from "./phone";
 import AppText from "@/components/Texts/Text";
@@ -22,16 +22,21 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import PasswordRequirements from "@/components/PasswordRequirements/PasswordRequirements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const RSNewPasswordPage = () => {
   const [focus1, setFocus1] = useState(false);
   const [focus2, setFocus2] = useState(false);
+  const topInsets = useSafeAreaInsets().top;
   const [state, setNewRequest] = useAtom(newPasswordAtom);
   const phone = useAtomValue(phoneForSmsAtom);
   const formattedPhone = "+998" + phone.replace(/[^0-9]/g, "");
   const Colors = useThemeColors();
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const marginTop = useSharedValue(topInsets + 55 + 10);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -47,11 +52,10 @@ const RSNewPasswordPage = () => {
     }
   }, [state?.detail]);
 
-  console.log(state);
-
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<NewPasswordSchemaType>({
     resolver: zodResolver(newPasswordSchema()),
@@ -68,12 +72,56 @@ const RSNewPasswordPage = () => {
     };
     setNewRequest(payload);
   };
+
+  const headerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+    };
+  });
+
+  const formStyle = useAnimatedStyle(() => {
+    return {
+      marginTop: marginTop.value,
+    };
+  });
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", () => {
+      translateY.value = withTiming(-(topInsets + 55), { duration: 400 }); // tepaga chiqadi
+      marginTop.value = withTiming(topInsets + 5, { duration: 400 });
+    });
+
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+      translateY.value = withTiming(0, { duration: 400 }); // pastga tushadi
+      marginTop.value = withTiming(topInsets + 55 + 10, { duration: 400 });
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  const passwordValue = watch("password");
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
-        <AuthHedaer title="Yangi parol kiriting" />
-        {state?.detail ? (
-          <Animated.View style={[{ marginTop: 20 }, animatedStyle]}>
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 10,
+            },
+            headerStyle,
+          ]}
+        >
+          <AuthHedaer title="Ro'yxatdan o'tish" />
+        </Animated.View>
+        {!state?.detail ? (
+          <Animated.View style={[{ marginTop: 20 }, animatedStyle, formStyle]}>
             <AppText
               style={{
                 textAlign: "center",
@@ -86,7 +134,12 @@ const RSNewPasswordPage = () => {
           </Animated.View>
         ) : (
           <>
-            <View style={{ flex: 1, paddingHorizontal: screens.width * 0.04 }}>
+            <Animated.View
+              style={[
+                { flex: 1, paddingHorizontal: screens.width * 0.04 },
+                formStyle,
+              ]}
+            >
               <View style={{ marginTop: 20, flex: 1 }}>
                 <Controller
                   name="password"
@@ -121,7 +174,9 @@ const RSNewPasswordPage = () => {
                     />
                   )}
                 />
+                <PasswordRequirements password={passwordValue} />
               </View>
+
               <KeyboardResponsiveView
                 style={{ paddingHorizontal: screens.width * 0.04 }}
               >
@@ -131,7 +186,7 @@ const RSNewPasswordPage = () => {
                   loading={state.isLoading}
                 />
               </KeyboardResponsiveView>
-            </View>
+            </Animated.View>
           </>
         )}
       </View>

@@ -9,8 +9,6 @@ import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
 import { Controller, useForm } from "react-hook-form";
 import {
   RegisterSchemaStep2,
-  RegisterSchemaType,
-  registerSchema,
   registerSchemaStep2,
 } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,8 +21,10 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { authStateAtom } from "@/service/auth/controller";
-import { registerTempValues } from "@/widget/auth/register";
+import { authAtom, authStateAtom } from "@/service/auth/controller";
+import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
+import { registerTempValues } from "@/widget/auth/register/tempValues";
+import PasswordRequirements from "@/components/PasswordRequirements/PasswordRequirements";
 
 const RegisterUserPasswordPage = () => {
   const [focus, setFocus] = useState({
@@ -33,14 +33,13 @@ const RegisterUserPasswordPage = () => {
   });
   const translateY = useSharedValue(0);
   const marginTop = useSharedValue(80);
-  const [, setRegister] = useAtom(authStateAtom);
+  const [state, setRegister] = useAtom(authAtom);
   const tempRegisterValue = useAtomValue(registerTempValues);
-
-  console.log(tempRegisterValue);
 
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterSchemaStep2>({
     resolver: zodResolver(registerSchemaStep2()),
@@ -55,6 +54,7 @@ const RegisterUserPasswordPage = () => {
       ...tempRegisterValue,
       password: data.password,
     };
+    setRegister(finishingValue, "register");
   };
 
   const headerStyle = useAnimatedStyle(() => {
@@ -85,6 +85,8 @@ const RegisterUserPasswordPage = () => {
       hideSub.remove();
     };
   }, []);
+
+  const passwordValue = watch("password");
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -165,17 +167,19 @@ const RegisterUserPasswordPage = () => {
                   />
                 )}
               />
+              <PasswordRequirements password={passwordValue} />
             </View>
           </ScrollView>
 
-          <View
-            style={{
-              paddingHorizontal: screens.width * 0.04,
-              marginBottom: 10,
-            }}
+          <KeyboardResponsiveView
+            style={{ paddingHorizontal: screens.width * 0.04 }}
           >
-            <AppButton text="Davom etish" onPress={handleSubmit(onSubmit)} />
-          </View>
+            <AppButton
+              text="Davom etish"
+              onPress={handleSubmit(onSubmit)}
+              loading={state.isLoading}
+            />
+          </KeyboardResponsiveView>
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>

@@ -4,7 +4,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
 import { Controller, useForm } from "react-hook-form";
 import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
@@ -15,13 +15,17 @@ import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
-import { atom, useSetAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
+import { vibration } from "@/utils/hapticks";
+import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
+import useCheckRegister from "@/service/check-register/controller";
 
 export const phoneForSmsAtom = atom("");
 
 const ResetPasswordPhonePage = () => {
   const [phoneFocused, setPhoneFocused] = useState(false);
   const setPhone = useSetAtom(phoneForSmsAtom);
+  const { checkPhone, cancel, state } = useCheckRegister();
 
   const {
     control,
@@ -34,9 +38,18 @@ const ResetPasswordPhonePage = () => {
     },
   });
 
-  const onSubmit = (data: PhoneSchemaType) => {
+  const onSubmit = async (data: PhoneSchemaType) => {
     setPhone(data.phone);
-    router.push(AppRoutes.auth.resetPassword.smsCode);
+    const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
+    cancel();
+
+    const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
+
+    if (exists === true) {
+      router.push(AppRoutes.auth.resetPassword.smsCode);
+    } else if (exists === false) {
+      vibration.notification.error();
+    }
   };
 
   return (
@@ -61,6 +74,14 @@ const ResetPasswordPhonePage = () => {
                   focused={phoneFocused}
                 />
               )}
+            />
+            <AnimatedErrorText
+              style={{ textAlign: "center", fontSize: 16 }}
+              error={
+                state.status === false
+                  ? "Bu telefon raqam ro'yxatdan o'tmagan"
+                  : ""
+              }
             />
           </View>
           <KeyboardResponsiveView

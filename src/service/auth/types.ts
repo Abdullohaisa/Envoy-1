@@ -15,7 +15,7 @@ export interface AuthRequestLogin {
 
 export interface AuthRequestRegister {
   username?: string;
-  phone: string;
+  phone_email: string;
   password: string;
   role?: "Driver" | "Customer" | null; // Agar boshqa rollar bo‘lmasa
   user_image?: string | null; // Null bo'lishi yoki string (URL) bo'lishi mumkin

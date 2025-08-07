@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextProps, View } from "react-native";
+import { StyleSheet, Text, TextProps, TextStyle, View } from "react-native";
 import React, { ReactNode } from "react";
 import AppText from "./Text";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -7,13 +7,18 @@ interface Props {
   align?: "left" | "center" | "right";
   children: ReactNode;
   props?: TextProps;
+  style?: TextStyle;
 }
 
-const AppDesc = ({ align = "left", children, ...props }: Props) => {
+const AppDesc = ({ align = "left", children, style, ...props }: Props) => {
   const Colors = useThemeColors();
   return (
     <AppText
-      style={[styles.desc, { textAlign: align, color: Colors.textSecondary }]}
+      style={[
+        styles.desc,
+        { textAlign: align, color: Colors.textSecondary },
+        style,
+      ]}
       {...props}
     >
       {children}

@@ -104,7 +104,7 @@ export const WelcomePageStyles = StyleSheet.create({
   },
   dotesBox: {
     position: "absolute",
-    bottom: screens.height * 0.44,
+    top: screens.height * 0.6,
     left: "50%",
     transform: [{ translateX: "-50%" }],
     zIndex: 3,

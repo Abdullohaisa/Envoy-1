@@ -55,9 +55,6 @@ const RPSmsCodePage = () => {
     }
   };
 
-  console.log(sms);
-  console.log(phone);
-
   const animValues = [
     useSharedValue(0),
     useSharedValue(0),
@@ -77,7 +74,6 @@ const RPSmsCodePage = () => {
       setTimeout(() => {
         setCode((codes) => codes.slice(0, -1));
       }, 100);
-      console.log("a");
     } else if (code.length < 4 && value !== "del") {
       const index = code.length;
       setCode((prev) => prev + value);

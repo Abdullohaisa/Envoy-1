@@ -5,23 +5,13 @@ import AppPhoneInput from "@/components/Input/PhoneInput";
 import { useForm, Controller } from "react-hook-form";
 import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { atom, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
-
-export interface RegisterTempValues {
-  username: string;
-  phone: string;
-  user_image: null;
-  role: string;
-}
-
-export const registerTempValues = atom<RegisterTempValues>({
-  username: "",
-  phone: "",
-  user_image: null,
-  role: "",
-});
+import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
+import { vibration } from "@/utils/hapticks";
+import { RegisterTempValues, registerTempValues } from "./tempValues";
+import useCheckRegister from "@/service/check-register/controller";
 
 const RegisterPhone = ({
   onSubmitRef,
@@ -30,6 +20,9 @@ const RegisterPhone = ({
 }) => {
   const [phoneFocused, setPhoneFocused] = useState(false);
   const setTempValue = useSetAtom(registerTempValues);
+
+  // useCheckRegister hook
+  const { checkPhone, cancel, state } = useCheckRegister();
 
   const {
     control,
@@ -42,17 +35,45 @@ const RegisterPhone = ({
     },
   });
 
-  const onSubmit = (data: PhoneSchemaType) => {
+  const onSubmit = async (data: PhoneSchemaType) => {
+    // register tempga telefonni saqlaymiz
     setTempValue((p: RegisterTempValues) => ({
       ...p,
-      phone: data.phone,
+      phone_email: data.phone,
     }));
-    router.push(AppRoutes.auth.registerSmsCode);
+
+    const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
+
+    // Agar oldingi so‘rov bor bo‘lsa bekor qilish (hook ichidagi cancel)
+    cancel();
+
+    // Tekshirish: submit orqali odatda debounce=0 ishlatamiz (instant)
+    const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
+
+    // checkPhone resolvedidan keyin state ham yangilanadi, lekin biz natijani ham oldik
+    if (exists === false) {
+      // ro'yxatdan o'tmagan — SMS kod sahifasiga o'tamiz
+      router.push(AppRoutes.auth.registerSmsCode);
+    } else if (exists === true) {
+      // ro'yxatdan o'tgan — foydalanuvchiga signal beramiz
+      vibration.notification.error();
+    } else {
+      // exists === null (xato yoki bekor qilingan) — kerak bo'lsa xabar ko'rsatish
+      // state.error dan foydalanish mumkin
+    }
   };
 
+  // Parent komponentdan formni submit qilish uchun referenceni set qilamiz
   useEffect(() => {
     onSubmitRef.current = handleSubmit(onSubmit);
-  }, [handleSubmit]);
+  }, [handleSubmit, onSubmit]);
+
+  // Komponent unmount bo'lganda ishlayotgan so'rovni bekor qilamiz
+  useEffect(() => {
+    return () => {
+      cancel();
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -72,6 +93,15 @@ const RegisterPhone = ({
             focused={phoneFocused}
           />
         )}
+      />
+
+      <AnimatedErrorText
+        style={{ textAlign: "center", fontSize: 16 }}
+        error={
+          state.status === true
+            ? "Bu telefon raqam oldin ro'yxatdan o'tgan"
+            : (state.error ?? "")
+        }
       />
     </View>
   );

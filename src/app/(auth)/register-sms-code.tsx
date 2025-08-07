@@ -1,7 +1,6 @@
 import {
   Keyboard,
   Pressable,
-  StyleSheet,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -22,17 +21,16 @@ import { useAtom, useAtomValue } from "jotai";
 import { smsAtom } from "@/service/sms/controller";
 import AppText from "@/components/Texts/Text";
 import { useTimer } from "@/hooks/useTimer";
-import { phoneForSmsAtom } from "./reset-password/phone";
-import { registerTempValues } from "@/widget/auth/register";
+import { registerTempValues } from "@/widget/auth/register/tempValues";
 
 const RegisterSmsCodePage = () => {
   const [code, setCode] = useState("");
   const [isCodeCorrect, setIsCodeCorrect] = useState<null | boolean>(null);
   const Colors = useThemeColors();
   const [sms, setSms] = useAtom(smsAtom);
-  const { phone } = useAtomValue(registerTempValues);
+  const { phone_email } = useAtomValue(registerTempValues);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const formattedPhone = "+998" + phone.replace(/[^0-9]/g, "");
+  const formattedPhone = "+998" + phone_email.replace(/[^0-9]/g, "");
   const { count, startTimer, scale, opacity } = useTimer(30);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -66,12 +64,7 @@ const RegisterSmsCodePage = () => {
   const handlePress = (value: string) => {
     if (value === "del" && code.length > 0) {
       const index = code.length - 1;
-
-      // Avval animatsiyani ishga tushuramiz
-      animValues[index].value = withTiming(0, { duration: 100 }, () => {
-        // Animatsiyadan keyin kodni o'chiramiz
-        // runOnJS(setCode)(code.slice(0, -1));
-      });
+      animValues[index].value = withTiming(0, { duration: 100 }, () => {});
       setTimeout(() => {
         setCode((codes) => codes.slice(0, -1));
       }, 100);
@@ -99,6 +92,7 @@ const RegisterSmsCodePage = () => {
         } else {
           setIsCodeCorrect(false);
           vibration.heavy();
+          setCode("");
         }
       } else {
         setIsCodeCorrect(null);
@@ -107,7 +101,7 @@ const RegisterSmsCodePage = () => {
   }, [code]);
 
   useEffect(() => {
-    if (phone) {
+    if (phone_email) {
       setSms(formattedPhone);
     }
   }, []);
@@ -118,7 +112,7 @@ const RegisterSmsCodePage = () => {
         <AuthHedaer title="Sms kod" />
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <AppText style={{ textAlign: "center", marginTop: 10 }}>
-            +998 {phone}
+            +998 {phone_email}
           </AppText>
           <SmsCodeBox
             code={code}
@@ -185,5 +179,3 @@ const RegisterSmsCodePage = () => {
 };
 
 export default RegisterSmsCodePage;
-
-const styles = StyleSheet.create({});
