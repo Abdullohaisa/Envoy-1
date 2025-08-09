@@ -1,16 +1,20 @@
 import { z } from "zod";
 
-export const loginSchema = () =>
-  z.object({
-    phone: z.string().refine((val) => val.length >= 12, {
-      message: "Telefon raqamni to'liq kiritng",
-    }),
-    password: z.string().refine((val) => val.length >= 6, {
-      message: "Parolni to'liq kiriting",
-    }),
-  });
+export const emailLoginSchema = z.object({
+  email: z.string().email({ message: "Email noto‘g‘ri kiritildi" }),
+  password: z.string().min(8, { message: "Parolni to‘liq kiriting" }),
+});
 
-export type LoginSchemaType = z.infer<ReturnType<typeof loginSchema>>;
+export type EmailLoginSchemaType = z.infer<typeof emailLoginSchema>;
+
+export const phoneLoginSchema = z.object({
+  phone: z.string().refine((val) => val.replace(/\D/g, "").length === 9, {
+    message: "Telefon raqamni to‘liq kiriting",
+  }),
+  password: z.string().min(8, { message: "Parolni to‘liq kiriting" }),
+});
+
+export type PhoneLoginSchemaType = z.infer<typeof phoneLoginSchema>;
 
 export const phoneSchema = () =>
   z.object({

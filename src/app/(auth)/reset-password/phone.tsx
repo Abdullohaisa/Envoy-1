@@ -45,6 +45,8 @@ const ResetPasswordPhonePage = () => {
 
     const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
 
+    console.log(exists, state);
+
     if (exists === true) {
       router.push(AppRoutes.auth.resetPassword.smsCode);
     } else if (exists === false) {

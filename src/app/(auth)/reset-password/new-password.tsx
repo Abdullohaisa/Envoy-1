@@ -41,7 +41,7 @@ const RSNewPasswordPage = () => {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scale.value }],
-      opacity: opacity.value,
+      // opacity: opacity.value,
     };
   });
 
@@ -118,9 +118,9 @@ const RSNewPasswordPage = () => {
             headerStyle,
           ]}
         >
-          <AuthHedaer title="Ro'yxatdan o'tish" />
+          <AuthHedaer title="Parolni yangilash" />
         </Animated.View>
-        {!state?.detail ? (
+        {state?.detail ? (
           <Animated.View style={[{ marginTop: 20 }, animatedStyle, formStyle]}>
             <AppText
               style={{

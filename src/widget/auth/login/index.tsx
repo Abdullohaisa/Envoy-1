@@ -1,10 +1,15 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { screens } from "@/shared/token";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import AppInput from "@/components/Input/Input";
 import { useForm, Controller } from "react-hook-form";
-import { LoginSchemaType, loginSchema } from "@/shared/validation.scheme";
+import {
+  EmailLoginSchemaType,
+  PhoneLoginSchemaType,
+  emailLoginSchema,
+  phoneLoginSchema,
+} from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthRequestLogin } from "@/service/auth/types";
 import { useAtom } from "jotai";
@@ -14,6 +19,8 @@ import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
+import { vibration } from "@/utils/hapticks";
+import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 
 interface LoginProps {
   onSubmitRef: React.MutableRefObject<() => void>;
@@ -21,29 +28,32 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
   const Colors = useThemeColors();
-  const [phoneFocused, setPhoneFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loginState, setLogin] = useAtom(authAtom);
+  const [isEmailLogin, setIsEmailLogin] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const schema = isEmailLogin ? emailLoginSchema : phoneLoginSchema;
 
   const {
     control,
     handleSubmit,
+    clearErrors,
+    reset,
     formState: { errors },
-  } = useForm<LoginSchemaType>({
-    resolver: zodResolver(loginSchema()),
-    // mode: "onChange", // bu juda muhim!
-    defaultValues: {
-      phone: "",
-      password: "",
-    },
+  } = useForm<EmailLoginSchemaType | PhoneLoginSchemaType>({
+    resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: LoginSchemaType) => {
-    const formattedPhone = "+998" + data.phone.replace(/\D/g, "");
-    const payload: AuthRequestLogin = {
-      phone: formattedPhone,
+  const onSubmit = (data: EmailLoginSchemaType | PhoneLoginSchemaType) => {
+    // const formattedPhone = "+998" + phone_email.replace(/[^0-9]/g, "");
+    const payload = {
+      phone_email: isEmailLogin
+        ? (data as EmailLoginSchemaType).email + ""
+        : "+998" + (data as PhoneLoginSchemaType).phone.replace(/[^0-9]/g, ""),
       password: data.password,
     };
+
+    console.log(payload);
     setLogin(payload, "login");
   };
 
@@ -51,52 +61,127 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
     onSubmitRef.current = handleSubmit(onSubmit);
   }, [handleSubmit]);
 
-  useEffect(() => {
-    if (loginState.error?.error) {
-      Toast.show({
-        type: "error",
-        text1: "Telefon raqam yoki parol noto'gri",
-        position: "top",
-        visibilityTime: 3000, // 3 sekund
-        autoHide: true,
-        topOffset: 50,
-      });
-    }
-  }, [loginState.error]);
+  // useEffect(() => {
+  //   if (loginState.error?.error) {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Telefon raqam yoki parol noto'gri",
+  //       position: "top",
+  //       visibilityTime: 3000, // 3 sekund
+  //       autoHide: true,
+  //       topOffset: 50,
+  //     });
+  //   }
+  // }, [loginState.error]);
+
+  // const toggleLoginType = () => {
+  //   vibration.selection();
+  //   clearErrors(); // Errorlarni tozalaydi
+  //   reset({
+  //     phone: "",
+  //     email: "",
+  //     password: "",
+  //   }); // formani tozalaydi
+  //   setIsEmailLogin((prev) => {
+  //     const nextPage = !prev ? 1 : 0;
+  //     scrollRef.current?.scrollTo({
+  //       x: nextPage * screens.width,
+  //       animated: true,
+  //     });
+  //     return !prev;
+  //   });
+  //   clearErrors(); // barcha errorlarni tozalaydi
+  //   // resetField(""); // inputni ham tozalab yuboradi (optional)
+  // };
+
+  // const onScrollEnd = (event: any) => {
+  //   const x = event.nativeEvent.contentOffset.x;
+  //   setIsEmailLogin(x >= screens.width / 2); // avtomatik holatni yangilash
+  //   vibration.light();
+  // };
 
   return (
     <View style={styles.container}>
+      {/* <ScrollView
+        ref={scrollRef}
+        horizontal
+        nestedScrollEnabled
+        pagingEnabled
+        scrollEnabled={false} // foydalanuvchi o‘zi scroll qilmasligi uchun
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={onScrollEnd}
+        style={{
+          width: screens.width,
+          flexGrow: 0,
+          overflow: "visible",
+        }}
+      > */}
       <Controller
         control={control}
         name="phone"
         render={({ field: { onChange, value } }) => (
-          <AppPhoneInput
-            label="Telefon raqam"
-            value={value}
-            onChangeText={onChange}
-            onFocus={() => setPhoneFocused(true)}
-            onBlur={() => setPhoneFocused(false)}
-            error={errors.phone?.message}
-            keyboardType="number-pad"
-            mask="99 999-99-99"
-            focused={phoneFocused}
-          />
+          <View
+            style={{
+              width: screens.width,
+              paddingHorizontal: screens.width * 0.04,
+              overflow: "visible",
+            }}
+          >
+            <AppPhoneInput
+              label="Telefon raqam"
+              value={value}
+              onChangeText={onChange}
+              error={!isEmailLogin ? errors?.phone?.message : ""}
+              mask="99 999-99-99"
+              keyboardType="number-pad"
+            />
+          </View>
         )}
       />
+
+      {/* <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, value } }) => (
+            <View
+              style={{
+                width: screens.width,
+                paddingHorizontal: screens.width * 0.04,
+              }}
+            >
+              <AppInput
+                label="Email"
+                value={value}
+                onChangeText={onChange}
+                error={isEmailLogin ? errors?.email?.message : ""}
+                keyboardType="email-address"
+              />
+            </View>
+          )}
+        /> */}
+      {/* </ScrollView> */}
+
       <Controller
         control={control}
         name="password"
         render={({ field: { onChange, value } }) => (
-          <AppInput
-            label="Parol"
-            value={value}
-            onChangeText={onChange}
-            onFocus={() => setPasswordFocused(true)}
-            onBlur={() => setPasswordFocused(false)}
-            error={errors.password?.message}
-            password={true}
-            focused={passwordFocused}
-          />
+          <View
+            style={{
+              width: screens.width,
+              paddingHorizontal: screens.width * 0.04,
+            }}
+          >
+            <AppInput
+              label="Parol"
+              value={value}
+              onChangeText={onChange}
+              onFocus={() => setPasswordFocused(true)}
+              onBlur={() => setPasswordFocused(false)}
+              error={errors.password?.message}
+              password={true}
+              focused={passwordFocused}
+            />
+          </View>
         )}
       />
       <AppText
@@ -106,10 +191,33 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
           fontSize: 14,
           color: Colors.primary,
           textDecorationLine: "underline",
+          paddingHorizontal: screens.width * 0.04,
         }}
       >
-        Parol esdan chiqdimi
+        Parol esdan chiqdimi ?
       </AppText>
+      <AnimatedErrorText
+        error={loginState.error?.error}
+        style={{ textAlign: "center", marginTop: 15, fontSize: 14 }}
+      />
+      {/* <AppText
+        onPress={toggleLoginType}
+        style={{
+          top: screens.height * 0.65,
+          textAlign: "center",
+          color: Colors.primary,
+          backgroundColor: Colors.Boxbackground,
+          alignSelf: "center",
+          paddingVertical: 10,
+          paddingHorizontal: 20,
+          borderRadius: 20,
+          position: "absolute",
+        }}
+      >
+        {isEmailLogin
+          ? "📞 Telefon raqam orqali kirish"
+          : "@ Email orqali kirish"}
+      </AppText> */}
     </View>
   );
 };
@@ -123,6 +231,5 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     justifyContent: "flex-start",
-    paddingHorizontal: screens.width * 0.04,
   },
 });

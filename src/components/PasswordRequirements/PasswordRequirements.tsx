@@ -64,7 +64,7 @@ const ReqRow = ({ text, satisfied, colors }: any) => {
   useEffect(() => {
     // kichik animatsiya: satisfied bo'lsa kattalashtirish va opacity 1 ga o'tkazish
     if (satisfied) {
-      scale.value = withSpring(1.05, { damping: 12 });
+      scale.value = withSpring(1.05, { damping: 30 });
       opacity.value = withTiming(1, { duration: 200 });
       // keyin biroz normallashtirish
       setTimeout(() => {

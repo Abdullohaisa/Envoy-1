@@ -10,6 +10,7 @@ import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
 import { useAtomValue } from "jotai";
 import { authAtom } from "@/service/auth/controller";
+import AuthButton from "@/components/Buttons/AuthButton";
 
 export default function Auth() {
   const Colors = useThemeColors();
@@ -50,6 +51,17 @@ export default function Auth() {
       </ScrollView>
 
       {/* Umumiy pastdagi button */}
+      {/* <AuthButton
+        text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
+        loading={isLoading}
+        onPress={() => {
+          if (activePage === 0) {
+            loginSubmitRef.current(); // Login formani submit qiladi
+          } else {
+            registerSubmitRef.current(); // Register formani submit qiladi
+          }
+        }}
+      /> */}
       <KeyboardResponsiveView
         style={{ paddingHorizontal: screens.width * 0.04 }}
       >

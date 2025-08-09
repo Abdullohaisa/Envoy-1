@@ -77,7 +77,8 @@ const Layout = () => {
       <View
         style={{
           flex: 1,
-          paddingBottom: insetsTop,
+          // paddingBottom: insetsTop,
+          paddingBottom: 0,
           backgroundColor: Colors.pageBackground,
         }}
       >

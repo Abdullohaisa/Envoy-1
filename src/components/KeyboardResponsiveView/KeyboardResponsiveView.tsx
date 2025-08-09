@@ -1,4 +1,3 @@
-// components/KeyboardResponsiveView.tsx
 import React, { useEffect } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import Animated, {
@@ -7,7 +6,9 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { useKeyboardHeight } from "@/hooks/useKeyboardHeight"; // ← SENING HOOKING
+import { useKeyboardHeight } from "@/hooks/useKeyboardHeight";
+import { screens } from "@/shared/token";
+import { useThemeColors } from "@/theme/useThemeColors";
 
 type Props = {
   children: React.ReactNode;
@@ -17,29 +18,38 @@ type Props = {
 
 const KeyboardResponsiveView: React.FC<Props> = ({
   children,
-  offset = 10,
+  offset = 0,
   style,
 }) => {
   const keyboardHeight = useKeyboardHeight();
-  const bottom = useSharedValue(10);
+  const bottom = useSharedValue(0);
+  const Colors = useThemeColors();
 
   useEffect(() => {
     const isKeyboardOpen = keyboardHeight > 0;
-    bottom.value = withTiming(
-      keyboardHeight > 0 ? keyboardHeight + offset : 10,
-      {
-        duration: isKeyboardOpen ? 300 : 300,
-        easing: Easing.out(Easing.cubic),
-      }
-    );
+    bottom.value = withTiming(isKeyboardOpen ? keyboardHeight + offset : 0, {
+      duration: 300,
+      easing: Easing.out(Easing.cubic),
+    });
   }, [keyboardHeight]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    position: "absolute",
-    bottom: bottom.value,
-    left: 0,
-    right: 0,
-  }));
+  const animatedStyle = useAnimatedStyle(() => {
+    const isKeyboardOpen = keyboardHeight > 0;
+
+    return {
+      position: "absolute",
+      bottom: bottom.value,
+      left: 0,
+      right: 0,
+      paddingHorizontal: screens.width * 0.04,
+      height: isKeyboardOpen ? screens.height * 0.09 : screens.height * 0.12,
+      backgroundColor: Colors.Boxbackground,
+      borderRadius: isKeyboardOpen ? 30 : 30,
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
+      paddingTop: isKeyboardOpen ? 10 : 10,
+    };
+  });
 
   return (
     <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>
