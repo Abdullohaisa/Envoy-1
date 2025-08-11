@@ -5,13 +5,15 @@ import AppPhoneInput from "@/components/Input/PhoneInput";
 import { useForm, Controller } from "react-hook-form";
 import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 import { vibration } from "@/utils/hapticks";
 import { RegisterTempValues, registerTempValues } from "./tempValues";
 import useCheckRegister from "@/service/check-register/controller";
+import { smsAtom } from "@/service/sms/controller";
+import { isValidRegAtom } from "@/app/(auth)/auth";
 
 const RegisterPhone = ({
   onSubmitRef,
@@ -20,6 +22,7 @@ const RegisterPhone = ({
 }) => {
   const [phoneFocused, setPhoneFocused] = useState(false);
   const setTempValue = useSetAtom(registerTempValues);
+  const setIsValidAtom = useSetAtom(isValidRegAtom);
 
   // useCheckRegister hook
   const { checkPhone, cancel, state } = useCheckRegister();
@@ -27,13 +30,19 @@ const RegisterPhone = ({
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<PhoneSchemaType>({
     resolver: zodResolver(phoneSchema()),
     defaultValues: {
       phone: "",
     },
   });
+
+  console.log("reg ", isValid);
+
+  useEffect(() => {
+    setIsValidAtom(isValid);
+  }, [isValid]);
 
   const onSubmit = async (data: PhoneSchemaType) => {
     // register tempga telefonni saqlaymiz

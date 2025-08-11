@@ -91,13 +91,13 @@ const RegisterSmsCodePage = () => {
           }, 200);
         } else {
           setIsCodeCorrect(false);
+          clearinput();
           vibration.heavy();
-          setCode("");
         }
       } else {
         setIsCodeCorrect(null);
       }
-    }, 200);
+    }, 50);
   }, [code]);
 
   useEffect(() => {

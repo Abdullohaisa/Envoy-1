@@ -30,7 +30,7 @@ function EyeCloseIcon({ isSecure, color }: EyeCloseIconProps) {
   }));
 
   return (
-    <Svg width={28} height={28} viewBox="0 0 32 32" fill="none">
+    <Svg width={22} height={22} viewBox="0 0 32 32" fill="none">
       {/* Ko‘z shakli */}
       <Path
         fillRule="evenodd"

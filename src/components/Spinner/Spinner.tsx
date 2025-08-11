@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useEffect } from "react";
+import { useThemeColors } from "@/theme/useThemeColors";
 
 const DOTS = 8; // nechta nuqta
 const RADIUS = 10; // doira radiusi (px)
@@ -16,8 +17,9 @@ const DURATION = 1200; // 1 to‘liq “aylanish” (ms)
 
 // Asosiy rang (variantga ko‘ra dinamik qilsa ham bo‘ladi)
 
-export default function CustomSpinner({ color = "#fff" }: { color?: string }) {
-  const COLOR = color;
+export default function CustomSpinner({ color }: { color?: string }) {
+  const Colors = useThemeColors();
+  const COLOR = color || Colors.textPrimary;
 
   /** 0 → DOTS oralig‘ida cheksiz “aylanib” yuradigan qiymat */
   const progress = useSharedValue(0);

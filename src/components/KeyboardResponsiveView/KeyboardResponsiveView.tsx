@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { Platform, StyleProp, ViewStyle } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -18,7 +18,7 @@ type Props = {
 
 const KeyboardResponsiveView: React.FC<Props> = ({
   children,
-  offset = 0,
+  offset = Platform.OS === "ios" ? 0 : 15,
   style,
 }) => {
   const keyboardHeight = useKeyboardHeight();

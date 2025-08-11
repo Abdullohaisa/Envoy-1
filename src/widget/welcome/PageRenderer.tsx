@@ -1,4 +1,4 @@
-import { FlatList } from "react-native";
+import { FlatList, Platform } from "react-native";
 import React from "react";
 import { WelcomePages, welcomePages } from "./pages";
 import { screens } from "@/shared/token";
@@ -48,6 +48,7 @@ const WelcomePageRenderer = ({ ref, setActivePage, welcomeScrollX }: Props) => {
       })}
       onScroll={scrollHandler} // ✅ endi to‘g‘ri ishlaydi
       scrollEventThrottle={16}
+      style={{ marginTop: Platform.OS === "ios" ? 10 : 0 }}
     />
   );
 };

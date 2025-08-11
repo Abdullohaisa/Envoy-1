@@ -8,9 +8,11 @@ import RegisterPhone from "@/widget/auth/register";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
-import { useAtomValue } from "jotai";
+import { atom, useAtomValue } from "jotai";
 import { authAtom } from "@/service/auth/controller";
-import AuthButton from "@/components/Buttons/AuthButton";
+
+export const isValidLoginAtom = atom<boolean | null>(null);
+export const isValidRegAtom = atom<boolean | null>(null);
 
 export default function Auth() {
   const Colors = useThemeColors();
@@ -20,6 +22,8 @@ export default function Auth() {
   const loginSubmitRef = useRef<() => void>(() => {});
   const registerSubmitRef = useRef<() => void>(() => {});
   const { isLoading } = useAtomValue(authAtom);
+  const isValidLogin = useAtomValue(isValidLoginAtom);
+  const isValidReg = useAtomValue(isValidRegAtom);
 
   return (
     <View
@@ -30,6 +34,7 @@ export default function Auth() {
 
       {/* Scroll pages */}
       <ScrollView
+        keyboardShouldPersistTaps="handled"
         ref={ref}
         pagingEnabled
         horizontal
@@ -68,6 +73,7 @@ export default function Auth() {
         <AppButton
           text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
           loading={isLoading}
+          disabled={activePage === 0 ? !isValidLogin : !isValidReg}
           onPress={() => {
             if (activePage === 0) {
               loginSubmitRef.current(); // Login formani submit qiladi

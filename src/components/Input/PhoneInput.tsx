@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { View, TextInputProps, StyleSheet } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  TextInputProps,
+  StyleSheet,
+  Pressable,
+  Keyboard,
+} from "react-native";
 import { MaskedTextInput } from "react-native-mask-text";
 import Animated, {
   useAnimatedStyle,
@@ -10,6 +16,8 @@ import Animated, {
 } from "react-native-reanimated";
 import AnimatedErrorText from "../Texts/AnimatedErrorText";
 import { useThemeColors } from "@/theme/useThemeColors";
+import CloseIcon from "@/assets/icon/close";
+import { vibration } from "@/utils/hapticks";
 
 type AppPhoneInputProps = {
   label: string;
@@ -17,6 +25,7 @@ type AppPhoneInputProps = {
   password?: boolean;
   mask?: string;
   focused?: boolean;
+  onClear?: () => void;
 } & TextInputProps;
 
 const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
@@ -27,18 +36,24 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
   focused,
   style,
   value = "",
+  onClear,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const Colors = useThemeColors();
+  const inputRef = useRef<any>(null);
 
   const animatedLabel = useSharedValue(0);
   const prefixTranslate = useSharedValue(0);
+  const clearButton = useSharedValue(0);
+
+  const AnimatedCloseButton = Animated.createAnimatedComponent(Pressable);
 
   useEffect(() => {
     const show = isFocused || value.length > 0 || focused;
     animatedLabel.value = withTiming(show ? 1 : 0, { duration: 200 });
     prefixTranslate.value = withTiming(show ? 1 : 0, { duration: 200 });
+    clearButton.value = value.length > 0 ? withTiming(1) : withTiming(0);
   }, [isFocused, value, focused]);
 
   const labelStyle = useAnimatedStyle(() => {
@@ -47,7 +62,11 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
       left: 16,
       top: interpolate(animatedLabel.value, [0, 1], [16, -8]),
       fontSize: interpolate(animatedLabel.value, [0, 1], [16, 12]),
-      color: interpolateColor(animatedLabel.value, [0, 1], ["#aaa", "#00BEFF"]),
+      color: interpolateColor(
+        animatedLabel.value,
+        [0, 1],
+        [Colors.borderColor, Colors.primary]
+      ),
       paddingHorizontal: 4,
     };
   });
@@ -63,6 +82,10 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
     };
   });
 
+  const closeButtonStyle = useAnimatedStyle(() => ({
+    right: interpolate(clearButton.value, [0, 1], [-55, 0]),
+  }));
+
   return (
     <View style={styles.wrapper}>
       <View
@@ -73,7 +96,7 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             borderColor: error
               ? "red"
               : isFocused || focused
-                ? "#00BEFF"
+                ? Colors.primary
                 : Colors.borderColor,
           },
         ]}
@@ -82,8 +105,9 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
           style={[
             labelStyle,
             {
-              borderRadius: 5,
+              borderRadius: 100,
               backgroundColor: Colors.pageBackground,
+              color: Colors.borderColor,
             },
           ]}
         >
@@ -95,11 +119,12 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             style={[
               styles.prefix,
               {
+                color: Colors.textPrimary,
                 borderRightColor: error
                   ? "red"
                   : isFocused || focused
-                    ? "#00BEFF"
-                    : Colors.Boxbackground,
+                    ? Colors.primary
+                    : Colors.borderColor,
               },
               prefixStyle,
             ]}
@@ -107,16 +132,38 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             +998
           </Animated.Text>
           <MaskedTextInput
+            ref={inputRef}
             mask={mask}
             value={value}
             onChangeText={(masked, raw) => rest.onChangeText?.(masked)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholderTextColor="#aaa"
-            style={[styles.maskedInput, style]}
+            style={[styles.maskedInput, { color: Colors.textPrimary }, style]}
             keyboardType="number-pad"
             {...rest}
           />
+        </View>
+
+        <View
+          style={[
+            styles.closeButton,
+            {
+              overflow: "hidden",
+            },
+          ]}
+        >
+          <AnimatedCloseButton
+            onPress={(e) => {
+              e.stopPropagation();
+              vibration.medium();
+              rest.onChangeText?.("");
+              inputRef?.current?.focus();
+            }}
+            hitSlop={10} // kattaroq bosish zonasi
+            style={[styles.closeButton, closeButtonStyle]}
+          >
+            <CloseIcon color={Colors.borderColor} size={18} />
+          </AnimatedCloseButton>
         </View>
       </View>
 
@@ -136,6 +183,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: 55,
     justifyContent: "center",
+    backgroundColor: "#f1f1f1",
+    // overflow: "hidden",
   },
   maskedInputContainer: {
     flexDirection: "row",
@@ -157,5 +206,14 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     height: 55,
     paddingLeft: 70,
+    // backgroundColor: "red",
+  },
+  closeButton: {
+    position: "absolute",
+    right: 0,
+    width: 55,
+    height: 55,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

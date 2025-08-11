@@ -1,14 +1,14 @@
 export const lightColors = {
-  primary: "#00BEFF", // Moviy — jonli, lekin ko‘zni charchatmaydi
+  primary: "#00BEFF",
 
-  pageBackground: "#eeeeee", // Sof oq emas, ko‘zni charchatmaydi
+  pageBackground: "#f5f5f5",
   Boxbackground: "#fff",
 
-  textPrimary: "#1F2937", // Dark Gray — qora emas, o‘qish oson
-  textSecondary: "#6B7280", // Xira kulrang — ikkilamchi matn uchun
+  textPrimary: "#1F2937",
+  textSecondary: "#6B7280",
 
-  green: "#22C55E", // Tailwind uslubidagi toza yashil
-  yellow: "#FACC15", // Yorqin, lekin pastel sariq
+  green: "#22C55E",
+  yellow: "#FACC15",
 
   borderColor: "#999",
 };
@@ -16,7 +16,7 @@ export const lightColors = {
 export const darkColors = {
   primary: "#00BEFF",
 
-  pageBackground: "#222",
+  pageBackground: "#1A1A1A",
   Boxbackground: "#333",
 
   textPrimary: "#fff",
@@ -25,5 +25,5 @@ export const darkColors = {
   green: "#00ff4c",
   yellow: "#ffbd59",
 
-  borderColor: "#333",
+  borderColor: "#555",
 };

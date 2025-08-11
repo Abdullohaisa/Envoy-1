@@ -26,7 +26,7 @@ const SmsCodeBox: React.FC<SmsCodeBoxProps> = ({
   const borderColor = () => {
     if (isCodeCorrect === true) return "green";
     if (isCodeCorrect === false) return "red";
-    return Colors.Boxbackground;
+    return "transparent";
   };
 
   const animatedStyle = (index: number) =>
@@ -44,7 +44,16 @@ const SmsCodeBox: React.FC<SmsCodeBoxProps> = ({
   return (
     <View style={styles.mainBox}>
       {[0, 1, 2, 3].map((i) => (
-        <View key={i} style={[styles.box, { borderColor: borderColor() }]}>
+        <View
+          key={i}
+          style={[
+            styles.box,
+            {
+              borderColor: borderColor(),
+              backgroundColor: Colors.Boxbackground,
+            },
+          ]}
+        >
           <Animated.View style={animatedStyle(i)}>
             <AppText style={styles.text}>{code[i] ?? ""}</AppText>
           </Animated.View>
@@ -71,6 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
+    elevation: 5,
   },
   text: {
     fontSize: 22,

@@ -98,18 +98,15 @@ const RPSmsCodePage = () => {
         } else {
           setIsCodeCorrect(false);
           vibration.heavy();
+          setTimeout(() => {
+            clearinput();
+          }, 500);
         }
       } else {
         setIsCodeCorrect(null);
       }
     }, 200);
   }, [code]);
-
-  useEffect(() => {
-    if (phone) {
-      setSms(formattedPhone);
-    }
-  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

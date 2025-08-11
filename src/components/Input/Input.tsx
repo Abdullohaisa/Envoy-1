@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   interpolate,
+  interpolateColor,
 } from "react-native-reanimated";
 import AnimatedErrorText from "../Texts/AnimatedErrorText";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -53,7 +54,11 @@ const AppInput: React.FC<AppInputProps> = ({
       left: 16,
       top: interpolate(labelAnim.value, [0, 1], [16, -8]),
       fontSize: interpolate(labelAnim.value, [0, 1], [16, 12]),
-      color: labelAnim.value === 1 ? "#00BEFF" : "#aaa",
+      color: interpolateColor(
+        labelAnim.value,
+        [0, 1],
+        [Colors.borderColor, Colors.primary]
+      ),
     };
   });
 
@@ -72,7 +77,7 @@ const AppInput: React.FC<AppInputProps> = ({
             borderColor: error
               ? "red"
               : isFocused || focused
-                ? "#00BEFF"
+                ? Colors.primary
                 : Colors.borderColor,
           },
         ]}
@@ -83,7 +88,7 @@ const AppInput: React.FC<AppInputProps> = ({
             {
               backgroundColor: Colors.pageBackground,
               paddingHorizontal: 4,
-              borderRadius: 5,
+              borderRadius: 100,
             },
           ]}
         >
@@ -98,14 +103,12 @@ const AppInput: React.FC<AppInputProps> = ({
           onBlur={() => setIsFocused(false)}
           secureTextEntry={secure}
           placeholderTextColor={Colors.borderColor}
-          style={[styles.input, style]}
+          style={[styles.input, style, { color: Colors.textPrimary }]}
         />
 
         {password && (
           <Pressable onPress={handleSecure} style={styles.toggle}>
-            <EyeOpenIcon isSecure={secure} color={Colors.textSecondary} />
-
-            {/* <EyeCloseIcon isOpen={secure} color={Colors.textSecondary} /> */}
+            <EyeOpenIcon isSecure={secure} color={Colors.borderColor} />
           </Pressable>
         )}
       </View>

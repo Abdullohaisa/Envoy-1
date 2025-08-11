@@ -24,6 +24,8 @@ import Animated, {
 } from "react-native-reanimated";
 import PasswordRequirements from "@/components/PasswordRequirements/PasswordRequirements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import { AppRoutes } from "@/constants/routes";
 
 const RSNewPasswordPage = () => {
   const [focus1, setFocus1] = useState(false);
@@ -49,6 +51,9 @@ const RSNewPasswordPage = () => {
     if (state?.detail) {
       scale.value = withSpring(1, { damping: 10 });
       opacity.value = withTiming(1, { duration: 300 });
+      setTimeout(() => {
+        router.push(AppRoutes.auth.auth);
+      }, 2000);
     }
   }, [state?.detail]);
 

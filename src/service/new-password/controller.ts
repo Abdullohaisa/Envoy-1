@@ -22,9 +22,6 @@ export const newPasswordAtom = atom(
         isLoading: false,
         error: null,
       });
-      setTimeout(() => {
-        router.push(AppRoutes.auth.auth);
-      }, 2000);
     } catch (error: any) {
       set(newPasswordState, {
         detail: null,

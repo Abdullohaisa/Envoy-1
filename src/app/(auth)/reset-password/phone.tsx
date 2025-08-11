@@ -13,12 +13,11 @@ import AppPhoneInput from "@/components/Input/PhoneInput";
 import { screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
-import { router } from "expo-router";
-import { AppRoutes } from "@/constants/routes";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { vibration } from "@/utils/hapticks";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 import useCheckRegister from "@/service/check-register/controller";
+import { smsAtom } from "@/service/sms/controller";
 
 export const phoneForSmsAtom = atom("");
 
@@ -26,17 +25,21 @@ const ResetPasswordPhonePage = () => {
   const [phoneFocused, setPhoneFocused] = useState(false);
   const setPhone = useSetAtom(phoneForSmsAtom);
   const { checkPhone, cancel, state } = useCheckRegister();
+  const setSms = useSetAtom(smsAtom);
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+
+    formState: { errors, isValid, isReady },
   } = useForm<PhoneSchemaType>({
     resolver: zodResolver(phoneSchema()),
     defaultValues: {
       phone: "",
     },
   });
+
+  console.log(isReady, isValid);
 
   const onSubmit = async (data: PhoneSchemaType) => {
     setPhone(data.phone);
@@ -45,10 +48,11 @@ const ResetPasswordPhonePage = () => {
 
     const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
 
-    console.log(exists, state);
+    console.log(checkPhone);
 
     if (exists === true) {
-      router.push(AppRoutes.auth.resetPassword.smsCode);
+      // router.push(AppRoutes.auth.resetPassword.smsCode);
+      // setSms(formattedPhone);
     } else if (exists === false) {
       vibration.notification.error();
     }
@@ -89,7 +93,12 @@ const ResetPasswordPhonePage = () => {
           <KeyboardResponsiveView
             style={{ paddingHorizontal: screens.width * 0.04 }}
           >
-            <AppButton text="Yuborish" onPress={handleSubmit(onSubmit)} />
+            <AppButton
+              text="Yuborish"
+              onPress={handleSubmit(onSubmit)}
+              loading={state.isLoading}
+              disabled={!isValid}
+            />
           </KeyboardResponsiveView>
         </View>
       </View>
