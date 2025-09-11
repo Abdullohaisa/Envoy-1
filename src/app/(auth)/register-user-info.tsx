@@ -5,16 +5,14 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
+import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { Controller, useForm } from "react-hook-form";
 import {
   RegisterSchemaStep1,
-  RegisterSchemaType,
-  registerSchema,
   registerSchemaStep1,
 } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import AppInput from "@/components/Input/Input";
 import { phoneForSmsAtom } from "./reset-password/phone";
@@ -64,7 +62,7 @@ const RegisterUserInfoPage = () => {
     setTempValue((p: RegisterTempValues) => ({
       ...p,
       username: data.name,
-      phone: formattedPhone,
+      phone_email: formattedPhone,
       user_image: null,
       role: role,
     }));
@@ -115,14 +113,14 @@ const RegisterUserInfoPage = () => {
             headerStyle,
           ]}
         >
-          <AuthHedaer title="Ro'yxatdan o'tish" />
+          <PageHeader title="Ro'yxatdan o'tish" />
         </Animated.View>
 
         <Animated.View
           style={[
             {
               flex: 1,
-              paddingHorizontal: screens.width * 0.04,
+              paddingHorizontal: Spacing.horizontal,
             },
             formStyle,
           ]}
@@ -178,7 +176,7 @@ const RegisterUserInfoPage = () => {
           </ScrollView>
 
           <KeyboardResponsiveView
-            style={{ paddingHorizontal: screens.width * 0.04 }}
+            style={{ paddingHorizontal: Spacing.horizontal }}
           >
             <AppButton text="Davom etish" onPress={handleSubmit(onSubmit)} />
           </KeyboardResponsiveView>

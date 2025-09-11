@@ -5,14 +5,14 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
+import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { Controller, useForm } from "react-hook-form";
 import {
   RegisterSchemaStep2,
   registerSchemaStep2,
 } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import AppInput from "@/components/Input/Input";
 import { useAtom, useAtomValue } from "jotai";
@@ -55,6 +55,7 @@ const RegisterUserPasswordPage = () => {
       password: data.password,
     };
     setRegister(finishingValue, "register");
+    console.log(finishingValue);
   };
 
   const headerStyle = useAnimatedStyle(() => {
@@ -103,14 +104,14 @@ const RegisterUserPasswordPage = () => {
             headerStyle,
           ]}
         >
-          <AuthHedaer title="Ro'yxatdan o'tish" />
+          <PageHeader title="Ro'yxatdan o'tish" />
         </Animated.View>
 
         <Animated.View
           style={[
             {
               flex: 1,
-              paddingHorizontal: screens.width * 0.04,
+              paddingHorizontal: Spacing.horizontal,
             },
             formStyle,
           ]}
@@ -172,7 +173,7 @@ const RegisterUserPasswordPage = () => {
           </ScrollView>
 
           <KeyboardResponsiveView
-            style={{ paddingHorizontal: screens.width * 0.04 }}
+            style={{ paddingHorizontal: Spacing.horizontal }}
           >
             <AppButton
               text="Davom etish"

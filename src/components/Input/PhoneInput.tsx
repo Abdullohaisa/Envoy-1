@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  TextInputProps,
-  StyleSheet,
-  Pressable,
-  Keyboard,
-} from "react-native";
+import { View, TextInputProps, StyleSheet, Pressable } from "react-native";
 import { MaskedTextInput } from "react-native-mask-text";
 import Animated, {
   useAnimatedStyle,
@@ -53,7 +47,11 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
     const show = isFocused || value.length > 0 || focused;
     animatedLabel.value = withTiming(show ? 1 : 0, { duration: 200 });
     prefixTranslate.value = withTiming(show ? 1 : 0, { duration: 200 });
-    clearButton.value = value.length > 0 ? withTiming(1) : withTiming(0);
+    if (value.length > 0) {
+      clearButton.value = withTiming(1);
+    } else {
+      clearButton.value = withTiming(0);
+    }
   }, [isFocused, value, focused]);
 
   const labelStyle = useAnimatedStyle(() => {
@@ -144,13 +142,17 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
           />
         </View>
 
-        <View
-          style={[
-            styles.closeButton,
-            {
-              overflow: "hidden",
-            },
-          ]}
+        <Pressable
+          style={{
+            height: 55,
+            width: 55,
+            overflow: "hidden",
+            position: "absolute",
+            right: 0,
+          }}
+          onPress={() => {
+            inputRef?.current?.focus();
+          }}
         >
           <AnimatedCloseButton
             onPress={(e) => {
@@ -162,9 +164,12 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             hitSlop={10} // kattaroq bosish zonasi
             style={[styles.closeButton, closeButtonStyle]}
           >
-            <CloseIcon color={Colors.borderColor} size={18} />
+            <CloseIcon
+              color={isFocused || focused ? Colors.primary : Colors.borderColor}
+              size={18}
+            />
           </AnimatedCloseButton>
-        </View>
+        </Pressable>
       </View>
 
       <AnimatedErrorText error={error} />

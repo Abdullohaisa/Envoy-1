@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
+import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { vibration } from "@/utils/hapticks";
 import NumberKeyboard from "@/components/Keyboard/Keyboard";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -111,7 +111,7 @@ const RPSmsCodePage = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
-        <AuthHedaer title="Sms kod" />
+        <PageHeader title="Sms kod" />
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <AppText style={{ textAlign: "center", marginTop: 10 }}>
             +998 {phone}

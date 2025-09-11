@@ -1,13 +1,13 @@
 import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
+import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { Controller, useForm } from "react-hook-form";
 import {
   NewPasswordSchemaType,
   newPasswordSchema,
 } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AppInput from "@/components/Input/Input";
@@ -123,7 +123,7 @@ const RSNewPasswordPage = () => {
             headerStyle,
           ]}
         >
-          <AuthHedaer title="Parolni yangilash" />
+          <PageHeader title="Parolni yangilash" />
         </Animated.View>
         {state?.detail ? (
           <Animated.View style={[{ marginTop: 20 }, animatedStyle, formStyle]}>
@@ -141,7 +141,7 @@ const RSNewPasswordPage = () => {
           <>
             <Animated.View
               style={[
-                { flex: 1, paddingHorizontal: screens.width * 0.04 },
+                { flex: 1, paddingHorizontal: Spacing.horizontal },
                 formStyle,
               ]}
             >
@@ -183,7 +183,7 @@ const RSNewPasswordPage = () => {
               </View>
 
               <KeyboardResponsiveView
-                style={{ paddingHorizontal: screens.width * 0.04 }}
+                style={{ paddingHorizontal: Spacing.horizontal }}
               >
                 <AppButton
                   text="Yuborish"

@@ -12,7 +12,17 @@ export const AppRoutes = {
     },
   },
   customer: {
+    getOrder: {
+      index: "/(app)/customer/get-order",
+      cargo: "/(app)/customer/get-order/cargo",
+      locations: "/(app)/customer/get-order/locations",
+      truck: "/(app)/customer/get-order/truck",
+      price: "/(app)/customer/get-order/price",
+      comment: "/(app)/customer/get-order/comment",
+      time: "/(app)/customer/get-order/time",
+    },
     home: "/(app)/customer/",
+    orders: "/(app)/customer/orders",
   },
   driver: {
     home: "/(app)/driver/",

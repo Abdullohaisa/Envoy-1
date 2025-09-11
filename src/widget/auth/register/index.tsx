@@ -1,11 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import { useForm, Controller } from "react-hook-form";
 import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAtom, useSetAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
@@ -13,7 +13,9 @@ import { vibration } from "@/utils/hapticks";
 import { RegisterTempValues, registerTempValues } from "./tempValues";
 import useCheckRegister from "@/service/check-register/controller";
 import { smsAtom } from "@/service/sms/controller";
-import { isValidRegAtom } from "@/app/(auth)/auth";
+import { isValidRegAtom } from "@/atoms/reg.login.valid";
+
+export const checkRegLoading = atom<boolean>(false);
 
 const RegisterPhone = ({
   onSubmitRef,
@@ -23,9 +25,9 @@ const RegisterPhone = ({
   const [phoneFocused, setPhoneFocused] = useState(false);
   const setTempValue = useSetAtom(registerTempValues);
   const setIsValidAtom = useSetAtom(isValidRegAtom);
-
-  // useCheckRegister hook
   const { checkPhone, cancel, state } = useCheckRegister();
+  const setSms = useSetAtom(smsAtom);
+  const setLoading = useSetAtom(checkRegLoading);
 
   const {
     control,
@@ -38,51 +40,39 @@ const RegisterPhone = ({
     },
   });
 
-  console.log("reg ", isValid);
-
   useEffect(() => {
     setIsValidAtom(isValid);
   }, [isValid]);
 
   const onSubmit = async (data: PhoneSchemaType) => {
-    // register tempga telefonni saqlaymiz
     setTempValue((p: RegisterTempValues) => ({
       ...p,
       phone_email: data.phone,
     }));
-
     const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
-
-    // Agar oldingi so‘rov bor bo‘lsa bekor qilish (hook ichidagi cancel)
     cancel();
-
-    // Tekshirish: submit orqali odatda debounce=0 ishlatamiz (instant)
     const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
-
-    // checkPhone resolvedidan keyin state ham yangilanadi, lekin biz natijani ham oldik
     if (exists === false) {
-      // ro'yxatdan o'tmagan — SMS kod sahifasiga o'tamiz
+      setSms(formattedPhone);
       router.push(AppRoutes.auth.registerSmsCode);
     } else if (exists === true) {
-      // ro'yxatdan o'tgan — foydalanuvchiga signal beramiz
       vibration.notification.error();
-    } else {
-      // exists === null (xato yoki bekor qilingan) — kerak bo'lsa xabar ko'rsatish
-      // state.error dan foydalanish mumkin
     }
   };
 
-  // Parent komponentdan formni submit qilish uchun referenceni set qilamiz
   useEffect(() => {
     onSubmitRef.current = handleSubmit(onSubmit);
   }, [handleSubmit, onSubmit]);
 
-  // Komponent unmount bo'lganda ishlayotgan so'rovni bekor qilamiz
   useEffect(() => {
     return () => {
       cancel();
     };
   }, []);
+
+  useEffect(() => {
+    setLoading(state.isLoading);
+  }, [state.isLoading]);
 
   return (
     <View style={styles.container}>
@@ -125,6 +115,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     justifyContent: "flex-start",
-    paddingHorizontal: screens.width * 0.04,
+    paddingHorizontal: Spacing.horizontal,
   },
 });

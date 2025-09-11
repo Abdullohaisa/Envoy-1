@@ -7,7 +7,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useKeyboardHeight } from "@/hooks/useKeyboardHeight";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 
 type Props = {
@@ -41,7 +41,7 @@ const KeyboardResponsiveView: React.FC<Props> = ({
       bottom: bottom.value,
       left: 0,
       right: 0,
-      paddingHorizontal: screens.width * 0.04,
+      paddingHorizontal: Spacing.horizontal,
       height: isKeyboardOpen ? screens.height * 0.09 : screens.height * 0.12,
       backgroundColor: Colors.Boxbackground,
       borderRadius: isKeyboardOpen ? 30 : 30,

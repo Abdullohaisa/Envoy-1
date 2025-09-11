@@ -39,15 +39,19 @@ const ChangeRoleButton = ({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.switchBox, { borderColor: Colors.Boxbackground }]}>
+      <View style={[styles.switchBox, { borderColor: Colors.borderColor }]}>
         {/* Animated background box */}
-        <Animated.View
-          style={[
-            styles.highlight,
-            animatedStyle,
-            { backgroundColor: Colors.Boxbackground },
-          ]}
-        />
+        <Animated.View style={[styles.highlight, animatedStyle]}>
+          <View
+            style={[
+              {
+                backgroundColor: Colors.borderColor,
+                flex: 1,
+                borderRadius: 15,
+              },
+            ]}
+          />
+        </Animated.View>
 
         {/* Buttons */}
         <Pressable
@@ -117,5 +121,6 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 18,
     zIndex: 0,
+    padding: 5,
   },
 });

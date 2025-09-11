@@ -86,8 +86,8 @@ const ReqRow = ({ text, satisfied, colors }: any) => {
         style={[
           styles.checkbox,
           {
-            borderColor: satisfied ? colors.green : colors.borderColor,
-            backgroundColor: satisfied ? colors.green : "transparent",
+            borderColor: satisfied ? colors.primary : colors.borderColor,
+            backgroundColor: satisfied ? colors.primary : "transparent",
           },
         ]}
       >

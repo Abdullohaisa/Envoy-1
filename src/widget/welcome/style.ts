@@ -1,4 +1,4 @@
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import { StyleSheet } from "react-native";
 
 export const WelcomePageStyles = StyleSheet.create({
@@ -44,8 +44,8 @@ export const WelcomePageStyles = StyleSheet.create({
     borderTopRightRadius: 30,
     overflow: "hidden",
     padding: 5,
-    paddingTop: screens.width * 0.04,
-    paddingHorizontal: screens.width * 0.04,
+    paddingTop: Spacing.horizontal,
+    paddingHorizontal: Spacing.horizontal,
   },
   mainButton: {
     height: 75,

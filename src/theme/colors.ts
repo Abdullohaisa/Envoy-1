@@ -1,7 +1,8 @@
 export const lightColors = {
-  primary: "#00BEFF",
+  primary: "#007fff",
 
-  pageBackground: "#f5f5f5",
+  // pageBackground: "#f5f5f5",
+  pageBackground: "#fff",
   Boxbackground: "#fff",
 
   textPrimary: "#1F2937",
@@ -16,7 +17,8 @@ export const lightColors = {
 export const darkColors = {
   primary: "#00BEFF",
 
-  pageBackground: "#1A1A1A",
+  // pageBackground: "#1A1A1A",
+  pageBackground: "#111",
   Boxbackground: "#333",
 
   textPrimary: "#fff",

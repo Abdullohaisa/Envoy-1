@@ -1,18 +1,16 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useRef, useState } from "react";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AppButton from "@/components/Buttons/Button";
 import Login from "@/widget/auth/login";
-import RegisterPhone from "@/widget/auth/register";
+import RegisterPhone, { checkRegLoading } from "@/widget/auth/register";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
 import { atom, useAtomValue } from "jotai";
 import { authAtom } from "@/service/auth/controller";
-
-export const isValidLoginAtom = atom<boolean | null>(null);
-export const isValidRegAtom = atom<boolean | null>(null);
+import { isValidLoginAtom, isValidRegAtom } from "@/atoms/reg.login.valid";
 
 export default function Auth() {
   const Colors = useThemeColors();
@@ -24,6 +22,7 @@ export default function Auth() {
   const { isLoading } = useAtomValue(authAtom);
   const isValidLogin = useAtomValue(isValidLoginAtom);
   const isValidReg = useAtomValue(isValidRegAtom);
+  const checkLoadingReg = useAtomValue(checkRegLoading);
 
   return (
     <View
@@ -68,11 +67,11 @@ export default function Auth() {
         }}
       /> */}
       <KeyboardResponsiveView
-        style={{ paddingHorizontal: screens.width * 0.04 }}
+        style={{ paddingHorizontal: Spacing.horizontal }}
       >
         <AppButton
           text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
-          loading={isLoading}
+          loading={isLoading || checkLoadingReg}
           disabled={activePage === 0 ? !isValidLogin : !isValidReg}
           onPress={() => {
             if (activePage === 0) {

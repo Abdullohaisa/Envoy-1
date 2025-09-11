@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import AppInput from "@/components/Input/Input";
 import { useForm, Controller } from "react-hook-form";
@@ -16,7 +16,7 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
-import { isValidLoginAtom } from "@/app/(auth)/auth";
+import { isValidLoginAtom } from "@/atoms/reg.login.valid";
 
 interface LoginProps {
   onSubmitRef: React.MutableRefObject<() => void>;
@@ -63,7 +63,7 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
           <View
             style={{
               width: screens.width,
-              paddingHorizontal: screens.width * 0.04,
+              paddingHorizontal: Spacing.horizontal,
               overflow: "visible",
             }}
           >
@@ -87,7 +87,7 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
           <View
             style={{
               width: screens.width,
-              paddingHorizontal: screens.width * 0.04,
+              paddingHorizontal: Spacing.horizontal,
             }}
           >
             <AppInput

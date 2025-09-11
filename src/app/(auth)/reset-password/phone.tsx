@@ -5,12 +5,12 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import AuthHedaer from "@/components/Header/AuthHeader/AuthHedaer";
+import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { Controller, useForm } from "react-hook-form";
 import { PhoneSchemaType, phoneSchema } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AppPhoneInput from "@/components/Input/PhoneInput";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import { atom, useAtom, useSetAtom } from "jotai";
@@ -18,6 +18,8 @@ import { vibration } from "@/utils/hapticks";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 import useCheckRegister from "@/service/check-register/controller";
 import { smsAtom } from "@/service/sms/controller";
+import { router } from "expo-router";
+import { AppRoutes } from "@/constants/routes";
 
 export const phoneForSmsAtom = atom("");
 
@@ -51,8 +53,8 @@ const ResetPasswordPhonePage = () => {
     console.log(checkPhone);
 
     if (exists === true) {
-      // router.push(AppRoutes.auth.resetPassword.smsCode);
-      // setSms(formattedPhone);
+      router.push(AppRoutes.auth.resetPassword.smsCode);
+      setSms(formattedPhone);
     } else if (exists === false) {
       vibration.notification.error();
     }
@@ -61,8 +63,8 @@ const ResetPasswordPhonePage = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
-        <AuthHedaer title="Parolni tiklash" />
-        <View style={{ flex: 1, paddingHorizontal: screens.width * 0.04 }}>
+        <PageHeader title="Parolni tiklash" />
+        <View style={{ flex: 1, paddingHorizontal: Spacing.horizontal }}>
           <View style={{ marginTop: 20, flex: 1 }}>
             <Controller
               control={control}
@@ -91,7 +93,7 @@ const ResetPasswordPhonePage = () => {
             />
           </View>
           <KeyboardResponsiveView
-            style={{ paddingHorizontal: screens.width * 0.04 }}
+            style={{ paddingHorizontal: Spacing.horizontal }}
           >
             <AppButton
               text="Yuborish"

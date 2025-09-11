@@ -8,6 +8,8 @@ import { AppRoutes } from "@/constants/routes";
 import { LogBox, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 LogBox.ignoreLogs([
   "`expo-notifications` functionality is not fully supported in Expo Go",
@@ -39,8 +41,10 @@ const Layout = () => {
         const storedData = await AsyncStorage.getItem("authData");
 
         if (!storedData) {
-          router.replace(AppRoutes.auth.welcome);
+          // router.replace(AppRoutes.auth.welcome);
           // router.replace(AppRoutes.auth.registerUserInfo);
+          // router.replace(AppRoutes.customer.home);
+          router.replace(AppRoutes.customer.getOrder.index);
           return;
         }
 
@@ -48,8 +52,8 @@ const Layout = () => {
         const { token, role } = parsed || {};
 
         if (!token) {
-          router.replace(AppRoutes.auth.welcome);
-          // router.replace(AppRoutes.auth.registerUserInfo);
+          // router.replace(AppRoutes.auth.welcome);
+          // router.replace(AppRoutes.customer.getOrder.cargo);
         } else {
           if (role === "Customer") {
             router.replace(AppRoutes.customer.home);
@@ -73,24 +77,28 @@ const Layout = () => {
   // if (!isReady) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <View
-        style={{
-          flex: 1,
-          // paddingBottom: insetsTop,
-          paddingBottom: 0,
-          backgroundColor: Colors.pageBackground,
-        }}
-      >
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: "ios_from_right",
-            contentStyle: { backgroundColor: Colors.pageBackground },
-          }}
-        />
-      </View>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <QueryClientProvider client={queryClient}>
+          <View
+            style={{
+              flex: 1,
+              // paddingBottom: insetsTop,
+              paddingBottom: 0,
+              backgroundColor: Colors.pageBackground,
+            }}
+          >
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: "ios_from_right",
+                contentStyle: { backgroundColor: Colors.pageBackground },
+              }}
+            />
+          </View>
+        </QueryClientProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 };
 
