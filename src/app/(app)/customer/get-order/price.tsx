@@ -12,6 +12,10 @@ import AppInputWithUnit from "@/components/Input/InputWithUnit";
 import { TextInput } from "react-native-gesture-handler";
 import GetOrderNextButton from "@/widget/customer/get-order/next-button";
 import { Spacing } from "@/shared/token";
+import { useThemeColors } from "@/theme/useThemeColors";
+import { themeAtom } from "@/theme/theme";
+import { useAtomValue } from "jotai";
+import AppText from "@/components/Texts/Text";
 
 const Price = () => {
   const {
@@ -30,8 +34,16 @@ const Price = () => {
   const priceValue = watch("price");
   const currencyValue = watch("currency");
   const inputRef = useRef<TextInput>(null);
+  const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
 
   const formattedPrice = new Intl.NumberFormat("ru-RU").format(priceValue);
+
+  const inputBackColor = Colors.pageBackground;
+  const darkModeInputStyle =
+    theme === "dark"
+      ? { elevation: 0, backgroundColor: inputBackColor, borderWidth: 1 }
+      : {};
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -66,13 +78,18 @@ const Price = () => {
                 onUnitChange={(unit) => setValue("currency", unit)}
                 keyboardType="numeric"
                 ref={inputRef}
+                backColor={inputBackColor}
+                styleView={darkModeInputStyle}
               />
             )}
           />
 
-          <Text style={{ marginTop: 16, fontSize: 16 }}>
-            narx: {currencyValue} {formattedPrice}
-          </Text>
+          <AppText
+            style={{ marginTop: 16, fontSize: 16, color: Colors.textPrimary }}
+          >
+            <AppText style={{ color: Colors.textSecondary }}>narx:</AppText>{" "}
+            {formattedPrice} {currencyValue}
+          </AppText>
 
           <View
             style={{

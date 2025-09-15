@@ -405,3 +405,5 @@ export const tumanlar: Record<string, { id: string; name: string }[]> = {
   // Sherobod shahri
   "011404": [{ id: "01140401", name: "Sherobod tumani markazi" }],
 };
+
+export const APIKEY = "Cwx5IFF36zGVlkPPoKvTuRaNdZ4_0ZfUzI-9-bL2t5s";

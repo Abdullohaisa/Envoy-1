@@ -100,10 +100,6 @@ export default PageHeader;
 
 const styles = StyleSheet.create({
   container: {
-    // position: "absolute",
-    // top: 0,
-    // left: 0,
-    // right: 0,
     zIndex: 10,
     paddingTop: 0,
     elevation: 3,
@@ -125,9 +121,10 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     height: 55,
     width: 70, // kattaroq qilish
     paddingHorizontal: 10,
+    paddingLeft: 15,
   },
 });

@@ -49,3 +49,38 @@ export const UNIT_OPTIONS: Record<UnitType, UnitOption[]> = {
   ],
   comment: [],
 };
+
+import ArrowIcon from "@/assets/icon/arrow";
+import { JSX } from "react";
+
+export const UNIT_ICONS: Record<string, JSX.Element> = {
+  // 🔹 Og'irlik
+  g: <ArrowIcon />,
+  kg: <ArrowIcon />,
+  t: <ArrowIcon />,
+
+  // 🔹 Uzunlik / Balans / Kenglik
+  sm: <ArrowIcon />,
+  m: <ArrowIcon />,
+
+  // 🔹 Miqdor
+  dona: <ArrowIcon />,
+  quti: <ArrowIcon />,
+  qop: <ArrowIcon />,
+  palet: <ArrowIcon />,
+  shisha: <ArrowIcon />,
+
+  // 🔹 Hajm / Hajm o'lchovlari
+  ml: <ArrowIcon />,
+  l: <ArrowIcon />,
+  "m³": <ArrowIcon />,
+
+  // 🔹 Narxlar
+  UZS: <ArrowIcon />,
+  USD: <ArrowIcon />,
+  RUB: <ArrowIcon />,
+
+  // 🔹 Yuk turi va kommentariyalar
+  cargoType: <ArrowIcon />,
+  comment: <ArrowIcon />,
+};

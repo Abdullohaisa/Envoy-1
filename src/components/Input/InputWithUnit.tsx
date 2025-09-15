@@ -25,6 +25,7 @@ import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomBottomSheetModal from "../BottomSheets/BottomSheetModal";
+import UnitPicker from "@/widget/customer/get-order/get-order-form/cargo";
 
 type StyleInput = {
   [key: string]: any; // agar aniq tiping bo‘lsa yozib qo‘y
@@ -158,35 +159,12 @@ const AppInputWithUnit: React.FC<AppInputWithUnitProps> = ({
       {/* Error */}
       <AnimatedErrorText error={error} />
 
-      <CustomBottomSheetModal ref={modalRef}>
-        <View style={[styles.options]}>
-          <FlatList
-            data={UNIT_OPTIONS[type]}
-            keyExtractor={(item) => item.short}
-            renderItem={({ item, index }) => (
-              <Pressable
-                style={[
-                  styles.unitOption,
-                  {
-                    borderColor: Colors.borderColor,
-                    borderBottomWidth:
-                      index === UNIT_OPTIONS[type].length - 1 ? 0 : 1,
-                  },
-                ]}
-                onPress={() => {
-                  onUnitChange(item.short);
-                  modalRef.current?.close();
-                  vibration.light();
-                }}
-              >
-                <Text style={{ fontSize: 16, color: Colors.textPrimary }}>
-                  {item.label}
-                </Text>
-              </Pressable>
-            )}
-          />
-        </View>
-      </CustomBottomSheetModal>
+      <UnitPicker
+        modalRef={modalRef}
+        onUnitChange={onUnitChange}
+        selectedUnit={selectedUnit}
+        type={type}
+      />
     </View>
   );
 };

@@ -1,74 +1,48 @@
-import React, { useState, useMemo, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Pressable,
-  Button,
-  Linking,
-  Alert,
-  Platform,
-} from "react-native";
+import React, { useRef } from "react";
+import { View, StyleSheet } from "react-native";
+import { WebView } from "react-native-webview";
 
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
-import { useThemeColors } from "@/theme/useThemeColors";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "@/theme/theme";
 import { Spacing } from "@/shared/token";
-import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
-import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import PickUpLocation from "@/widget/customer/get-order/get-order-form/locations/pick-up-location";
+import { APIKEY } from "@/constants/locations";
+import MapView, { UrlTile, Marker } from "react-native-maps";
 
 const LocationForm = () => {
-  const Colors = useThemeColors();
-  const theme = useAtomValue(themeAtom);
-  const ref = useRef<BottomSheetModalMethods>(null);
-
-  const openMap = (lat: number, lng: number) => {
-    const yandexUrl = `yandexmaps://maps.yandex.com/?ll=${lng},${lat}&pt=${lng},${lat},pm2rdm`;
-    const googleUrl =
-      Platform.OS === "ios"
-        ? `comgooglemaps://?q=${lat},${lng}&zoom=14`
-        : `geo:${lat},${lng}?q=${lat},${lng}`;
-
-    Linking.openURL(yandexUrl).catch(() => {
-      // Yandex mavjud bo‘lmasa Google Maps ochish
-      Linking.openURL(googleUrl).catch(() => {
-        Alert.alert(
-          "Xatolik",
-          "Hech qanday xarita ilovasi o‘rnatilmagan. Iltimos, Yandex yoki Google Maps’ni o‘rnating."
-        );
-      });
-    });
-  };
+  const webviewRef = useRef<WebView>(null);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={{ flex: 1 }}>
-        <PageHeader title="Manzil" enableBack />
-        <View style={styles.container}>
-          <Button
-            onPress={() => openMap(39.73333, 64.18333)}
-            title="Yuk ortiladigan manzil"
-          />
-          <Button title="Yuk tushuriladigan manzil" />
-        </View>
-        <CustomBottomSheetModal ref={ref} snapPointsProp={["100%"]}>
-          <PickUpLocation />
-        </CustomBottomSheetModal>
-      </View>
-    </TouchableWithoutFeedback>
+    <View style={{ flex: 1 }}>
+      <PageHeader title="Manzil" enableBack />
+
+      <MapView
+        style={{ flex: 1 }}
+        initialRegion={{
+          latitude: 41.3387,
+          longitude: 69.3412,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        }}
+      >
+        {/* HERE tile layer */}
+        <UrlTile
+          urlTemplate={`https://{s}.base.maps.ls.hereapi.com/maptile/2.1/maptile/newest/normal.day/{z}/{x}/{y}/256/png8?apiKey=${APIKEY}`}
+          maximumZ={20}
+          flipY={false}
+          subdomains={["1", "2", "3", "4"]}
+        />
+
+        {/* Marker */}
+        <Marker
+          coordinate={{ latitude: 41.3387, longitude: 69.3412 }}
+          title="Yuk ortiladigan joy"
+        />
+      </MapView>
+    </View>
   );
 };
 
 export default LocationForm;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 20,
-    paddingHorizontal: Spacing.horizontal,
-    flex: 1,
-    gap: 10,
-  },
+  container: { flex: 1, padding: Spacing.horizontal },
 });

@@ -43,12 +43,10 @@ const GetOrderNextButton = ({
         onPressOut={handlePressOut}
         style={styles.button}
       >
-        <AppText style={styles.text}>{title}</AppText>
-        <ArrowIcon
-          size={12}
-          direction="right"
-          color={theme !== "light" ? "#ddd" : Colors.textSecondary}
-        />
+        <AppText style={[styles.text, { color: Colors.primary }]}>
+          {title}
+        </AppText>
+        <ArrowIcon size={12} direction="right" color={Colors.primary} />
       </Pressable>
     </Animated.View>
   );
@@ -66,17 +64,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 7,
     padding: 8,
-    backgroundColor: "#fff", // oq back
     borderRadius: 8,
-    // Shadow (iOS)
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    // Elevation (Android)
-    elevation: 3,
   },
   text: {
-    fontSize: 12,
+    // fontSize: 12,
   },
 });

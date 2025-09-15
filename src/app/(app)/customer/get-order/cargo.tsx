@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,11 +13,9 @@ import {
   cargoSchema,
 } from "@/shared/validation/get-order/cargo-schema";
 import AppInputWithUnit from "@/components/Input/InputWithUnit";
-import { UNIT_OPTIONS } from "@/constants/unit";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { Spacing } from "@/shared/token";
 import AppText from "@/components/Texts/Text";
-import ArrowIcon from "@/assets/icon/arrow";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -43,6 +41,7 @@ const CargoForm = () => {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<CargoType>({
     resolver: zodResolver(cargoSchema),
@@ -80,6 +79,15 @@ const CargoForm = () => {
       ? { elevation: 0, backgroundColor: inputBackColor, borderWidth: 1 }
       : {};
 
+  const watchedFields = watch();
+
+  const getClearButtonColor = () => {
+    const hasValue = Object.values(watchedFields).some(
+      (val) => val && val.length > 0
+    );
+    return hasValue ? "red" : Colors.textSecondary;
+  };
+
   const renderInput = (
     name: keyof CargoType,
     label: string,
@@ -111,7 +119,7 @@ const CargoForm = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{ flex: 1 }}>
-        <PageHeader title="Yuk" enableBack />
+        <PageHeader title="Yuk" enableBack animated />
         <View style={styles.container}>
           {renderInput("type", "Yuk turi", "weight")}
 
@@ -148,7 +156,9 @@ const CargoForm = () => {
                 (reset(), Keyboard.dismiss());
               }}
             >
-              <AppText style={{ color: "red" }}>Tozalash</AppText>
+              <AppText style={{ color: getClearButtonColor() }}>
+                Tozalash
+              </AppText>
             </Pressable>
 
             <GetOrderNextButton
