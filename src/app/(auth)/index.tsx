@@ -52,12 +52,12 @@ export default function Welcome() {
       />
 
       <WelcomePageDotes welcomeScrollX={welcomeScrollX} />
-
+      {/* 
       <WelcomeButton
         handleNext={handleNext}
         handlePrev={handlePrev}
         activePage={activePage}
-      />
+      /> */}
 
       <WelcomeLanguageButton welcomeScrollX={welcomeScrollX} />
     </View>

@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { StatusBar } from "expo-status-bar";
 
 LogBox.ignoreLogs([
   "`expo-notifications` functionality is not fully supported in Expo Go",
@@ -44,7 +45,7 @@ const Layout = () => {
           // router.replace(AppRoutes.auth.welcome);
           // router.replace(AppRoutes.auth.registerUserInfo);
           // router.replace(AppRoutes.customer.home);
-          router.replace(AppRoutes.customer.getOrder.index);
+          router.replace(AppRoutes.customer.orders);
           return;
         }
 
@@ -56,7 +57,7 @@ const Layout = () => {
           // router.replace(AppRoutes.customer.getOrder.cargo);
         } else {
           if (role === "Customer") {
-            router.replace(AppRoutes.customer.home);
+            router.replace(AppRoutes.customer.getOrder.index);
           } else if (role === "Driver") {
             router.replace(AppRoutes.driver.home);
           } else {
@@ -77,7 +78,9 @@ const Layout = () => {
   // if (!isReady) return null;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView
+      style={{ flex: 1, backgroundColor: Colors.pageBackground }}
+    >
       <BottomSheetModalProvider>
         <QueryClientProvider client={queryClient}>
           <View
@@ -88,10 +91,11 @@ const Layout = () => {
               backgroundColor: Colors.pageBackground,
             }}
           >
+            <StatusBar style="inverted" />
             <Stack
               screenOptions={{
                 headerShown: false,
-                animation: "ios_from_right",
+                // animation: "ios_from_right",
                 contentStyle: { backgroundColor: Colors.pageBackground },
               }}
             />

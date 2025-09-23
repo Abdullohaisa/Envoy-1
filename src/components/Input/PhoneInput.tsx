@@ -12,6 +12,7 @@ import AnimatedErrorText from "../Texts/AnimatedErrorText";
 import { useThemeColors } from "@/theme/useThemeColors";
 import CloseIcon from "@/assets/icon/close";
 import { vibration } from "@/utils/hapticks";
+import { Radius } from "@/shared/token";
 
 type AppPhoneInputProps = {
   label: string;
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
   },
   container: {
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: Radius.input,
     height: 55,
     justifyContent: "center",
     backgroundColor: "#f1f1f1",

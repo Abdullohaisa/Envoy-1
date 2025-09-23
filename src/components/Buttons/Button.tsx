@@ -17,6 +17,7 @@ import Animated, {
 import CustomSpinner from "../Spinner/Spinner";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import { Radius } from "@/shared/token";
 
 interface Props {
   text: string;
@@ -111,7 +112,7 @@ export default AppButton;
 const styles = StyleSheet.create({
   button: {
     height: 50,
-    borderRadius: 20,
+    borderRadius: Radius.primary,
     justifyContent: "center",
     alignItems: "center",
   },

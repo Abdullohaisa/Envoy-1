@@ -1,81 +1,19 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import React, { RefObject, useRef } from "react";
+import LocationPicker from "../location-picker";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import AppButton from "@/components/Buttons/Button";
 
 const PickDownLocation = () => {
-  const [query, setQuery] = useState(""); // inputdagi yozuv
-  const [suggestions, setSuggestions] = useState<string[]>([
-    "Chilonzor",
-    "Amir Temur xiyoboni",
-    "Yunusobod",
-    "Sergeli",
-  ]); // hozircha soxta ma'lumot
-
-  const handleSelect = (item: string) => {
-    setQuery(item); // tanlaganida inputga yoziladi
-    console.log("Tanlangan manzil:", item);
-  };
-
+  const fromRef = useRef<BottomSheetModalMethods>(null);
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Yuk olinadigan manzil</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Manzil kiriting..."
-        value={query}
-        onChangeText={setQuery}
-      />
-
-      {/* Takliflar ro'yxati */}
-      {query.length > 0 && (
-        <FlatList
-          data={suggestions.filter((s) =>
-            s.toLowerCase().includes(query.toLowerCase())
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSelect(item)}
-              style={styles.suggestionItem}
-            >
-              <Text>{item}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
+    <View>
+      {/* <AppButton text="Qayerga" onPress={() => fromRef.current?.present()} /> */}
+      {/* <LocationPicker ref={fromRef} /> */}
     </View>
   );
 };
 
 export default PickDownLocation;
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-  },
-  suggestionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-});
-
-// Shuni yodda tut: bepul versiyada cheklovlar bor — kuniga 25 000 so‘rov va 1 000 ta geocoder so‘rov.
+const styles = StyleSheet.create({});

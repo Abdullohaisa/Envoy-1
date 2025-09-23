@@ -20,6 +20,7 @@ import CloseIcon from "@/assets/icon/close";
 import { vibration } from "@/utils/hapticks";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AnimatedErrorText from "../Texts/AnimatedErrorText";
+import { Radius } from "@/shared/token";
 
 // 🔑 Props type: input label, error matn, parol rejimi, fokus, fon rangi va clear tugmasi
 // `ref` tashqi tomondan ham yuborilishi mumkin
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   wrapper: {},
   container: {
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: Radius.input,
     height: 55,
     justifyContent: "center",
   },

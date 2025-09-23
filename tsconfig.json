@@ -1,9 +1,52 @@
+// {
+//   "extends": "expo/tsconfig.base",
+//   // "compilerOptions": {
+//   //   "strict": true,
+//   //   "paths": {
+//   //     "@/*": ["./src/*"]
+//   //   }
+//   // }
+//   "compilerOptions": {
+//     "target": "esnext",
+//     "module": "esnext",
+//     "jsx": "react-jsx", // <-- MUHIM
+
+//     // "strict": false,
+
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "moduleResolution": "node",
+//     "allowSyntheticDefaultImports": true,
+//     "resolveJsonModule": true,
+//     "isolatedModules": true,
+//     "noEmit": true,
+//     "paths": {
+// "@/*": ["src/*"]
+//     }
+//   }
+// }
+
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "target": "esnext", // Eng so‘nggi JavaScript imkoniyatlari
+    "module": "esnext", // ES modul tizimi
+    "jsx": "react-jsx", // React 17+ JSX transform
+    "strict": true, // Qat’iy tip tekshiruvlari
+    "noImplicitAny": true, // Har qanday 'any' tipini qat’iy tekshiradi
+    "strictNullChecks": true, // Null va undefined tekshiruvlarini kuchaytiradi
+    "esModuleInterop": true, // CommonJS bilan moslashuv
+    "skipLibCheck": true, // node_modules tekshiruvini o‘tkazib yuboradi
+    "moduleResolution": "node", // Node.js modul qidiruvi
+    "allowSyntheticDefaultImports": true, // CommonJS importlari uchun default
+    "resolveJsonModule": true, // JSON fayllarni import qilish imkoniyati
+    "isolatedModules": true, // Har bir fayl alohida kompilyatsiya qilinadi
+    "noEmit": true, // JavaScript hosil qilmaydi, faqat xatolarni tekshiradi
+    "forceConsistentCasingInFileNames": true, // Fayl nomlari har doim bir xil bo‘lishini talab qiladi
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"] // Import aliaslari: "@/components" -> "src/components"
     }
-  }
+  },
+  "include": ["src/**/*"], // Qaerlarni kompilyatsiya qilish
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"] // Istisno qilinadigan fayllar
 }

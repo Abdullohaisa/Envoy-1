@@ -3,6 +3,7 @@ import React from "react";
 import { Stack } from "expo-router";
 import { useThemeColors } from "@/theme/useThemeColors";
 import Toast, { ErrorToast } from "react-native-toast-message";
+import { Radius } from "@/shared/token";
 
 const AuthLaout = () => {
   const Colors = useThemeColors();
@@ -16,7 +17,7 @@ const AuthLaout = () => {
           borderWidth: 1,
           borderColor: "red", // Qizil border
           borderLeftWidth: 1,
-          borderRadius: 20,
+          borderRadius: Radius.primary,
           borderLeftColor: "transparent", // ❌ Chap tarafdagi default qizil chiziqni yo‘q qilamiz
           shadowColor: "transparent", // iOS'da default soyani olib tashlaymiz agar xohlasang
           elevation: 20, // Android'da shadow yo‘qotish uchun

@@ -1,5 +1,3 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
 import { Stack } from "expo-router";
 import { useThemeColors } from "@/theme/useThemeColors";
 
@@ -10,7 +8,7 @@ const GetOrderLayout = () => {
       screenOptions={{
         contentStyle: { backgroundColor: Colors.pageBackground },
         headerShown: false,
-        animation: "slide_from_right",
+        animation: "default",
       }}
     />
   );

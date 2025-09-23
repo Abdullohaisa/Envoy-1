@@ -1,3 +1,4 @@
+import { Radius } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { vibration } from "@/utils/hapticks";
 import { Dimensions, Pressable, StyleSheet, View, Text } from "react-native";
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   switchBox: {
     width: BOX_WIDTH,
     height: 55,
-    borderRadius: 20,
+    borderRadius: Radius.primary,
     flexDirection: "row",
     overflow: "hidden",
     position: "relative",

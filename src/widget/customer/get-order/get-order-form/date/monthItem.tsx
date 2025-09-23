@@ -94,7 +94,6 @@ const MonthItem: React.FC<MonthItemProps> = ({
                       styles.dayText,
                       {
                         height: 35,
-                        // borderWidth: 1,
                         borderColor,
                         color,
                         backgroundColor,

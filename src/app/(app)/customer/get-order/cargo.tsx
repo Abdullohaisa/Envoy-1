@@ -69,7 +69,7 @@ const CargoForm = () => {
     );
 
     console.log("Cargo data:", formattedData);
-    router.push(AppRoutes.customer.getOrder.locations);
+    // router.push(AppRoutes.customer.getOrder.locations);
     Keyboard.dismiss();
   };
 

@@ -6,6 +6,10 @@ import DateNavigationContainer from "@/widget/customer/get-order/get-order-form/
 import MonthList from "@/widget/customer/get-order/get-order-form/date/monthList";
 import DateNames from "@/widget/customer/get-order/get-order-form/date/date-names";
 import { getMonthDates } from "@/utils/date-picker";
+import GetOrderNextButton from "@/widget/customer/get-order/next-button";
+import { Spacing } from "@/shared/token";
+import { router } from "expo-router";
+import { AppRoutes } from "@/constants/routes";
 
 export default function DatePicker() {
   const [selectedMonth, setSelectedMonth] = useState(0);
@@ -65,6 +69,20 @@ export default function DatePicker() {
         setSelectedMonth={setSelectedMonth}
         setSelectedYear={setSelectedYear}
       />
+
+      <View
+        style={{
+          justifyContent: "flex-end",
+          alignItems: "flex-end",
+          marginTop: 20,
+          paddingHorizontal: Spacing.horizontal,
+        }}
+      >
+        <GetOrderNextButton
+          title="Keyingi"
+          onPress={() => router.push(AppRoutes.customer.getOrder.index)}
+        />
+      </View>
     </View>
   );
 }

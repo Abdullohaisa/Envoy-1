@@ -2,7 +2,7 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { screens } from "@/shared/token";
+import { Radius, screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import Animated, {
   useAnimatedStyle,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: Radius.primary,
     elevation: 5,
   },
   text: {

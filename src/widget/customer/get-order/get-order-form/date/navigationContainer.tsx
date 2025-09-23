@@ -73,6 +73,23 @@ export default function DateNavigationContainer({
           <ArrowIcon color={Colors.primary} />
         </TouchableOpacity>
 
+        <View
+          style={[styles.selectedDateBox, { borderTopColor: Colors.primary04 }]}
+        >
+          {selectedDate ? (
+            <AppText style={{ fontWeight: "700", color: Colors.green }}>
+              {selectedDate.day} - {monthNames[selectedDate.month]}{" "}
+              {selectedDate.year}
+            </AppText>
+          ) : (
+            <AppText
+              style={[styles.selectedDateText, { color: Colors.primary }]}
+            >
+              Yukni olish vaqtini tanlang
+            </AppText>
+          )}
+        </View>
+
         <TouchableOpacity
           onPress={handleNextMonth}
           style={[styles.navButton, { borderColor: Colors.primary }]}
@@ -80,39 +97,14 @@ export default function DateNavigationContainer({
           <ArrowIcon color={Colors.primary} direction="right" />
         </TouchableOpacity>
       </View>
-      <View
-        style={[styles.selectedDateBox, { borderTopColor: Colors.primary04 }]}
-      >
-        {selectedDate ? (
-          <>
-            <AppText
-              style={[styles.selectedDateText, { color: Colors.primary }]}
-            >
-              Yukni olish vaqti
-            </AppText>
-            <AppText style={{ fontWeight: "700", color: Colors.primary }}>
-              {selectedDate.day} - {monthNames[selectedDate.month]}{" "}
-              {selectedDate.year}
-            </AppText>
-          </>
-        ) : (
-          <AppText style={[styles.selectedDateText, { color: Colors.primary }]}>
-            Yukni olish vaqtini tanlang
-          </AppText>
-        )}
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   navigationContainer: {
-    position: "absolute",
-    top: "58%",
-    left: 0,
-    right: 0,
     paddingHorizontal: Spacing.horizontal,
-    gap: 10,
+    marginTop: 10,
   },
   container: {
     flexDirection: "row",
@@ -129,13 +121,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   selectedDateBox: {
-    marginTop: 15,
-    padding: 12,
     borderRadius: 10,
-    borderTopWidth: 1,
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   selectedDateText: {

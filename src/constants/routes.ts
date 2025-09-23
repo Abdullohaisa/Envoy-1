@@ -21,7 +21,18 @@ export const AppRoutes = {
       comment: "/(app)/customer/get-order/comment",
       time: "/(app)/customer/get-order/time",
     },
-    home: "/(app)/customer/",
+    profile: {
+      index: "/(app)/customer/profile/",
+      results: {
+        index: "/(app)/customer/profile/results",
+      },
+      settings: {
+        index: "/(app)/customer/profile/settings",
+        language: "/(app)/customer/profile/settings/language",
+        notification: "/(app)/customer/profile/settings/notification",
+      },
+      user: "/(app)/customer/profile/user",
+    },
     orders: "/(app)/customer/orders",
   },
   driver: {

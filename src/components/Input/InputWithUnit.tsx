@@ -26,6 +26,7 @@ import { themeAtom } from "@/theme/theme";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomBottomSheetModal from "../BottomSheets/BottomSheetModal";
 import UnitPicker from "@/widget/customer/get-order/get-order-form/cargo";
+import { Radius } from "@/shared/token";
 
 type StyleInput = {
   [key: string]: any; // agar aniq tiping bo‘lsa yozib qo‘y
@@ -173,7 +174,7 @@ export default AppInputWithUnit;
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
+    borderRadius: Radius.input,
     height: 55,
     justifyContent: "center",
     flexDirection: "row",

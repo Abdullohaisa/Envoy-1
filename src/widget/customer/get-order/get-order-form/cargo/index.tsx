@@ -5,7 +5,7 @@ import { UNIT_ICONS, UNIT_OPTIONS, UnitType } from "@/constants/unit";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { vibration } from "@/utils/hapticks";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { screens } from "@/shared/token";
+import { Radius, screens } from "@/shared/token";
 
 interface UnitPickerProps {
   modalRef: RefObject<BottomSheetModalMethods | null>;
@@ -68,6 +68,19 @@ const UnitPicker: React.FC<UnitPickerProps> = ({
     <CustomBottomSheetModal
       ref={modalRef}
       backgroundStyle={{ backgroundColor: Colors.pageBackground }}
+      index={0}
+      enablePanDownToClose
+      enableDynamicSizing={false}
+      backdropAppearIndex={0}
+      backdropDisappearIndex={-1}
+      backdropOpacity={0.5}
+      pressBehavior="close"
+      snapPoints={["50%"]}
+      handleComponent={null}
+      containerStyle={{
+        borderRadius: Radius.primary,
+        paddingTop: 0,
+      }}
     >
       <View style={styles.options}>
         <FlatList

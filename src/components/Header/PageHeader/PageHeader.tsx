@@ -16,6 +16,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
+import { Radius } from "@/shared/token";
 
 type PageHeaderProps = {
   title: string;
@@ -32,6 +35,7 @@ const PageHeader = ({
 }: PageHeaderProps) => {
   const Colors = useThemeColors();
   const insetsTop = useSafeAreaInsets().top;
+  const theme = useAtomValue(themeAtom);
 
   const translateY = useSharedValue(0);
   const paddingTop = useSharedValue(0);
@@ -76,19 +80,34 @@ const PageHeader = ({
         styles.container,
         {
           height: 55 + insetsTop,
-          backgroundColor: Colors.Boxbackground,
+          backgroundColor:
+            theme === "light" ? Colors.primary08 : Colors.Boxbackground,
           borderColor: Colors.borderColor,
+          borderBottomLeftRadius: Platform.OS === "ios" ? Radius.primary : 0,
+          borderBottomRightRadius: Platform.OS === "ios" ? Radius.primary : 0,
         },
         animated && headerStyle,
       ]}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: Colors.textPrimary }]}>
+        <Text
+          style={[
+            styles.title,
+            {
+              color:
+                theme === "light" ? Colors.Boxbackground : Colors.textPrimary,
+            },
+          ]}
+        >
           {title}
         </Text>
         {enableBack && (
           <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <ArrowIcon color={Colors.textSecondary} />
+            <ArrowIcon
+              color={
+                theme === "light" ? Colors.Boxbackground : Colors.textSecondary
+              }
+            />
           </Pressable>
         )}
       </View>
@@ -103,7 +122,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     paddingTop: 0,
     elevation: 3,
-    borderBottomWidth: Platform.OS === "ios" ? 1 : 0,
+    borderBottomWidth: Platform.OS === "ios" ? 0 : 0,
     justifyContent: "flex-end",
   },
   header: {
