@@ -1,0 +1,19 @@
+{
+  "choose_language": "Dili saýlaň",
+  "search_placeholder": "Gözleg...",
+  "region_central_asia": "Orta Aziýa",
+  "region_near": "Ýakyn sebit",
+  "region_world": "Dünýä dilleri",
+  "languages": {
+    "uzbekistan": "Özbegistan",
+    "kazakhstan": "Gazagystan",
+    "kyrgyzstan": "Gyrgyzstan",
+    "tajikistan": "Täjigistan",
+    "turkmenistan": "Türkmenistan",
+    "russia": "Russiýa",
+    "turkey": "Türkiýe",
+    "english": "Angliýa",
+    "china": "Hytaý",
+    "belarus": "Belarus"
+  }
+}

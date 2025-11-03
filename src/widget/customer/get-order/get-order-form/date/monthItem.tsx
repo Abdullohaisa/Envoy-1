@@ -57,12 +57,12 @@ const MonthItem: React.FC<MonthItemProps> = ({
                 selectedDate.month === item.id &&
                 selectedDate.year === selectedYear;
 
-              const backgroundColor = isTodayCell
-                ? Colors.primary08
-                : isSelected
-                  ? Colors.green08
+              const backgroundColor = isSelected
+                ? Colors.green06
+                : isTodayCell
+                  ? Colors.primary06
                   : isSelectable(day, item.id, selectedYear)
-                    ? Colors.borderColor02
+                    ? Colors.Boxbackground
                     : "transparent";
 
               const color = isTodayCell
@@ -80,9 +80,13 @@ const MonthItem: React.FC<MonthItemProps> = ({
 
               return (
                 <Pressable
+                  android_ripple={{ color: Colors.primary06 }}
+                  style={[styles.dayCell]}
                   key={di}
-                  style={styles.dayCell}
-                  disabled={!day || !isSelectable(day, item.id, selectedYear)}
+                  disabled={
+                    !day ||
+                    (!isSelectable(day, item.id, selectedYear) && !isTodayCell)
+                  }
                   onPress={() =>
                     setSelectedDate(
                       day ? { day, month: item.id, year: selectedYear } : null
@@ -93,7 +97,7 @@ const MonthItem: React.FC<MonthItemProps> = ({
                     style={[
                       styles.dayText,
                       {
-                        height: 35,
+                        // height: 35,
                         borderColor,
                         color,
                         backgroundColor,
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderBottomWidth: 1,
     paddingBottom: 10,
-    height: 287,
+    // height: 287,
   },
   weekNameBox: {
     flexDirection: "row",
@@ -143,7 +147,7 @@ const styles = StyleSheet.create({
   dayText: {
     textAlign: "center",
     margin: 3,
-    padding: 5,
+    padding: 8,
     borderRadius: 5,
     width: screens.width * 0.114,
     textAlignVertical: "center",

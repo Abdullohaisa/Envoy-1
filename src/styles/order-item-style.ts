@@ -14,7 +14,8 @@ export const orderItemStyle = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: screens.width * 0.03,
     paddingBottom: 10,
-    borderRadius: Radius.primary,
+    borderRadius: 20,
+    gap: 10,
   },
 
   topSection: {
@@ -26,24 +27,26 @@ export const orderItemStyle = StyleSheet.create({
   infoBox: {
     gap: 3,
     flexDirection: "column",
+    flexWrap: "wrap",
   },
   row: {
     flexDirection: "row",
-    gap: 5,
+    gap: 7,
+    flexWrap: "wrap",
   },
   orderTypeBox: {
-    padding: 5,
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
-    flex: 1,
-    borderRadius: 5,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   orderType: {
     fontSize: 12,
     color: "#FFF",
-    width: "100%",
     textAlign: "center",
+    fontWeight: "700",
   },
   locationItem: {
     flexDirection: "row",
@@ -57,8 +60,6 @@ export const orderItemStyle = StyleSheet.create({
   line: {
     width: "100%",
     height: 1,
-    backgroundColor: "#444",
-    marginVertical: 5,
   },
   itemLength: {
     color: "silver",

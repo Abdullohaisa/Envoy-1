@@ -1,5 +1,3 @@
-
-
 import axios, { AxiosRequestConfig } from "axios";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,10 +15,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = await tokenManager.get();
+    const access = await tokenManager.get();
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (access) {
+      config.headers.Authorization = `Bearer ${access}`;
     }
 
     return config;

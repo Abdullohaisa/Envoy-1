@@ -1,1 +1,1 @@
-export const SMS_URL = `/users/send-sms/`;
+export const SMS_URL = `/user/send-sms/`;

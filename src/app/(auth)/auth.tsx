@@ -9,7 +9,7 @@ import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/Keyboard
 import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
 import { atom, useAtomValue } from "jotai";
-import { authAtom } from "@/service/auth/controller";
+import { authAtom, authStateAtom } from "@/service/auth/controller";
 import { isValidLoginAtom, isValidRegAtom } from "@/atoms/reg.login.valid";
 
 export default function Auth() {
@@ -19,7 +19,7 @@ export default function Auth() {
   const scrollX = useSharedValue(0); // 👈 scroll qiymati
   const loginSubmitRef = useRef<() => void>(() => {});
   const registerSubmitRef = useRef<() => void>(() => {});
-  const { isLoading } = useAtomValue(authAtom);
+  const { isLoading } = useAtomValue(authStateAtom);
   const isValidLogin = useAtomValue(isValidLoginAtom);
   const isValidReg = useAtomValue(isValidRegAtom);
   const checkLoadingReg = useAtomValue(checkRegLoading);
@@ -54,24 +54,13 @@ export default function Auth() {
         <RegisterPhone onSubmitRef={registerSubmitRef} />
       </ScrollView>
 
-      {/* Umumiy pastdagi button */}
-      {/* <AuthButton
-        text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
-        loading={isLoading}
-        onPress={() => {
-          if (activePage === 0) {
-            loginSubmitRef.current(); // Login formani submit qiladi
-          } else {
-            registerSubmitRef.current(); // Register formani submit qiladi
-          }
-        }}
-      /> */}
       <KeyboardResponsiveView
+        offset={0}
         style={{ paddingHorizontal: Spacing.horizontal }}
       >
         <AppButton
           text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
-          loading={isLoading || checkLoadingReg}
+          isLoading={isLoading || checkLoadingReg}
           disabled={activePage === 0 ? !isValidLogin : !isValidReg}
           onPress={() => {
             if (activePage === 0) {

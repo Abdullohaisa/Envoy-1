@@ -17,9 +17,9 @@ export const smsAtom = atom(
     set(smsStateAtom, { sms: null, isLoading: true, error: null });
 
     try {
-      const { verification_code } = await sendSms(phone);
+      const { code } = await sendSms(phone);
       set(smsStateAtom, {
-        sms: verification_code,
+        sms: code,
         isLoading: false,
         error: null,
       });

@@ -1,0 +1,19 @@
+{
+  "choose_language": "Интихоби забон",
+  "search_placeholder": "Ҷустуҷӯ...",
+  "region_central_asia": "Осиёи Марказӣ",
+  "region_near": "Минтақаи наздик",
+  "region_world": "Забонҳои ҷаҳон",
+  "languages": {
+    "uzbekistan": "Ӯзбекистон",
+    "kazakhstan": "Қазоқистон",
+    "kyrgyzstan": "Қирғизистон",
+    "tajikistan": "Тоҷикистон",
+    "turkmenistan": "Туркманистон",
+    "russia": "Русия",
+    "turkey": "Туркия",
+    "english": "Англия",
+    "china": "Чин",
+    "belarus": "Белорус"
+  }
+}

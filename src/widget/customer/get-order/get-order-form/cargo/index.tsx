@@ -6,12 +6,13 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { vibration } from "@/utils/hapticks";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { Radius, screens } from "@/shared/token";
+import AppText from "@/components/Texts/Text";
 
 interface UnitPickerProps {
   modalRef: RefObject<BottomSheetModalMethods | null>;
   onUnitChange: (short: string) => void;
   type: UnitType;
-  selectedUnit: string;
+  selectedUnit: string | null;
 }
 
 const UnitPicker: React.FC<UnitPickerProps> = ({
@@ -53,13 +54,9 @@ const UnitPicker: React.FC<UnitPickerProps> = ({
           }, 500);
         }}
       >
-        {/* Icon */}
-        {/* {UNIT_ICONS[item.short] && (
-          <View style={{ marginRight: 4 }}>{UNIT_ICONS[item.short]}</View>
-        )} */}
-        <Text style={{ fontSize: 16, color: Colors.textPrimary }}>
+        <AppText style={{ fontSize: 16, color: Colors.textPrimary }}>
           {item.label}
-        </Text>
+        </AppText>
       </Pressable>
     );
   };

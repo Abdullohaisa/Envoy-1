@@ -1,10 +1,8 @@
-
-
 export const DELETE_API = {
-  api: `/users/delete/`,
+  api: `/user/delete/`,
 };
 
 export const AUTH_ENDPOINTS = {
-  login: "/users/login/",
-  register: "/users/signup/",
+  login: "/user/sign-in/",
+  register: "/user/sign-up/",
 };

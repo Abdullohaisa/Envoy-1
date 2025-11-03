@@ -20,6 +20,7 @@ import useCheckRegister from "@/service/check-register/controller";
 import { smsAtom } from "@/service/sms/controller";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
+import { safeNavigate } from "@/utils/safe-navigation";
 
 export const phoneForSmsAtom = atom("");
 
@@ -41,8 +42,6 @@ const ResetPasswordPhonePage = () => {
     },
   });
 
-  console.log(isReady, isValid);
-
   const onSubmit = async (data: PhoneSchemaType) => {
     setPhone(data.phone);
     const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
@@ -50,10 +49,8 @@ const ResetPasswordPhonePage = () => {
 
     const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
 
-    console.log(checkPhone);
-
     if (exists === true) {
-      router.push(AppRoutes.auth.resetPassword.smsCode);
+      safeNavigate(() => router.push(AppRoutes.auth.resetPassword.smsCode));
       setSms(formattedPhone);
     } else if (exists === false) {
       vibration.notification.error();
@@ -98,7 +95,7 @@ const ResetPasswordPhonePage = () => {
             <AppButton
               text="Yuborish"
               onPress={handleSubmit(onSubmit)}
-              loading={state.isLoading}
+              isLoading={state.isLoading}
               disabled={!isValid}
             />
           </KeyboardResponsiveView>

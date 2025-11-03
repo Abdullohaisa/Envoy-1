@@ -188,7 +188,7 @@ const RSNewPasswordPage = () => {
                 <AppButton
                   text="Yuborish"
                   onPress={handleSubmit(onSubmit)}
-                  loading={state.isLoading}
+                  isLoading={state.isLoading}
                 />
               </KeyboardResponsiveView>
             </Animated.View>

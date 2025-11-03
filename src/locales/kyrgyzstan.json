@@ -1,0 +1,19 @@
+{
+  "choose_language": "Тилди тандаңыз",
+  "search_placeholder": "Издөө...",
+  "region_central_asia": "Борбордук Азия",
+  "region_near": "Жакын аймак",
+  "region_world": "Дүйнө тилдери",
+  "languages": {
+    "uzbekistan": "Өзбекстан",
+    "kazakhstan": "Казакстан",
+    "kyrgyzstan": "Кыргызстан",
+    "tajikistan": "Тажикстан",
+    "turkmenistan": "Түркмөнстан",
+    "russia": "Россия",
+    "turkey": "Түркия",
+    "english": "Англия",
+    "china": "Кытай",
+    "belarus": "Беларусь"
+  }
+}

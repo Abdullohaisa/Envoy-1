@@ -19,12 +19,18 @@ import Animated, {
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import { Radius } from "@/shared/token";
+import { safeNavigate } from "@/utils/safe-navigation";
+import AppText from "@/components/Texts/Text";
 
 type PageHeaderProps = {
   title: string;
   hide?: boolean;
-  animated?: boolean; // 🔹 default false
+  animated?: boolean;
   enableBack?: boolean;
+  rightIcon?: React.ReactNode; // 🔹 qo'shildi
+  onRightPress?: () => void; // 🔹 qo'shildi
+  rightDisabled?: boolean; // 🔹 qo'shildi
+  routePath?: string;
 };
 
 const PageHeader = ({
@@ -32,6 +38,10 @@ const PageHeader = ({
   hide,
   animated = false,
   enableBack,
+  rightIcon,
+  onRightPress,
+  rightDisabled = false,
+  routePath,
 }: PageHeaderProps) => {
   const Colors = useThemeColors();
   const insetsTop = useSafeAreaInsets().top;
@@ -83,14 +93,33 @@ const PageHeader = ({
           backgroundColor:
             theme === "light" ? Colors.primary08 : Colors.Boxbackground,
           borderColor: Colors.borderColor,
-          borderBottomLeftRadius: Platform.OS === "ios" ? Radius.primary : 0,
-          borderBottomRightRadius: Platform.OS === "ios" ? Radius.primary : 0,
+          borderBottomLeftRadius:
+            Platform.OS === "ios" ? Radius.primary : Radius.primary,
+          borderBottomRightRadius:
+            Platform.OS === "ios" ? Radius.primary : Radius.primary,
         },
         animated && headerStyle,
       ]}
     >
       <View style={styles.header}>
-        <Text
+        {enableBack && (
+          <Pressable
+            style={styles.backButton}
+            onPress={() =>
+              safeNavigate(() =>
+                routePath ? router.push(routePath) : router.back()
+              )
+            }
+          >
+            <ArrowIcon
+              color={
+                theme === "light" ? Colors.Boxbackground : Colors.textSecondary
+              }
+            />
+          </Pressable>
+        )}
+
+        <AppText
           style={[
             styles.title,
             {
@@ -100,14 +129,15 @@ const PageHeader = ({
           ]}
         >
           {title}
-        </Text>
-        {enableBack && (
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <ArrowIcon
-              color={
-                theme === "light" ? Colors.Boxbackground : Colors.textSecondary
-              }
-            />
+        </AppText>
+
+        {rightIcon && (
+          <Pressable
+            style={styles.rightButton}
+            onPress={onRightPress}
+            disabled={rightDisabled}
+          >
+            {rightIcon}
           </Pressable>
         )}
       </View>
@@ -120,7 +150,6 @@ export default PageHeader;
 const styles = StyleSheet.create({
   container: {
     zIndex: 10,
-    paddingTop: 0,
     elevation: 3,
     borderBottomWidth: Platform.OS === "ios" ? 0 : 0,
     justifyContent: "flex-end",
@@ -142,8 +171,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     height: 55,
-    width: 70, // kattaroq qilish
+    width: 70,
     paddingHorizontal: 10,
     paddingLeft: 15,
+  },
+  rightButton: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    height: 55,
+    width: 70,
+    paddingHorizontal: 15,
   },
 });

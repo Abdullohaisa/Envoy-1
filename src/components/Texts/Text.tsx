@@ -1,20 +1,22 @@
-import { useThemeColors } from "@/theme/useThemeColors";
+import { StyleSheet, Text, TextProps, View } from "react-native";
 import React from "react";
-import { StyleSheet, Text, TextProps } from "react-native";
+import { Fonts } from "@/shared/token";
+import { useThemeColors } from "@/theme/useThemeColors";
 
-const AppText: React.FC<TextProps> = ({ children, style, ...rest }) => {
+type TFont = keyof typeof Fonts;
+
+interface AppTextProp extends TextProps {
+  variant?: TFont;
+}
+
+const AppText = ({ variant = "regular", style, ...props }: AppTextProp) => {
   const Colors = useThemeColors();
   return (
-    <Text style={[styles.text, { color: Colors.textPrimary }, style]} {...rest}>
-      {children}
-    </Text>
+    <Text
+      {...props}
+      style={[{ fontFamily: Fonts[variant], color: Colors.textPrimary }, style]}
+    />
   );
 };
 
 export default AppText;
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 16,
-  },
-});

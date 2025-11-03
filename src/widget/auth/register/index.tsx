@@ -14,6 +14,7 @@ import { RegisterTempValues, registerTempValues } from "./tempValues";
 import useCheckRegister from "@/service/check-register/controller";
 import { smsAtom } from "@/service/sms/controller";
 import { isValidRegAtom } from "@/atoms/reg.login.valid";
+import { safeNavigate } from "@/utils/safe-navigation";
 
 export const checkRegLoading = atom<boolean>(false);
 
@@ -47,14 +48,14 @@ const RegisterPhone = ({
   const onSubmit = async (data: PhoneSchemaType) => {
     setTempValue((p: RegisterTempValues) => ({
       ...p,
-      phone_email: data.phone,
+      phone: data.phone,
     }));
     const formattedPhone = "+998" + data.phone.replace(/[^0-9]/g, "");
     cancel();
     const exists = await checkPhone(formattedPhone, { debounceMs: 0 });
     if (exists === false) {
       setSms(formattedPhone);
-      router.push(AppRoutes.auth.registerSmsCode);
+      safeNavigate(() => router.push(AppRoutes.auth.registerSmsCode));
     } else if (exists === true) {
       vibration.notification.error();
     }

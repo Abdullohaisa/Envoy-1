@@ -2,6 +2,7 @@ import React, { forwardRef, useMemo } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import AppText from "../Texts/Text";
 
 interface Props {
   data: { id: string; name: string }[];
@@ -39,7 +40,7 @@ const SelectBottomSheet = forwardRef<BottomSheetModalMethods, Props>(
                   ref?.current?.dismiss();
                 }}
               >
-                <Text style={{ fontSize: 16 }}>{item.name}</Text>
+                <AppText style={{ fontSize: 16 }}>{item.name}</AppText>
               </TouchableOpacity>
             )}
           />

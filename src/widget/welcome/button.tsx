@@ -62,12 +62,7 @@ const WelcomeButton = ({ handleNext, handlePrev, activePage }: Props) => {
             backAnimatedStyle,
           ]}
         >
-          <AppText
-            style={[
-              { color: Colors.textPrimary, fontSize: 20 },
-              backAnimatedStyle,
-            ]}
-          >
+          <AppText style={[{ color: Colors.textPrimary, fontSize: 20 }]}>
             <ArrowIcon color={Colors.primary} />
           </AppText>
         </AnimtedPressable>

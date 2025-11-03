@@ -1,32 +1,30 @@
 import {
+  BackHandler,
   Keyboard,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import React, { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { Controller, useForm } from "react-hook-form";
 import AppInputWithUnit from "@/components/Input/InputWithUnit";
 import { TextInput } from "react-native-gesture-handler";
 import GetOrderNextButton from "@/widget/customer/get-order/next-button";
-import { Spacing } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { themeAtom } from "@/theme/theme";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import AppText from "@/components/Texts/Text";
+import { getOrderPriceAtom } from "@/atoms/get-order/price";
+import { useFocusEffect, useRouter } from "expo-router"; // yoki react-navigation ishlatayotgan bo‘lsang, o‘shani import qil
+import { AppRoutes } from "@/constants/routes";
+import GetOrderBackButton from "@/widget/customer/get-order/back-button";
+import { safeNavigate } from "@/utils/safe-navigation";
 
 const Price = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm({
+  const { control, watch, setValue } = useForm({
     defaultValues: {
-      price: null,
+      price: 0,
       currency: "UZS",
     },
   });
@@ -36,8 +34,12 @@ const Price = () => {
   const inputRef = useRef<TextInput>(null);
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
+  const setOrder = useSetAtom(getOrderPriceAtom);
+  const router = useRouter();
 
-  const formattedPrice = new Intl.NumberFormat("ru-RU").format(priceValue);
+  // 🔹 Raqamni formatlash
+  const formatPrice = (value: number) =>
+    value ? new Intl.NumberFormat("ru-RU").format(value) : "";
 
   const inputBackColor = Colors.pageBackground;
   const darkModeInputStyle =
@@ -45,10 +47,40 @@ const Price = () => {
       ? { elevation: 0, backgroundColor: inputBackColor, borderWidth: 1 }
       : {};
 
+  // 🔹 useEffect bilan har o‘zgarishda atomni yangilaymiz (debounce bilan)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setOrder({
+        value: priceValue || 0,
+        currency: currencyValue || "UZS",
+      });
+    }, 300); // 400ms kechiktirish (debounce)
+
+    return () => clearTimeout(timeout);
+  }, [priceValue, currencyValue]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        safeNavigate(() => router.replace(AppRoutes.customer.getOrder.index));
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+      return () => sub.remove();
+    }, [])
+  );
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ flex: 1 }}>
-        <PageHeader title="Narx" enableBack />
+        <PageHeader
+          title="Narx"
+          enableBack
+          routePath={AppRoutes.customer.getOrder.index}
+        />
 
         <View style={{ flex: 1, padding: 16 }}>
           <Controller
@@ -57,21 +89,11 @@ const Price = () => {
             render={({ field: { onChange, value } }) => (
               <AppInputWithUnit
                 label="Narx"
-                value={new Intl.NumberFormat("ru-RU").format(value)} // inputda formatlangan ko‘rinish
+                value={formatPrice(value)}
                 onChangeText={(text) => {
-                  // Faqat raqamlarni ajratamiz
                   const numeric = text.replace(/\D/g, "");
-
-                  // Form value raqam sifatida saqlansin
-                  onChange(Number(numeric));
-                  setValue("price", Number(numeric));
-
-                  // Inputda formatlangan holda ko‘rsatiladi
-                  inputRef.current?.setNativeProps({
-                    text: new Intl.NumberFormat("ru-RU").format(
-                      Number(numeric)
-                    ),
-                  });
+                  const numberValue = numeric ? Number(numeric) : 0;
+                  onChange(numberValue);
                 }}
                 type="price"
                 selectedUnit={currencyValue}
@@ -88,16 +110,32 @@ const Price = () => {
             style={{ marginTop: 16, fontSize: 16, color: Colors.textPrimary }}
           >
             <AppText style={{ color: Colors.textSecondary }}>narx:</AppText>{" "}
-            {formattedPrice} {currencyValue}
+            {formatPrice(priceValue)} {currencyValue}
           </AppText>
 
           <View
             style={{
-              alignItems: "flex-end",
-              marginTop: 10,
+              justifyContent: "space-between",
+              flexDirection: "row",
+              marginTop: 20,
             }}
           >
-            <GetOrderNextButton title="Keyingisi" onPress={() => {}} />
+            <GetOrderBackButton
+              title="Yuk mashina"
+              onPress={() =>
+                safeNavigate(() =>
+                  router.push(AppRoutes.customer.getOrder.truck)
+                )
+              }
+            />
+            <GetOrderNextButton
+              title="Vaqt"
+              onPress={() =>
+                safeNavigate(() =>
+                  router.push(AppRoutes.customer.getOrder.time)
+                )
+              }
+            />
           </View>
         </View>
       </View>

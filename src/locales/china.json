@@ -1,0 +1,19 @@
+{
+  "choose_language": "选择语言",
+  "search_placeholder": "搜索...",
+  "region_central_asia": "中亚",
+  "region_near": "邻近地区",
+  "region_world": "世界语言",
+  "languages": {
+    "uzbekistan": "乌兹别克斯坦",
+    "kazakhstan": "哈萨克斯坦",
+    "kyrgyzstan": "吉尔吉斯斯坦",
+    "tajikistan": "塔吉克斯坦",
+    "turkmenistan": "土库曼斯坦",
+    "russia": "俄罗斯",
+    "turkey": "土耳其",
+    "english": "英国",
+    "china": "中国",
+    "belarus": "白俄罗斯"
+  }
+}

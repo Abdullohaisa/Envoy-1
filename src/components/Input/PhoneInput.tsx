@@ -106,7 +106,7 @@ const AppPhoneInput: React.FC<AppPhoneInputProps> = ({
             {
               borderRadius: 100,
               backgroundColor: Colors.pageBackground,
-              color: Colors.borderColor,
+              color: Colors.textSecondary,
             },
           ]}
         >

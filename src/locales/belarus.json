@@ -1,0 +1,19 @@
+{
+  "choose_language": "Выбраць мову",
+  "search_placeholder": "Пошук...",
+  "region_central_asia": "Цэнтральная Азія",
+  "region_near": "Блізкі рэгіён",
+  "region_world": "Мовы свету",
+  "languages": {
+    "uzbekistan": "Узбекістан",
+    "kazakhstan": "Казахстан",
+    "kyrgyzstan": "Кіргізстан",
+    "tajikistan": "Таджыкістан",
+    "turkmenistan": "Туркменістан",
+    "russia": "Расія",
+    "turkey": "Турцыя",
+    "english": "Англія",
+    "china": "Кітай",
+    "belarus": "Беларусь"
+  }
+}

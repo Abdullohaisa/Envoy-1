@@ -28,10 +28,10 @@ const RegisterSmsCodePage = () => {
   const [isCodeCorrect, setIsCodeCorrect] = useState<null | boolean>(null);
   const Colors = useThemeColors();
   const [sms, setSms] = useAtom(smsAtom);
-  const { phone_email } = useAtomValue(registerTempValues);
+  const { phone } = useAtomValue(registerTempValues);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const formattedPhone = "+998" + phone_email.replace(/[^0-9]/g, "");
-  const { count, startTimer, scale, opacity } = useTimer(30);
+  const formattedPhone = "+998" + phone.replace(/[^0-9]/g, "");
+  const { count, startTimer, scale, opacity } = useTimer(60);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -101,74 +101,26 @@ const RegisterSmsCodePage = () => {
   }, [code]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ flex: 1 }}>
-        <PageHeader title="Sms kod" />
-        <View style={{ flex: 1, justifyContent: "flex-end" }}>
-          <AppText style={{ textAlign: "center", marginTop: 10 }}>
-            +998 {phone_email}
-          </AppText>
-          <SmsCodeBox
-            code={code}
-            animValues={animValues}
-            isCodeCorrect={isCodeCorrect}
-          />
-          <View
-            style={{
-              height: 40,
-              backgroundColor: Colors.Boxbackground,
-              borderBottomWidth: 0.5,
-              borderColor: Colors.pageBackground,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Animated.View
-              style={[
-                {
-                  height: 40,
-                  width: 40,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "absolute",
-                  zIndex: 1,
-                  left: 2.5,
-                },
-                animatedStyle,
-              ]}
-            >
-              <AppText
-                style={{
-                  color: Colors.primary,
-                  textAlign: "center",
-                }}
-              >
-                {count}
-              </AppText>
-            </Animated.View>
-            <Pressable
-              disabled={count !== 0}
-              onPress={resend}
-              style={{ flex: 1 }}
-            >
-              <AppText
-                style={{
-                  color: !count ? Colors.primary : Colors.textSecondary,
-                  textAlign: "center",
-                }}
-              >
-                Qayta sms yuboring
-              </AppText>
-            </Pressable>
-          </View>
-          <NumberKeyboard
-            onKeyPress={handlePress}
-            codeLength={code.length}
-            clearinput={clearinput}
-          />
-        </View>
+    <View style={{ flex: 1 }}>
+      <PageHeader title="Sms kod" />
+      <View style={{ flex: 1, justifyContent: "flex-end" }}>
+        <AppText style={{ textAlign: "center", marginTop: 10 }}>
+          +998 {phone}
+        </AppText>
+        <SmsCodeBox
+          code={code}
+          animValues={animValues}
+          isCodeCorrect={isCodeCorrect}
+        />
+        <NumberKeyboard
+          count={count}
+          resend={resend}
+          onKeyPress={handlePress}
+          codeLength={code.length}
+          clearinput={clearinput}
+        />
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 

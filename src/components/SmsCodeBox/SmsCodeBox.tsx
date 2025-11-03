@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: Radius.primary,
+    borderRadius: 20,
     elevation: 5,
   },
   text: {

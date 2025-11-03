@@ -1,0 +1,19 @@
+{
+  "choose_language": "Тілді таңдаңыз",
+  "search_placeholder": "Іздеу...",
+  "region_central_asia": "Орталық Азия",
+  "region_near": "Жақын аймақ",
+  "region_world": "Әлем тілдері",
+  "languages": {
+    "uzbekistan": "Өзбекстан",
+    "kazakhstan": "Қазақстан",
+    "kyrgyzstan": "Қырғызстан",
+    "tajikistan": "Тәжікстан",
+    "turkmenistan": "Түрікменстан",
+    "russia": "Ресей",
+    "turkey": "Түркия",
+    "english": "Англия",
+    "china": "Қытай",
+    "belarus": "Беларусь"
+  }
+}

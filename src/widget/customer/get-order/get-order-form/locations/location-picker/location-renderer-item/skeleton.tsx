@@ -8,13 +8,13 @@ const LocationPickerSkeletonItem = () => {
   return (
     <View style={[styles.skeletonItem]}>
       <View style={{ marginHorizontal: 15, paddingTop: 15 }}>
-        <LocationIcon size={20} color={Colors.borderColor08} />
+        <LocationIcon size={20} color={Colors.borderColor} />
       </View>
       <View
         style={{
           flex: 1,
           borderBottomWidth: 1,
-          borderColor: Colors.Boxbackground06,
+          borderColor: Colors.Boxbackground,
           paddingVertical: 15,
           gap: 5,
         }}
@@ -22,13 +22,13 @@ const LocationPickerSkeletonItem = () => {
         <View
           style={[
             styles.skeletonTitle,
-            { backgroundColor: Colors.borderColor08 },
+            { backgroundColor: Colors.borderColor },
           ]}
         />
         <View
           style={[
             styles.skeletonSubtitle,
-            { backgroundColor: Colors.borderColor06 },
+            { backgroundColor: Colors.Boxbackground },
           ]}
         />
       </View>
@@ -46,14 +46,12 @@ const styles = StyleSheet.create({
   skeletonTitle: {
     width: "60%",
     height: 16,
-    backgroundColor: "#e0e0e0",
     borderRadius: 6,
     marginBottom: 6,
   },
   skeletonSubtitle: {
     width: "40%",
     height: 12,
-    backgroundColor: "#f0f0f0",
     borderRadius: 6,
   },
 });

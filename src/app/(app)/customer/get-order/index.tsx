@@ -1,72 +1,176 @@
-import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
-import { useRouter } from "expo-router";
-import { AppRoutes } from "@/constants/routes";
+import React, { useCallback, useMemo, useRef } from "react";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  BackHandler,
+  ListRenderItemInfo,
+} from "react-native";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
-import { Radius, Spacing } from "@/shared/token";
+import { Spacing } from "@/shared/token";
+import { useSetAtom } from "jotai";
+import { resetOrderAtom } from "@/atoms/get-order";
+import { OrderButton } from "@/widget/customer/get-order/get-order-button";
+import { useOrderFields } from "@/hooks/useOrderFields";
+import { OrderActions } from "@/widget/customer/get-order/order-action-button";
+import { orderButtons } from "@/widget/customer/get-order/orderButtons";
+import { useFocusEffect } from "expo-router";
+import OrderReviewSheet from "@/widget/customer/get-order/order-review-sheet";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { authStateAtom } from "@/service/auth/controller";
+import { AppRoutes } from "@/constants/routes";
+import { Feather } from "@expo/vector-icons";
 
 const GetOrder = () => {
-  const router = useRouter();
   const Colors = useThemeColors();
+  const resetOrder = useSetAtom(resetOrderAtom);
+  const { isFieldFilled, allFilled, anyFilled, order } = useOrderFields();
+  const reviewSheetRef = useRef<BottomSheetModalMethods>(null);
 
-  const buttons = [
-    { title: "Yuk", route: AppRoutes.customer.getOrder.cargo },
-    { title: "Manzillar", route: AppRoutes.customer.getOrder.locations },
-    { title: "Mashina", route: AppRoutes.customer.getOrder.truck },
-    { title: "Narx", route: AppRoutes.customer.getOrder.price },
-    { title: "Izoh", route: AppRoutes.customer.getOrder.comment },
-    { title: "Vaqt", route: AppRoutes.customer.getOrder.time },
+  type TOrderButton = {
+    key: string;
+    title: string;
+    icon: (color: string, size: number) => React.ReactNode;
+    route: string;
+    getValue: (order: any) => string | null;
+  };
+
+  const orderButtons: TOrderButton[] = [
+    {
+      key: "cargo",
+      title: "Yuk",
+      icon: (color, size) => <Feather name="box" size={size} color={color} />,
+      route: AppRoutes.customer.getOrder.cargo,
+      getValue: (order) => order?.cargo?.type?.value || null,
+    },
+    {
+      key: "locations",
+      title: "Manzillar",
+      icon: (color, size) => (
+        <Feather name="map-pin" size={size} color={color} />
+      ),
+      route: AppRoutes.customer.getOrder.locations.index,
+      getValue: (order) => {
+        const pickup = order?.locations?.pickup?.[0]?.short_title;
+        const dropoff = order?.locations?.dropoff?.[0]?.short_title;
+        if (pickup && dropoff) return `${pickup} → ${dropoff}`;
+        if (pickup) return pickup;
+        if (dropoff) return dropoff;
+        return null;
+      },
+    },
+    {
+      key: "truck",
+      title: "Mashina",
+      icon: (color, size) => <Feather name="truck" size={size} color={color} />,
+      route: AppRoutes.customer.getOrder.truck,
+      getValue: (order) => order?.truck || null,
+    },
+    {
+      key: "price",
+      title: "Narx",
+      icon: (color, size) => (
+        <Feather name="dollar-sign" size={size} color={color} />
+      ),
+      route: AppRoutes.customer.getOrder.price,
+      getValue: (order) =>
+        order?.price?.value ? `${order.price.value} UZS` : null,
+    },
+    {
+      key: "time",
+      title: "Vaqt",
+      icon: (color, size) => <Feather name="clock" size={size} color={color} />,
+      route: AppRoutes.customer.getOrder.time,
+      getValue: (order) =>
+        order?.time?.deadline?.day
+          ? `${order.time.deadline.day}.${order.time.deadline.month}.${order.time.deadline.year}`
+          : null,
+    },
+    {
+      key: "comment",
+      title: "Izoh",
+      icon: (color, size) => (
+        <Feather name="message-square" size={size} color={color} />
+      ),
+      route: AppRoutes.customer.getOrder.comment,
+      getValue: (order) => order?.comment || null,
+    },
   ];
+
+  // 🔹 BackHandler optimizatsiyasi
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        BackHandler.exitApp();
+        return true;
+      };
+      const sub = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+      return () => sub.remove();
+    }, [])
+  );
+
+  const buttons = useMemo(
+    () =>
+      orderButtons.map((btn) => ({
+        ...btn,
+        filled: !!isFieldFilled[btn.key as keyof typeof isFieldFilled],
+        value: btn.getValue(order),
+      })),
+    [order, isFieldFilled]
+  );
+
+  // 🔹 Har bir tugma uchun render funksiyasi (memorized)
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<(typeof buttons)[number]>) => (
+      <OrderButton
+        title={item.title}
+        icon={item.icon}
+        route={item.route}
+        filled={item.filled}
+        value={item.value}
+      />
+    ),
+    []
+  );
 
   return (
     <>
       <PageHeader title="Buyurtma berish" />
-      <View style={{ flex: 1, padding: 5 }}>
-        <ScrollView
-          style={{
-            backgroundColor: Colors.pageBackground,
-            flex: 1,
-            borderRadius: Radius.primary,
-            overflow: "hidden",
-          }}
-          contentContainerStyle={[styles.container, {}]}
+
+      <View style={{ flex: 1, paddingTop: 15 }}>
+        <FlatList
+          data={buttons}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
-        >
-          {buttons.map((btn) => (
-            <Pressable
-              key={btn.title}
-              style={[styles.button, { backgroundColor: Colors.Boxbackground }]}
-              onPress={() => router.push(btn.route)}
-            >
-              <Text style={[styles.buttonText, { color: Colors.textPrimary }]}>
-                {btn.title}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
+          contentContainerStyle={styles(Colors).container}
+        />
+
+        <OrderActions
+          onClear={resetOrder}
+          onSubmit={() => reviewSheetRef.current?.present()}
+          anyFilled={anyFilled}
+          allFilled={allFilled}
+        />
+
+        <OrderReviewSheet order={order} ref={reviewSheetRef} />
       </View>
     </>
   );
 };
 
-export default GetOrder;
+export default React.memo(GetOrder);
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1, // scrollview ichidagi elementlar ekranni to‘ldiradi
-    justifyContent: "space-between", // tugmalarni teng taqsimlaydi
-    gap: 5,
-  },
-  button: {
-    flex: 1,
-    borderRadius: Radius.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    // marginVertical: 5,
-    minHeight: 80, // minimal balandlik, kerak bo‘lsa
-  },
-  buttonText: {
-    fontWeight: "600",
-    fontSize: 18,
-  },
-});
+const styles = (Colors: any) =>
+  StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      gap: 10,
+      marginHorizontal: Spacing.horizontal,
+      paddingBottom: 20,
+    },
+  });

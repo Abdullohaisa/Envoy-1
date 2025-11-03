@@ -1,67 +1,96 @@
-import { BackHandler, View } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { BackHandler, Keyboard, View } from "react-native";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  forwardRef,
+} from "react";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
-import { APIKEY } from "@/constants/locations";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import LocationPickerInput from "./input";
-import LocationPickerList from "./location-list";
-import { runOnJS } from "react-native-reanimated";
-import { useThemeColors } from "@/theme/useThemeColors";
 import { useAtom, useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import { locationPickerAtom } from "@/service/get-order/controller";
+import LocationPickerInput from "./input";
+import LocationPickerList from "./location-list";
+import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius } from "@/shared/token";
 
+// 🔹 Memo LocationPickerInput wrapper
+const MemoLocationPickerInput = forwardRef(
+  ({ value, onChangeText }: any, ref) => (
+    <LocationPickerInput
+      ref={ref}
+      placeholder="Qayerdan..."
+      value={value}
+      onChangeText={onChangeText}
+    />
+  )
+);
+
+// 🔹 Memo LocationPickerList wrapper
+const MemoLocationPickerList = React.memo(
+  ({ sheetRef, isLoading, locations, setQuery }: any) => (
+    <LocationPickerList
+      sheetRef={sheetRef}
+      isLoading={isLoading}
+      locations={locations}
+      setQuery={setQuery}
+    />
+  )
+);
+
 interface Props {
-  ref: any;
+  sheetRef: React.RefObject<BottomSheetModalMethods<any> | null>;
 }
-const LocationPicker = ({ ref }: Props) => {
+
+const LocationPicker = ({ sheetRef }: Props) => {
   const topInsets = useSafeAreaInsets().top;
   const Colors = useThemeColors();
   const [query, setQuery] = useState("");
   const inputRef = useRef<any>(null);
   const theme = useAtomValue(themeAtom);
-  const typingTimeout = useRef<NodeJS.Timeout | null>(null); // ⬅️ debounce uchun
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [{ locations, isLoading }, fetchLocation] = useAtom(locationPickerAtom);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     const backAction = () => {
-      if (ref.current) {
-        // Agar sheet ochiq bo‘lsa yopamiz
-        ref.current.dismiss();
-        return true; // default back action ishlamasin
+      if (isSheetOpen && sheetRef?.current) {
+        sheetRef.current.dismiss();
+        return true;
       }
-      return false; // agar sheet ochiq bo‘lmasa default ishlasin
+      return false;
     };
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction
     );
-
     return () => backHandler.remove();
-  }, [ref]);
+  }, [isSheetOpen, sheetRef]);
 
-  const handleChangeText = (text: string) => {
-    setQuery(text);
+  useEffect(() => {
+    return () => {
+      if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    };
+  }, []);
 
-    // Agar yozayotgan bo‘lsa, eski timeoutni to‘xtatamiz
-    if (typingTimeout.current) {
-      clearTimeout(typingTimeout.current);
-    }
-
-    // Yangi timeout → 0.5 soniyadan keyin fetch ishlaydi
-    typingTimeout.current = setTimeout(() => {
-      fetchLocation({ text });
-    }, 600);
-  };
+  // 🔹 Debounced fetch
+  const handleChangeText = useCallback(
+    (text: string) => {
+      setQuery(text);
+      if (typingTimeout.current) clearTimeout(typingTimeout.current);
+      typingTimeout.current = setTimeout(() => fetchLocation({ text }), 600);
+    },
+    [fetchLocation]
+  );
 
   return (
     <CustomBottomSheetModal
-      ref={ref}
+      ref={sheetRef}
       index={0}
+      handleComponent={null}
       enablePanDownToClose
       enableDynamicSizing={false}
       backdropAppearIndex={0}
@@ -70,37 +99,44 @@ const LocationPicker = ({ ref }: Props) => {
       pressBehavior="close"
       snapPoints={["100%"]}
       topInset={topInsets + 5}
-      handleComponent={null}
       containerStyle={{
-        borderTopLeftRadius: Radius.primary,
-        borderTopRightRadius: Radius.primary,
+        borderTopLeftRadius: Radius.input,
+        borderTopRightRadius: Radius.input,
         paddingTop: 0,
       }}
-      backgroundStyle={{ backgroundColor: Colors.pageBackground }}
+      onChange={(index) => {
+        setIsSheetOpen(index >= 0);
+      }}
+      backgroundStyle={{
+        backgroundColor: Colors.pageBackground,
+        borderRadius: Radius.input,
+      }}
+      handleIndicatorStyle={{ height: 0 }}
       onAnimate={(fromIndex, toIndex) => {
         if (toIndex === 0) {
-          inputRef.current?.focus();
+          setTimeout(() => {
+            inputRef.current?.focus();
+          }, 700);
         } else if (fromIndex === 0) {
-          inputRef.current.blur();
+          inputRef.current?.blur();
         }
       }}
     >
       <View style={{ flex: 1 }}>
-        <LocationPickerInput
+        <MemoLocationPickerInput
           ref={inputRef}
-          placeholder="Qayerdan..."
           value={query}
           onChangeText={handleChangeText}
         />
-        <LocationPickerList
+        <MemoLocationPickerList
+          sheetRef={sheetRef}
           isLoading={isLoading}
-          suggestions={locations}
+          locations={locations}
           setQuery={setQuery}
-          ref={ref}
         />
       </View>
     </CustomBottomSheetModal>
   );
 };
 
-export default LocationPicker;
+export default React.memo(LocationPicker);

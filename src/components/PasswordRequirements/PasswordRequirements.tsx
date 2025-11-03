@@ -8,6 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useThemeColors } from "@/theme/useThemeColors";
+import AppText from "../Texts/Text";
 
 type Props = {
   password: string;
@@ -91,23 +92,23 @@ const ReqRow = ({ text, satisfied, colors }: any) => {
           },
         ]}
       >
-        <Text
+        <AppText
           style={[
             styles.checkmark,
             { color: satisfied ? "#fff" : colors.textSecondary },
           ]}
         >
           {satisfied ? "✓" : ""}
-        </Text>
+        </AppText>
       </View>
-      <Text
+      <AppText
         style={[
           styles.rowText,
           { color: satisfied ? colors.textPrimary : colors.textSecondary },
         ]}
       >
         {text}
-      </Text>
+      </AppText>
     </Animated.View>
   );
 };

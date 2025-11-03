@@ -1,7 +1,13 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import { StyleSheet, View, TextInputProps, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TextInputProps,
+  Pressable,
+  TextInput,
+} from "react-native";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { Radius, Spacing } from "@/shared/token";
+import { Fonts, Radius, Spacing } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { themeAtom } from "@/theme/theme";
 import { useAtomValue } from "jotai";
@@ -50,7 +56,7 @@ const LocationPickerInput = forwardRef<any, TextInputProps>((props, ref) => {
       <Pressable onPress={() => ref?.current?.focus()}>
         <Ionicons name="search" size={20} color={Colors.textPrimary06} />
       </Pressable>
-      <BottomSheetTextInput
+      <TextInput
         ref={ref}
         style={[styles.input, { color: Colors.textPrimary }]}
         placeholderTextColor={Colors.textPrimary06}
@@ -92,7 +98,7 @@ export default LocationPickerInput;
 const styles = StyleSheet.create({
   inputBox: {
     elevation: 2,
-    borderRadius: Radius.primary,
+    borderRadius: Radius.input,
     height: 60,
     paddingHorizontal: Spacing.horizontal,
     alignItems: "center",
@@ -106,5 +112,6 @@ const styles = StyleSheet.create({
     borderColor: "silver",
     height: "100%",
     flex: 1,
+    fontFamily: Fonts.regular,
   },
 });

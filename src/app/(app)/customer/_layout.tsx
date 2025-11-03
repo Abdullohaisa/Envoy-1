@@ -1,81 +1,213 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { Platform } from "react-native";
 import { Tabs, usePathname } from "expo-router";
-import { useSetAtom } from "jotai";
-import { themeAtom } from "@/theme/theme";
-import { useThemeColors } from "@/theme/useThemeColors";
+import { BottomTabBar } from "@react-navigation/bottom-tabs";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  Easing,
 } from "react-native-reanimated";
-import { BottomTabBar } from "@react-navigation/bottom-tabs";
-import { Platform } from "react-native";
-import { Radius } from "@/shared/token";
+import { Ionicons } from "@expo/vector-icons";
+import { useThemeColors } from "@/theme/useThemeColors";
+import { Radius, screens } from "@/shared/token";
 
+// ------------------------
+// 🔹 Mini komponent: AnimatedIcon
+// ------------------------
+const AnimatedIcon = React.memo(({ name, focused, color }: any) => {
+  const scale = useSharedValue(focused ? 1.15 : 1);
+  const rotate = useSharedValue(focused ? 0 : 0);
+
+  useEffect(() => {
+    scale.value = withTiming(focused ? 1.2 : 1, {
+      duration: 400,
+      easing: Easing.out(Easing.exp),
+    });
+    rotate.value = withTiming(focused ? 5 : 0, {
+      duration: 400,
+      easing: Easing.out(Easing.exp),
+    });
+  }, [focused]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }, { rotate: `${rotate.value}deg` }],
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Ionicons name={name} size={26} color={color} />
+    </Animated.View>
+  );
+});
+
+// ------------------------
+// 🔹 Mini komponent: AnimatedLabel
+// ------------------------
+const AnimatedLabel = React.memo(({ label, focused, color }: any) => {
+  const opacity = useSharedValue(focused ? 1 : 0.6);
+
+  useEffect(() => {
+    opacity.value = withTiming(focused ? 1 : 0.6, { duration: 300 });
+  }, [focused]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: focused ? -1 : 0 }],
+  }));
+
+  return (
+    <Animated.Text
+      style={[
+        animatedStyle,
+        {
+          fontSize: 12,
+          color,
+          fontWeight: focused ? "600" : "400",
+          marginTop: 2,
+        },
+      ]}
+    >
+      {label}
+    </Animated.Text>
+  );
+});
+
+// ------------------------
+// 🔹 Mini komponent: TabBarWrapper
+// ------------------------
+const TabBarWrapper = React.memo(({ showTabBar, children }: any) => {
+  const offset = useSharedValue(showTabBar ? 0 : 80);
+
+  useEffect(() => {
+    offset.value = withTiming(showTabBar ? 0 : 80, {
+      duration: 300,
+      easing: Easing.inOut(Easing.exp),
+    });
+  }, [showTabBar]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: offset.value }],
+    opacity: withTiming(showTabBar ? 1 : 0, { duration: 200 }),
+  }));
+
+  return (
+    <Animated.View
+      style={[
+        animatedStyle,
+        {
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          elevation: 10,
+        },
+      ]}
+      pointerEvents={showTabBar ? "auto" : "none"}
+    >
+      {children}
+    </Animated.View>
+  );
+});
+
+// ------------------------
+// 🔹 CustomerLayout
+// ------------------------
 const CustomerLayout = () => {
   const Colors = useThemeColors();
   const pathname = usePathname();
 
-  const visibleRouters = [
-    "/customer/orders",
-    "/customer/get-order",
-    "/customer/profile",
-  ];
+  const visibleRouters = useMemo(
+    () => ["/customer/orders", "/customer/get-order", "/customer/profile"],
+    []
+  );
+  const showTabBar = useMemo(
+    () => visibleRouters.includes(pathname),
+    [pathname, visibleRouters]
+  );
 
-  const showTabBar = visibleRouters.includes(pathname);
-
-  // 🔥 Reanimated qiymat
-  const offset = useSharedValue(0);
-
-  useEffect(() => {
-    offset.value = showTabBar ? 0 : 100; // pastga tushadi
-  }, [showTabBar]);
-
-  // 🔥 Animated style
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withTiming(offset.value, {
-            duration: showTabBar ? 300 : 300, // chiqishi 100ms, tushishi 300ms
-          }),
-        },
-      ],
-      opacity: withTiming(showTabBar ? 1 : 0, {
-        duration: showTabBar ? 300 : 300,
-      }),
-    };
-  });
+  const tabBarOptions = useMemo(
+    () => ({
+      sceneStyle: { backgroundColor: Colors.pageBackground },
+      animation: "none",
+      headerShown: false,
+      tabBarActiveTintColor: Colors.primary,
+      tabBarInactiveTintColor: Colors.textSecondary,
+      tabBarStyle: {
+        position: "absolute",
+        backgroundColor: Colors.Boxbackground,
+        borderTopWidth: 0,
+        borderTopLeftRadius: Platform.OS === "ios" ? Radius.primary : 0,
+        borderTopRightRadius: Platform.OS === "ios" ? Radius.primary : 0,
+        height: screens.height * 0.09,
+        zIndex: 10,
+      },
+    }),
+    [
+      Colors.pageBackground,
+      Colors.Boxbackground,
+      Colors.primary,
+      Colors.textSecondary,
+    ]
+  );
 
   return (
     <Tabs
       initialRouteName="get-order"
       tabBar={(props) => (
-        <Animated.View style={animatedStyle}>
+        <TabBarWrapper showTabBar={showTabBar}>
           <BottomTabBar {...props} />
-        </Animated.View>
+        </TabBarWrapper>
       )}
-      screenOptions={{
-        animation: "fade",
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: Colors.Boxbackground,
-          borderTopWidth: 0,
-          borderTopLeftRadius: Platform.OS === "ios" ? Radius.primary : 0,
-          borderTopRightRadius: Platform.OS === "ios" ? Radius.primary : 0,
-        },
-      }}
+      screenOptions={tabBarOptions}
     >
-      {/* Chapda yuklar */}
-      <Tabs.Screen name="orders/index" options={{ title: "Yuklar" }} />
-
-      {/* O‘rtada buyurtma berish */}
-      <Tabs.Screen name="get-order" options={{ title: "Yuk yaratish" }} />
-
-      {/* O‘ngda profil */}
-      <Tabs.Screen name="profile" options={{ title: "Profil" }} />
+      <Tabs.Screen
+        name="orders"
+        options={{
+          title: "Yuklar",
+          tabBarIcon: ({ focused, color }) => (
+            <AnimatedIcon name="cube-outline" focused={focused} color={color} />
+          ),
+          tabBarLabel: ({ focused, color }) => (
+            <AnimatedLabel label="Yuklar" focused={focused} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="get-order"
+        options={{
+          title: "Yaratish",
+          tabBarIcon: ({ focused, color }) => (
+            <AnimatedIcon
+              name="add-circle-outline"
+              focused={focused}
+              color={color}
+            />
+          ),
+          tabBarLabel: ({ focused, color }) => (
+            <AnimatedLabel label="Yaratish" focused={focused} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profil",
+          tabBarIcon: ({ focused, color }) => (
+            <AnimatedIcon
+              name="person-outline"
+              focused={focused}
+              color={color}
+            />
+          ),
+          tabBarLabel: ({ focused, color }) => (
+            <AnimatedLabel label="Profil" focused={focused} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 };
 
-export default CustomerLayout;
+export default React.memo(CustomerLayout);

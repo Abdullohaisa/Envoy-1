@@ -1,0 +1,19 @@
+{
+  "choose_language": "Dil seçin",
+  "search_placeholder": "Arama...",
+  "region_central_asia": "Orta Asya",
+  "region_near": "Yakın bölge",
+  "region_world": "Dünya dilleri",
+  "languages": {
+    "uzbekistan": "Özbekistan",
+    "kazakhstan": "Kazakistan",
+    "kyrgyzstan": "Kırgızistan",
+    "tajikistan": "Tacikistan",
+    "turkmenistan": "Türkmenistan",
+    "russia": "Rusya",
+    "turkey": "Türkiye",
+    "english": "İngiltere",
+    "china": "Çin",
+    "belarus": "Belarus"
+  }
+}

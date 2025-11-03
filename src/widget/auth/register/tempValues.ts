@@ -2,14 +2,14 @@ import { atom } from "jotai";
 
 export interface RegisterTempValues {
   username: string;
-  phone_email: string;
+  phone: string;
   user_image: null;
-  role: string;
+  role: "Customer" | "Driver" | null;
 }
 
 export const registerTempValues = atom<RegisterTempValues>({
   username: "",
-  phone_email: "",
+  phone: "",
   user_image: null,
-  role: "",
+  role: null,
 });

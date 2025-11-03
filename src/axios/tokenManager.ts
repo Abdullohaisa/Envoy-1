@@ -2,9 +2,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const tokenManager = {
-  set: async (token: string | null) => {
-    if (token) {
-      await AsyncStorage.setItem("access_token", token);
+  set: async (access: string | null) => {
+    if (access) {
+      await AsyncStorage.setItem("access_token", access);
     } else {
       await AsyncStorage.removeItem("access_token");
     }

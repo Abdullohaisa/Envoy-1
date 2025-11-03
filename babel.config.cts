@@ -11,7 +11,6 @@ module.exports = function (api: any) {
           },
         },
       ],
-      // "react-native-reanimated/plugin",
       "react-native-worklets/plugin",
     ],
   };

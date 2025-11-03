@@ -3,7 +3,6 @@ import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import AppText from "@/components/Texts/Text";
 import { screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
-import React from "react";
 import { View, ScrollView, StyleSheet, FlatList } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
@@ -59,13 +58,19 @@ const ResultsPage = () => {
   const Colors = useThemeColors();
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.pageBackground }}>
+    <View style={{ flex: 1 }}>
       <PageHeader title="Natijalar" enableBack />
-      <ScrollView style={{ padding: 8 }}>
-        <AppText style={[styles.header, { color: Colors.textPrimary }]}>
-          Natijalaringiz
-        </AppText>
-
+      <ScrollView
+        indicatorStyle="white"
+        showsVerticalScrollIndicator={false}
+        style={{
+          // padding: 8,
+          marginHorizontal: 8,
+          borderRadius: 12,
+          overflow: "hidden",
+          marginTop: 5,
+        }}
+      >
         {/* Umumiy statistika */}
         <AppText style={[styles.sectionTitle, { color: Colors.textPrimary }]}>
           Umumiy statistikalar
@@ -88,14 +93,14 @@ const ResultsPage = () => {
           <View
             style={[styles.card, { backgroundColor: Colors.Boxbackground }]}
           >
-            <AppText style={{ color: Colors.yellow }}>
+            <AppText style={{ color: "red" }}>
               Bekor qilingan: {summary.cancelled}
             </AppText>
           </View>
           <View
             style={[styles.card, { backgroundColor: Colors.Boxbackground }]}
           >
-            <AppText style={{ color: Colors.textSecondary }}>
+            <AppText style={{ color: Colors.yellow }}>
               Jarayonda: {summary.inProgress}
             </AppText>
           </View>
@@ -206,12 +211,17 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
   },
-  summaryGrid: { flexDirection: "row", flexWrap: "wrap" },
+  summaryGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 4,
+    width: screens.width - 16,
+  },
   card: {
-    width: "48%",
+    width: (screens.width - 20) / 2,
     padding: 10,
     borderRadius: 8,
-    margin: "1%",
   },
   chart: { marginVertical: 8, borderRadius: 12 },
   listItem: {

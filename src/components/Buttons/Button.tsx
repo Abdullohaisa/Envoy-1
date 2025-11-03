@@ -1,106 +1,210 @@
+// --- React Native UI va interaktiv komponentlar ---
 import {
   Pressable,
   StyleSheet,
   PressableProps,
-  ViewStyle,
   TextStyle,
+  ViewStyle,
 } from "react-native";
-import React, { useEffect } from "react";
-import { useThemeColors } from "@/theme/useThemeColors";
+
+// --- Ranglar to‘plami (design token) ---
+
+// --- Animatsiya uchun kutubxona (Reanimated v2) ---
 import Animated, {
-  interpolateColor,
-  useAnimatedStyle,
   useSharedValue,
+  useAnimatedStyle,
   withSpring,
   withTiming,
+  interpolateColor,
 } from "react-native-reanimated";
-import CustomSpinner from "../Spinner/Spinner";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "@/theme/theme";
-import { Radius } from "@/shared/token";
 
-interface Props {
-  text: string;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-  loading?: boolean;
-  disabled?: boolean;
+// --- React hook ---
+import { useEffect } from "react";
+
+// --- Qurilma vibratsiyasi uchun Haptic kutubxonasi (Expo) ---
+import * as Haptics from "expo-haptics";
+import CustomSpinner from "../Spinner/Spinner";
+import { useThemeColors } from "@/theme/useThemeColors";
+
+// --- Faqat 3 ta ruxsat etilgan vibratsiya turini ifodalovchi TypeScript enum ---
+enum VibrationType {
+  Light = "Light",
+  Medium = "Medium",
+  Heavy = "Heavy",
 }
 
+// --- Tugmaning qo‘shimcha xususiyatlarini belgilovchi interface ---
+interface ButtonProps {
+  text: string; // Tugmadagi matn
+  isLoading?: boolean; // Yuklanish holati ko‘rsatiladimi
+  vibration?: boolean; // Vibratsiya kerakmi
+  vibrationType?: VibrationType; // Vibratsiya turi (enum)
+  variant?: "primary" | "outline" | "danger" | "dangerOutline" | "silver";
+  fullWidth?: boolean;
+  width?: number | string; // Tugma uslubi (variant)
+  disabled?: boolean;
+  style?: ViewStyle;
+}
+
+// --- Tugma variantlari uchun tip ---
+type ButtonVariant =
+  | "primary"
+  | "outline"
+  | "danger"
+  | "dangerOutline"
+  | "silver";
+
+// --- AnimatedPressable: Reanimated bilan ishlaydigan Pressable komponent ---
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+// --- Asosiy PrimaryButton komponenti ---
 const AppButton = ({
   text,
-  style,
-  textStyle,
-  loading,
+  isLoading,
+  vibration,
+  vibrationType = VibrationType.Light,
+  variant = "primary",
+  fullWidth,
+  width,
   disabled,
+  fontStyle, // <--- Yangi prop qo'shildi
+  style,
   ...props
-}: Props & PressableProps) => {
-  const Colors = useThemeColors();
+}: PressableProps & ButtonProps & { fontStyle?: TextStyle }) => {
   const scale = useSharedValue(1);
-  const textOpacity = useSharedValue(1);
-  const spinnerOpacity = useSharedValue(1);
+  const Colors = useThemeColors();
+
+  const textOpacity = useSharedValue(isLoading ? 0 : 1);
+  const spinnerOpacity = useSharedValue(isLoading ? 1 : 0);
   const progress = useSharedValue(0);
-  const mode = useAtomValue(themeAtom);
+
+  // --- variantga qarab rang, border va text rangini aniqlovchi funksiya ---
+  const getVariantStyles = (variant: ButtonVariant = "primary") => {
+    switch (variant) {
+      case "outline":
+        return {
+          backgroundColor: "transparent",
+          borderWidth: 2,
+          borderColor: Colors.primary,
+          textColor: Colors.primary,
+        };
+      case "danger":
+        return {
+          backgroundColor: "red",
+          borderWidth: 0,
+          borderColor: "transparent",
+          textColor: Colors.textPrimary,
+        };
+      case "dangerOutline":
+        return {
+          backgroundColor: "transparent",
+          borderWidth: 2,
+          borderColor: "red",
+          textColor: "red",
+        };
+      case "silver":
+        return {
+          backgroundColor: Colors.borderColor,
+          borderWidth: 0,
+          borderColor: "transparent",
+          textColor: Colors.textPrimary,
+        };
+      case "primary":
+      default:
+        return {
+          backgroundColor: Colors.primary,
+          borderWidth: 0,
+          borderColor: "transparent",
+          textColor: Colors.textPrimary,
+        };
+    }
+  };
+
+  const { backgroundColor, borderWidth, borderColor, textColor } =
+    getVariantStyles(variant);
+
+  useEffect(() => {
+    if (isLoading) {
+      textOpacity.value = withSpring(0);
+      spinnerOpacity.value = withSpring(1);
+    } else {
+      textOpacity.value = withSpring(1);
+      spinnerOpacity.value = withSpring(0);
+    }
+  }, [isLoading]);
+
+  const textStyleAnim = useAnimatedStyle(() => ({
+    opacity: textOpacity.value,
+  }));
 
   const handlePressIn = () => {
-    if (!loading) {
+    if (!isLoading) {
+      vibration &&
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle[vibrationType]);
       scale.value = withSpring(0.98);
     }
   };
 
   const handlePressOut = () => {
-    if (!loading) {
-      scale.value = withSpring(1);
-    }
+    !isLoading && (scale.value = withSpring(1));
   };
 
   useEffect(() => {
-    textOpacity.value = withSpring(loading ? 0 : 1);
-    spinnerOpacity.value = withSpring(loading ? 1 : 0);
-  }, [loading]);
-
-  useEffect(() => {
-    progress.value = disabled || loading ? withTiming(1) : withTiming(0);
-  }, [disabled, loading]);
+    progress.value = disabled || isLoading ? withTiming(1) : withTiming(0);
+  }, [disabled, isLoading]);
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      [
-        Colors.primary,
-        mode === "dark" ? Colors.borderColor : Colors.pageBackground,
-      ]
+      [backgroundColor, Colors.pageBackground]
     ),
   }));
 
   const textAnimatedStyle = useAnimatedStyle(() => ({
     opacity: textOpacity.value,
-    color: interpolateColor(
-      progress.value,
-      [0, 1],
-      ["#fff", mode === "dark" ? Colors.textSecondary : Colors.borderColor]
-    ),
+    color: interpolateColor(progress.value, [0, 1], ["#fff", "#e9e9e9"]),
   }));
+
   const spinnerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: spinnerOpacity.value,
   }));
 
   return (
     <AnimatedPressable
+      android_ripple={{
+        color: Colors.Boxbackground,
+        borderless: false,
+        radius: 200, // radiusni sozlasa bo‘ladi
+      }}
+      style={[
+        styles.button,
+        buttonAnimatedStyle,
+        { backgroundColor: Colors.primary },
+        isLoading && { opacity: 0.7 },
+        { width: fullWidth ? "100%" : width || "auto" },
+        { borderWidth, borderColor },
+        { backgroundColor: "red" },
+      ]}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[styles.button, style, buttonAnimatedStyle]}
-      disabled={loading || disabled}
+      disabled={isLoading || disabled}
       {...props}
     >
-      <Animated.Text style={[styles.text, textStyle, textAnimatedStyle]}>
+      <Animated.Text
+        style={[
+          styles.buttonText,
+          { color: Colors.textPrimary },
+          textStyleAnim,
+          textAnimatedStyle,
+          fontStyle,
+        ]}
+      >
         {text}
       </Animated.Text>
-      <Animated.View style={[styles.spinnerBox, spinnerAnimatedStyle]}>
+
+      <Animated.View style={[styles.overlay, spinnerAnimatedStyle]}>
         <CustomSpinner />
       </Animated.View>
     </AnimatedPressable>
@@ -109,22 +213,26 @@ const AppButton = ({
 
 export default AppButton;
 
+// --- Umumiy uslublar (base styles) ---
 const styles = StyleSheet.create({
   button: {
-    height: 50,
-    borderRadius: Radius.primary,
-    justifyContent: "center",
+    width: "100%",
+    height: 55,
     alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
   },
-  text: {
+  buttonText: {
     fontSize: 18,
     lineHeight: 22,
+
     letterSpacing: 0.5,
-    color: "#fff",
   },
-  spinnerBox: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject, // butun buttonni qoplaydi
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
 });

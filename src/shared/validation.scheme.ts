@@ -48,34 +48,9 @@ export type NewPasswordSchemaType = z.infer<
   ReturnType<typeof newPasswordSchema>
 >;
 
-export const registerSchema = () =>
-  z
-    .object({
-      phone: z.string().refine((val) => val.length >= 12, {
-        message: "Telefon raqamni to'liq kiritng",
-      }),
-      name: z.string().min(1, { message: "Ismingizni kiriting" }),
-      password: z
-        .string()
-        .min(8, { message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak" })
-        .regex(/[A-Z]/, { message: "Kamida bitta katta harf" })
-        .regex(/[a-z]/, { message: "Kamida bitta kichkina harf" })
-        .regex(/\d/, { message: "Kamida bitta raqam" }),
-      confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Parollar mos emas",
-      path: ["confirmPassword"],
-    });
-
-export type RegisterSchemaType = z.infer<ReturnType<typeof registerSchema>>;
-
 export const registerSchemaStep1 = () =>
   z.object({
     name: z.string().min(2, "Ism majburiy"),
-    phone: z.string().refine((val) => val.length >= 12, {
-      message: "Telefon raqamni to'liq kiritng",
-    }),
   });
 
 export type RegisterSchemaStep1 = z.infer<

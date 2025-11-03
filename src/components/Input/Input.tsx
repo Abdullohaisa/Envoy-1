@@ -20,7 +20,7 @@ import CloseIcon from "@/assets/icon/close";
 import { vibration } from "@/utils/hapticks";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AnimatedErrorText from "../Texts/AnimatedErrorText";
-import { Radius } from "@/shared/token";
+import { Fonts, Radius } from "@/shared/token";
 
 // 🔑 Props type: input label, error matn, parol rejimi, fokus, fon rangi va clear tugmasi
 // `ref` tashqi tomondan ham yuborilishi mumkin
@@ -130,7 +130,11 @@ const AppInput: React.FC<AppInputProps> = ({
           onBlur={() => setIsFocused(false)}
           secureTextEntry={secure}
           placeholderTextColor={Colors.borderColor}
-          style={[styles.input, style, { color: Colors.textPrimary }]}
+          style={[
+            styles.input,
+            style,
+            { color: Colors.textPrimary, fontFamily: Fonts.regular },
+          ]}
           cursorColor={Colors.borderColor}
         />
 

@@ -21,7 +21,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { authAtom, authStateAtom } from "@/service/auth/controller";
+import { authStateAtom } from "@/service/auth/controller";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import { registerTempValues } from "@/widget/auth/register/tempValues";
 import PasswordRequirements from "@/components/PasswordRequirements/PasswordRequirements";
@@ -33,7 +33,7 @@ const RegisterUserPasswordPage = () => {
   });
   const translateY = useSharedValue(0);
   const marginTop = useSharedValue(80);
-  const [state, setRegister] = useAtom(authAtom);
+  const [state, setRegister] = useAtom(authStateAtom);
   const tempRegisterValue = useAtomValue(registerTempValues);
 
   const {
@@ -55,7 +55,6 @@ const RegisterUserPasswordPage = () => {
       password: data.password,
     };
     setRegister(finishingValue, "register");
-    console.log(finishingValue);
   };
 
   const headerStyle = useAnimatedStyle(() => {
@@ -104,7 +103,7 @@ const RegisterUserPasswordPage = () => {
             headerStyle,
           ]}
         >
-          <PageHeader title="Ro'yxatdan o'tish" />
+          <PageHeader title="Ro'yxatdan o'tish" enableBack />
         </Animated.View>
 
         <Animated.View
@@ -120,11 +119,11 @@ const RegisterUserPasswordPage = () => {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ marginTop: 20, flex: 1 }}>
+            <View style={{ marginTop: 15, flex: 1, gap: 15 }}>
               <Controller
                 control={control}
                 name="password"
-                render={({ field: { onChange, value, onBlur } }) => (
+                render={({ field: { onChange, value } }) => (
                   <AppInput
                     label={"Parol"}
                     value={value}
@@ -178,7 +177,7 @@ const RegisterUserPasswordPage = () => {
             <AppButton
               text="Davom etish"
               onPress={handleSubmit(onSubmit)}
-              loading={state.isLoading}
+              isLoading={state.isLoading}
             />
           </KeyboardResponsiveView>
         </Animated.View>

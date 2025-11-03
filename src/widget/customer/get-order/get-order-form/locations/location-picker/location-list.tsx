@@ -1,73 +1,85 @@
-import React from "react";
-import { View } from "react-native";
+import { View, Text, Image } from "react-native";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Spacing, screens } from "@/shared/token";
-import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import LocationPickerRendererItem from "./location-renderer-item";
 import LocationPickerSkeletonItem from "./location-renderer-item/skeleton";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import { LocationSuggestion } from "@/service/get-order/controller";
+import { RefObject, useMemo } from "react";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import LocationIcon from "@/assets/icon/location";
+import { useThemeColors } from "@/theme/useThemeColors";
+import AppText from "@/components/Texts/Text";
 
 interface Props {
   isLoading: boolean;
-  suggestions: object[];
+  locations: LocationSuggestion[];
   setQuery: (location: string) => void;
-  ref: any;
-}
-
-interface RenderItemProps {
-  item: any;
-  setQuery: (text: string) => void;
-  // ref: React.RefObject<BottomSheetModalMethods | null>;
+  sheetRef: RefObject<BottomSheetModalMethods<any> | null>;
 }
 
 const LocationPickerList = ({
   isLoading,
-  suggestions,
+  locations,
   setQuery,
-  // ref,
+  sheetRef,
 }: Props) => {
   const theme = useAtomValue(themeAtom);
+  const Colors = useThemeColors();
 
-  const SkeletonItem = () => <LocationPickerSkeletonItem />;
+  const skeletonData = useMemo(() => Array(10).fill(null), []);
 
-  const RenderItem = (props: RenderItemProps) => {
-    return <LocationPickerRendererItem {...props} />;
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: LocationSuggestion | null;
+    index: number;
+  }) => {
+    if (isLoading || !item) return <LocationPickerSkeletonItem key={index} />;
+
+    return (
+      <LocationPickerRendererItem
+        key={item.id || index.toString()}
+        item={item}
+        setQuery={setQuery}
+        sheetRef={sheetRef}
+      />
+    );
   };
+
+  // 🔹 Empty component (bo‘sh holat)
+  const EmptyComponent = () => (
+    <View
+      style={{
+        flex: 1,
+        height: screens.height * 0.4,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 20,
+      }}
+    >
+      <LocationIcon size={60} color={Colors.primary} />
+      <AppText
+        style={{ color: theme === "dark" ? "white" : "gray", fontSize: 16 }}
+      >
+        Manzil qidiring
+      </AppText>
+    </View>
+  );
 
   return (
     <BottomSheetFlatList
       indicatorStyle={theme === "dark" ? "white" : "black"}
       contentContainerStyle={{
-        paddingBottom: 400,
+        paddingBottom: !isLoading && locations.length !== 0 ? 400 : 0,
         paddingRight: Spacing.horizontal,
       }}
-      data={isLoading ? Array(10).fill(null) : suggestions}
+      data={isLoading ? skeletonData : locations}
       keyExtractor={(item: any, index: number) => item?.id || index.toString()}
-      ListEmptyComponent={() => (
-        <View
-          style={{
-            flex: 1,
-            height: screens.height,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        />
-      )}
-      renderItem={({ item }: { item: any }) => (
-        <Animated.View
-          entering={FadeIn.duration(300)}
-          exiting={FadeOut.duration(200)}
-        >
-          {isLoading ? (
-            <SkeletonItem />
-          ) : (
-            // <></>
-            <RenderItem item={item} setQuery={setQuery} />
-          )}
-        </Animated.View>
-      )}
+      ListEmptyComponent={EmptyComponent}
+      renderItem={renderItem}
       keyboardDismissMode="on-drag"
     />
   );

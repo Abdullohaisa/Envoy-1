@@ -32,6 +32,7 @@ import {
   RegisterTempValues,
   registerTempValues,
 } from "@/widget/auth/register/tempValues";
+import { safeNavigate } from "@/utils/safe-navigation";
 
 const RegisterUserInfoPage = () => {
   const topinsets = useSafeAreaInsets().top;
@@ -41,7 +42,7 @@ const RegisterUserInfoPage = () => {
   });
 
   const [tempValue, setTempValue] = useAtom(registerTempValues);
-  const formattedPhone = "+998" + tempValue.phone_email.replace(/[^0-9]/g, "");
+  const formattedPhone = "+998" + tempValue.phone.replace(/[^0-9]/g, "");
   const [role, setRole] = useState<"Customer" | "Driver">("Customer");
   const translateY = useSharedValue(0);
   const marginTop = useSharedValue(topinsets + 55 + 10);
@@ -54,7 +55,6 @@ const RegisterUserInfoPage = () => {
     resolver: zodResolver(registerSchemaStep1()),
     defaultValues: {
       name: "",
-      phone: tempValue.phone_email,
     },
   });
 
@@ -62,11 +62,11 @@ const RegisterUserInfoPage = () => {
     setTempValue((p: RegisterTempValues) => ({
       ...p,
       username: data.name,
-      phone_email: formattedPhone,
+      phone: formattedPhone,
       user_image: null,
       role: role,
     }));
-    router.push(AppRoutes.auth.registerUserPassword);
+    safeNavigate(() => router.push(AppRoutes.auth.registerUserPassword));
   };
 
   const headerStyle = useAnimatedStyle(() => {
@@ -129,32 +129,11 @@ const RegisterUserInfoPage = () => {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <View style={{ marginTop: 20, flex: 1 }}>
-              <Controller
-                control={control}
-                name="phone"
-                render={({ field: { onChange, value } }) => (
-                  <AppPhoneInput
-                    label={"Telefon raqam"}
-                    value={value}
-                    onChangeText={onChange}
-                    onFocus={() =>
-                      setFocus((prev) => ({ ...prev, phone: true }))
-                    }
-                    onBlur={() =>
-                      setFocus((prev) => ({ ...prev, phone: false }))
-                    }
-                    error={errors.phone?.message}
-                    keyboardType="number-pad"
-                    mask="99 999-99-99"
-                    focused={focus.phone}
-                  />
-                )}
-              />
+            <View style={{ marginTop: 15, flex: 1, gap: 15 }}>
               <Controller
                 control={control}
                 name="name"
-                render={({ field: { onChange, value, onBlur } }) => (
+                render={({ field: { onChange, value } }) => (
                   <AppInput
                     label={"Ism"}
                     value={value}

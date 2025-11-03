@@ -7,6 +7,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeColors } from "@/theme/useThemeColors";
 
 type Props = BottomSheetModalProps & {
   children: ReactNode;
@@ -30,6 +31,7 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModalMethods, Props>(
     },
     ref
   ) => {
+    const Colors = useThemeColors();
     const renderBackDrop = useCallback(
       (backdropProps: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop
@@ -51,7 +53,13 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModalMethods, Props>(
     const insetsTop = useSafeAreaInsets().top;
 
     return (
-      <BottomSheetModal ref={ref} backdropComponent={renderBackDrop} {...props}>
+      <BottomSheetModal
+        enableDynamicSizing={false}
+        ref={ref}
+        backdropComponent={renderBackDrop}
+        backgroundStyle={{ backgroundColor: Colors.pageBackground }}
+        {...props}
+      >
         {children}
       </BottomSheetModal>
     );

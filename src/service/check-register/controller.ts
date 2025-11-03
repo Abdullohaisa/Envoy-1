@@ -57,13 +57,12 @@ export const useCheckRegister = (): UseCheckRegisterReturn => {
 
           const controller = new AbortController();
           abortRef.current = controller;
-          console.log(phone);
 
           try {
             // axios post: body as second param, options as third
             const resp = await api.post(
-              "/users/check-phone/",
-              { phone_email: phone },
+              "/user/check-phone/",
+              { phone: phone },
               { signal: controller.signal }
             );
 
