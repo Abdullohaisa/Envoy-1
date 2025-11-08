@@ -12,25 +12,28 @@ const TabIndicator = ({ scrollX, pages }: any) => {
   const theme = useAtomValue(themeAtom);
   const Colors = useThemeColors();
 
-  if (pages.length === 1) {
-    return null;
-  }
+  if (pages.length === 1) return null;
 
-  const indicatorWidth = screens.width / pages.length;
+  const indicatorWidth = screens.width / pages.length - 50;
+  const tabWidth = screens.width / pages.length;
 
   const translateX = useDerivedValue(() => {
-    return (scrollX.value / screens.width) * indicatorWidth;
+    return (
+      (scrollX.value / screens.width) * tabWidth +
+      (tabWidth - indicatorWidth) / 2
+    );
   });
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
+
   return (
     <Animated.View
       style={[
-        styles(pages).indicator,
+        styles.indicator,
         {
-          width: indicatorWidth, // 🔥 yangi kenglik
+          width: indicatorWidth,
           backgroundColor: theme === "light" ? "#ffffff" : Colors.primary,
         },
         animatedStyle,
@@ -41,14 +44,12 @@ const TabIndicator = ({ scrollX, pages }: any) => {
 
 export default TabIndicator;
 
-const styles = (pages: any) =>
-  StyleSheet.create({
-    indicator: {
-      position: "absolute",
-      bottom: 0,
-      height: 4,
-      width: screens.width / pages.length, // 2 ta page uchun teng bo‘lib turadi
-      borderTopLeftRadius: 10,
-      borderTopRightRadius: 10,
-    },
-  });
+const styles = StyleSheet.create({
+  indicator: {
+    position: "absolute",
+    bottom: 0,
+    height: 4,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+});

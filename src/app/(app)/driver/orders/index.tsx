@@ -18,6 +18,8 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { safeNavigate } from "@/utils/safe-navigation";
 import { AppRoutes } from "@/constants/routes";
 import { router } from "expo-router";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/service/user/register-login/controller";
 
 // 🔹 Faol buyurtmalarni render qilish
 const renderActiveOrders = () => <DriverActiveOrderLIst orders={ORDERS} />;
@@ -28,20 +30,20 @@ const pages = [
     key: "active",
     title: "Yuklar",
     orders: ORDERS,
-    render: renderActiveOrders,
+    component: renderActiveOrders,
   },
   {
     key: "so'ralgan",
     title: "So'ralgan",
     orders: ORDERS,
-    render: renderActiveOrders,
+    component: renderActiveOrders,
   },
 ];
 
 // ==========================
 // 🔸 Tugmalar qutisi komponenti
 // ==========================
-const ButtonBox = ({ scrollX }: { scrollX: Animated.SharedValue<number> }) => {
+const ButtonBox = ({ scrollX }: { scrollX: any }) => {
   const Colors = useThemeColors();
 
   // Tugma qutisi animatsiyasi
@@ -101,8 +103,8 @@ const ButtonBox = ({ scrollX }: { scrollX: Animated.SharedValue<number> }) => {
           padding: 5,
           borderRadius: 100,
           backgroundColor: Colors.borderColor,
-          width: 45,
-          height: 45,
+          width: 40,
+          height: 40,
           justifyContent: "center",
           alignItems: "center",
           shadowColor: "#000",
@@ -112,7 +114,7 @@ const ButtonBox = ({ scrollX }: { scrollX: Animated.SharedValue<number> }) => {
           elevation: 5,
         }}
       >
-        <FontAwesome name="map" size={25} color={Colors.primary} />
+        <FontAwesome name="map" size={20} color={Colors.primary} />
       </Pressable>
 
       {/* 🎨 Filter tugmasi */}
@@ -124,8 +126,8 @@ const ButtonBox = ({ scrollX }: { scrollX: Animated.SharedValue<number> }) => {
           padding: 5,
           borderRadius: 100,
           backgroundColor: Colors.borderColor,
-          width: 45,
-          height: 45,
+          width: 40,
+          height: 40,
           justifyContent: "center",
           alignItems: "center",
           shadowColor: "#000",
@@ -135,7 +137,7 @@ const ButtonBox = ({ scrollX }: { scrollX: Animated.SharedValue<number> }) => {
           elevation: 5,
         }}
       >
-        <Ionicons name="color-filter" size={28} color={Colors.primary} />
+        <Ionicons name="color-filter" size={23} color={Colors.primary} />
       </Pressable>
     </Animated.View>
   );
@@ -147,6 +149,8 @@ const ButtonBox = ({ scrollX }: { scrollX: Animated.SharedValue<number> }) => {
 const DriverGetOrders = () => {
   const scrollX = useSharedValue(0);
   const flatRef = useRef<FlatList>(null);
+  const { access } = useAtomValue(authAtom);
+  console.log(access);
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -161,7 +165,7 @@ const DriverGetOrders = () => {
     });
   };
 
-  const Page = memo(({ item }: any) => <>{item.render()}</>);
+  const Page = memo(({ item }: any) => <>{item.component()}</>);
 
   return (
     <View style={{ flex: 1, gap: 5 }}>
@@ -180,7 +184,7 @@ const DriverGetOrders = () => {
         scrollEventThrottle={16}
         renderItem={({ item }) => <Page item={item} />}
         contentContainerStyle={{
-          paddingBottom: screens.height * 0.096,
+          paddingBottom: screens.height * 0.09 + 5,
         }}
       />
 

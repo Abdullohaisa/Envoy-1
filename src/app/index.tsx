@@ -225,6 +225,7 @@ import { AppRoutes } from "@/constants/routes";
 import SplashScreenIcon from "@/assets/icon/splash-screen-icon";
 import { initLanguage } from "@/locales/_i18n";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { useFetchUserData } from "@/service/user/get-user-info/controller";
 
 type State = {
   ready: boolean;
@@ -246,8 +247,9 @@ const reducer = (state: State, action: Action): State => {
 
 const Splash = () => {
   const router = useRouter();
-  const scale = useSharedValue(1);
+  const scale = useSharedValue(0.5);
   const Colors = useThemeColors();
+  const fetchUserData = useFetchUserData();
   const [fontsLoaded] = useFonts({
     "Inter-Regular": require("../assets/fonts/Inter_18pt-Regular.ttf"),
     "Inter-Medium": require("../assets/fonts/Inter_18pt-Medium.ttf"),
@@ -269,7 +271,11 @@ const Splash = () => {
     const prepareApp = async () => {
       try {
         // 🔹 Parallel yuklanish: til, auth va font
-        await Promise.all([initLanguage(), checkAuthAndSetRoute()]);
+        await Promise.all([
+          initLanguage(),
+          checkAuthAndSetRoute(),
+          fetchUserData(),
+        ]);
       } catch (e) {
         dispatch({ type: "READY", route: AppRoutes.auth.auth });
       }

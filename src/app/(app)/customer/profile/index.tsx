@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -16,26 +16,30 @@ import { AppRoutes } from "@/constants/routes";
 import { safeNavigate } from "@/utils/safe-navigation";
 import AppText from "@/components/Texts/Text";
 import { callPhone } from "@/utils/call-phone";
-import { useAtomValue } from "jotai";
-import { authStateAtom } from "@/service/auth/controller";
+import { useAtom, useAtomValue } from "jotai";
 import { IThemeColors } from "@/theme/colors.interface";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import ArrowIcon from "@/assets/icon/arrow";
 import { useTranslation } from "react-i18next";
+import { authStateAtom } from "@/service/user/register-login/controller";
+import {
+  useFetchUserData,
+  userDataAtom,
+  userDataStateAtom,
+} from "@/service/user/get-user-info/controller";
+import AppImage from "@/components/Image/Image";
 
 const Profile = () => {
   const Colors = useThemeColors();
-  const [refreshing, setRefreshing] = useState(false);
   const { data } = useAtomValue(authStateAtom);
   const { t } = useTranslation();
 
   const cachedStyles = useMemo(() => styles(Colors), [Colors]);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
+  const userData = useAtomValue(userDataAtom);
+  const fetchUserData = useFetchUserData();
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleNavigate = useCallback(
     (path: string) => safeNavigate(() => router.push(path)),
@@ -97,6 +101,15 @@ const Profile = () => {
     [data.role, t]
   );
 
+  const onRefresh = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      await fetchUserData();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [fetchUserData]);
+
   return (
     <View style={{ flex: 1 }}>
       <PageHeader title={t("profile")} />
@@ -112,11 +125,12 @@ const Profile = () => {
           />
         }
         style={{
+          marginTop: 5,
+          paddingTop: Spacing.horizontal - 5,
           overflow: "hidden",
-          borderRadius: 20,
-          marginTop: 15,
           marginHorizontal: Spacing.horizontal,
           flexGrow: 1,
+          borderRadius: 5,
         }}
         contentContainerStyle={[cachedStyles.container]}
         showsVerticalScrollIndicator={false}
@@ -140,15 +154,25 @@ const Profile = () => {
                 alignItems: "center",
                 borderRadius: 40,
                 backgroundColor: Colors.borderColor,
+                overflow: "hidden",
               },
               Shadow.dark,
             ]}
           >
-            <AppText style={{ fontSize: 40 }}>A</AppText>
+            {userData.image ? (
+              <AppImage
+                source={userData.image}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <AppText style={{ fontSize: 40 }}>
+                {userData.username?.slice(0, 1)}
+              </AppText>
+            )}
           </View>
           <View style={cachedStyles.profileInfo}>
-            <AppText style={cachedStyles.name}>Abdullah</AppText>
-            <AppText style={cachedStyles.phone}>+998 90 123 45 67</AppText>
+            <AppText style={cachedStyles.name}>{userData.username}</AppText>
+            <AppText style={cachedStyles.phone}>{userData.phone}</AppText>
           </View>
         </Pressable>
 
@@ -175,7 +199,6 @@ const Profile = () => {
   );
 };
 
-// 🔹 Kichik, qayta ishlatiladigan komponent, memo bilan optimallashtirilgan
 const ProfileActionBox = React.memo(
   ({
     icon,
@@ -262,8 +285,7 @@ export default Profile;
 const styles = (Colors: IThemeColors) =>
   StyleSheet.create({
     container: {
-      gap: 15,
-      flexGrow: 1,
+      gap: 10,
     },
     profileBox: {
       flexDirection: "row",
@@ -307,5 +329,18 @@ const styles = (Colors: IThemeColors) =>
       fontWeight: "600",
       textAlign: "center",
       color: Colors.textPrimary,
+    },
+    content: {
+      padding: 20,
+    },
+    text: {
+      fontSize: 18,
+      marginVertical: 8,
+      color: Colors.textPrimary,
+    },
+    errorText: {
+      textAlign: "center",
+      color: "red",
+      fontSize: 16,
     },
   });

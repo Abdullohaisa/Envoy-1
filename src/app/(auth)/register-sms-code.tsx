@@ -18,7 +18,7 @@ import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import SmsCodeBox from "@/components/SmsCodeBox/SmsCodeBox";
 import { useAtom, useAtomValue } from "jotai";
-import { smsAtom } from "@/service/sms/controller";
+import { smsAtom } from "@/service/user/sms/controller";
 import AppText from "@/components/Texts/Text";
 import { useTimer } from "@/hooks/useTimer";
 import { registerTempValues } from "@/widget/auth/register/tempValues";

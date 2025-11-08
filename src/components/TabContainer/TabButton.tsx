@@ -1,5 +1,7 @@
 import { screens } from "@/shared/token";
+import { themeAtom } from "@/theme/theme";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { useAtomValue } from "jotai";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, {
   interpolateColor,
@@ -15,6 +17,11 @@ const TabButton = ({
   pages,
 }: any) => {
   const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
+
+  const activeTextColor = theme === "dark" ? "#fff" : "#fff";
+  const inActiveTextColor =
+    theme === "dark" ? Colors.textSecondary : Colors.textSecondary04;
 
   const animatedStyle = useAnimatedStyle(() => {
     const inputRange =
@@ -24,8 +31,10 @@ const TabButton = ({
 
     const outputRange =
       pages.length > 1
-        ? pages.map((_: any, i: any) => (i === index ? "#ffffff" : "#bababa"))
-        : ["#bababa", "#ffffff"];
+        ? pages.map((_: any, i: any) =>
+            i === index ? activeTextColor : inActiveTextColor
+          )
+        : [inActiveTextColor, activeTextColor];
 
     const color = interpolateColor(scrollX.value, inputRange, outputRange);
 
@@ -37,8 +46,8 @@ const TabButton = ({
       onPress={onPress}
       style={{
         flex: 1,
-        alignItems: "center",
         flexDirection: "row",
+        alignItems: "center",
         justifyContent: "center",
         gap: 5,
       }}
@@ -58,7 +67,7 @@ export default TabButton;
 const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "700",
     paddingVertical: 12,
   },
   tabTextLength: {

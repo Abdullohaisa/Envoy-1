@@ -1,103 +1,393 @@
+// import {
+//   StyleSheet,
+//   View,
+//   TouchableOpacity,
+//   ScrollView,
+//   ViewStyle,
+// } from "react-native";
+// import { memo, useMemo, useState } from "react";
+// import PageHeader from "@/components/Header/PageHeader/PageHeader";
+// import { useThemeColors } from "@/theme/useThemeColors";
+// import { MaterialIcons } from "@expo/vector-icons";
+// import { useAtom, useAtomValue, useSetAtom } from "jotai";
+// import { setThemeAtom, themeAtom } from "@/theme/theme";
+// import { AppRoutes } from "@/constants/routes";
+// import { router } from "expo-router";
+// import AppText from "@/components/Texts/Text";
+// import { safeNavigate } from "@/utils/safe-navigation";
+// import { authStateAtom, logoutAtom } from "@/service/auth/controller";
+// import Ionicons from "@expo/vector-icons/Ionicons";
+// import AntDesign from "@expo/vector-icons/AntDesign";
+// import { Shadow } from "@/shared/token";
+// import ArrowIcon from "@/assets/icon/arrow";
+// import { IThemeColors } from "@/theme/colors.interface";
+// import { useTranslation } from "react-i18next";
+// import SheetModal from "@/components/Modal/SheetModal";
+
+// const SettingsCustomerPage = () => {
+//   const Colors = useThemeColors();
+//   const [theme] = useAtom(themeAtom);
+//   const setTheme = useSetAtom(setThemeAtom);
+//   const { data } = useAtomValue(authStateAtom);
+//   const role = data.role;
+//   const { t } = useTranslation();
+//   const handleLogout = useSetAtom(logoutAtom);
+//   const [alertVisible, setAlertVisible] = useState(false);
+//   const [actionType, setActionType] = useState<"logout" | "delete_acc" | null>(
+//     null
+//   );
+
+//   const toggleTheme = () => {
+//     setTheme(theme === "light" ? "dark" : "light");
+//   };
+
+//   const settingsActions = [
+//     {
+//       id: 1,
+//       title: t("theme_mode"),
+//       icon: (size: number, color: string) => (
+//         <Ionicons name="invert-mode" size={size} color={color} />
+//       ),
+//       onPress: toggleTheme,
+//     },
+//     {
+//       id: 2,
+//       title: t("change_language"),
+//       icon: (size: number, color: string) => (
+//         <MaterialIcons name="language" size={size} color={color} />
+//       ),
+//       onPress: () =>
+//         safeNavigate(() =>
+//           role === "Customer"
+//             ? router.push(AppRoutes.customer.profile.settings.language)
+//             : router.push(AppRoutes.driver.profile.settings.language)
+//         ),
+//     },
+//     {
+//       id: 3,
+//       title: t("logout"),
+//       icon: (size: number, color: string) => (
+//         <AntDesign name="logout" size={size} color={color} />
+//       ),
+//       onPress: () => {
+//         setActionType("logout");
+//         setAlertVisible(true);
+//       },
+//     },
+//     {
+//       id: 4,
+//       title: t("delete_account"),
+//       icon: (size: number, color: string) => (
+//         <MaterialIcons name="delete" size={size} color={color} />
+//       ),
+//       onPress: () => {
+//         setActionType("delete_acc");
+//         setAlertVisible(true);
+//       },
+//     },
+//   ];
+
+//   const cachedStyles = useMemo(() => styles(Colors), [Colors]);
+
+//   const handleModalConfirm = () => {
+//     if (actionType === "logout") {
+//       handleLogout();
+//     } else if (actionType === "delete_acc") {
+//     }
+//     setAlertVisible(false);
+//     setActionType(null);
+//   };
+
+//   return (
+//     <View
+//       style={[
+//         cachedStyles.container,
+//         { backgroundColor: Colors.pageBackground },
+//       ]}
+//     >
+//       <PageHeader title="Sozlamalar" enableBack />
+
+//       <ScrollView
+//         style={cachedStyles.scroll}
+//         contentContainerStyle={{ paddingBottom: 30 }}
+//       >
+//         <View style={{ gap: 10 }}>
+//           {settingsActions.map((item) => (
+//             <ProfileActionBox
+//               key={item.id}
+//               icon={item.icon}
+//               title={item.title}
+//               onPress={item.onPress}
+//             />
+//           ))}
+//         </View>
+//       </ScrollView>
+//       <SheetModal
+//         type="yesno"
+//         open={alertVisible}
+//         onDismiss={() => setAlertVisible(false)}
+//         onYes={handleModalConfirm}
+//         message={
+//           actionType === "logout"
+//             ? t("confirm_logout")
+//             : t("confirm_delete_account")
+//         }
+//       />
+//     </View>
+//   );
+// };
+
+// export default SettingsCustomerPage;
+
+// // -------------------------
+// // 🔹 ProfileActionBox
+// // -------------------------
+
+// type ProfileActionBoxProps = {
+//   icon: (size: number, color: string) => React.ReactElement;
+//   title: string;
+//   onPress?: () => void;
+//   style?: ViewStyle;
+// };
+
+// const ProfileActionBox = memo(
+//   ({ icon, title, onPress, style }: ProfileActionBoxProps) => {
+//     const Colors = useThemeColors();
+//     const cachedStyles = useMemo(() => styles(Colors), [Colors]);
+
+//     // 🔸 Icon va fon ranglarini boshqaruvchi funksiya
+//     const { iconColor, iconBackColor, shadow } = getIconColors(title, Colors);
+
+//     return (
+//       <TouchableOpacity
+//         onPress={onPress}
+//         style={[cachedStyles.smallBox, style]}
+//         activeOpacity={0.8}
+//       >
+//         <View style={cachedStyles.iconRow}>
+//           <View
+//             style={[cachedStyles.iconBox, { backgroundColor: iconBackColor }]}
+//           >
+//             {icon(18, iconColor)}
+//           </View>
+//           <AppText style={cachedStyles.boxText}>{title}</AppText>
+//         </View>
+
+//         <ArrowIcon
+//           color={Colors.textSecondary}
+//           direction="right"
+//           type="chevron"
+//         />
+//       </TouchableOpacity>
+//     );
+//   }
+// );
+
+// // -------------------------
+// // 🎨 Ranglar funksiyasi
+// // -------------------------
+
+// const getIconColors = (title: string, Colors: IThemeColors) => {
+//   const { t } = useTranslation();
+//   switch (title) {
+//     case t("theme_mode"):
+//       return {
+//         iconColor: Colors.primary,
+//         iconBackColor: Colors.primary02,
+//         shadow: Shadow.medium,
+//       };
+//     case t("change_language"):
+//       return {
+//         iconColor: Colors.green,
+//         iconBackColor: Colors.green02,
+//         shadow: Shadow.medium,
+//       };
+//     case t("logout"):
+//       return {
+//         iconColor: Colors.red,
+//         iconBackColor: Colors.red02,
+//         shadow: Shadow.light,
+//       };
+//     case t("delete_account"):
+//       return {
+//         iconColor: Colors.red,
+//         iconBackColor: Colors.red02,
+//         shadow: Shadow.light,
+//       };
+//     default:
+//       return {
+//         iconColor: Colors.textPrimary,
+//         iconBackColor: Colors.Boxbackground,
+//         shadow: Shadow.light,
+//       };
+//   }
+// };
+
+// // -------------------------
+// // 🧱 StyleSheet
+// // -------------------------
+
+// const styles = (Colors: IThemeColors) =>
+//   StyleSheet.create({
+//     container: { flex: 1 },
+//     scroll: {
+//       marginTop: 15,
+//       borderRadius: 15,
+//       overflow: "hidden",
+//       marginHorizontal: 12,
+//     },
+//     smallBox: {
+//       flexDirection: "row",
+//       alignItems: "center",
+//       justifyContent: "space-between",
+//       borderRadius: 15,
+//       padding: 10,
+//       backgroundColor: Colors.Boxbackground,
+//       minHeight: 50,
+//     },
+//     iconRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+//     iconBox: {
+//       borderRadius: 10,
+//       width: 30,
+//       height: 30,
+//       justifyContent: "center",
+//       alignItems: "center",
+//     },
+//     boxText: {
+//       fontSize: 15,
+//       fontWeight: "600",
+//       color: Colors.textPrimary,
+//     },
+//   });
+
+import React, { useState, useMemo, useCallback, memo } from "react";
 import {
   StyleSheet,
   View,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   ViewStyle,
+  ListRenderItem,
 } from "react-native";
-import { memo, useMemo, useState } from "react";
-import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { setThemeAtom, themeAtom } from "@/theme/theme";
+import { useAtomValue, useSetAtom, useAtom } from "jotai";
+import { themeAtom, setThemeAtom } from "@/theme/theme";
 import { AppRoutes } from "@/constants/routes";
 import { router } from "expo-router";
 import AppText from "@/components/Texts/Text";
+import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { safeNavigate } from "@/utils/safe-navigation";
-import { authStateAtom, logoutAtom } from "@/service/auth/controller";
+import SheetModal from "@/components/Modal/SheetModal";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Shadow } from "@/shared/token";
+import { MaterialIcons } from "@expo/vector-icons";
 import ArrowIcon from "@/assets/icon/arrow";
+import { Shadow, Spacing } from "@/shared/token";
 import { IThemeColors } from "@/theme/colors.interface";
 import { useTranslation } from "react-i18next";
-import SheetModal from "@/components/Modal/SheetModal";
+import {
+  authStateAtom,
+  logoutAtom,
+} from "@/service/user/register-login/controller";
 
+// -------------------------
+// 🔹 SettingsCustomerPage (FlatList optimized)
+// -------------------------
 const SettingsCustomerPage = () => {
   const Colors = useThemeColors();
   const [theme] = useAtom(themeAtom);
   const setTheme = useSetAtom(setThemeAtom);
   const { data } = useAtomValue(authStateAtom);
   const role = data.role;
-  const { t } = useTranslation();
   const handleLogout = useSetAtom(logoutAtom);
+  const { t } = useTranslation();
+
   const [alertVisible, setAlertVisible] = useState(false);
   const [actionType, setActionType] = useState<"logout" | "delete_acc" | null>(
     null
   );
 
-  const toggleTheme = () => {
+  // 🔹 Theme toggle
+  const toggleTheme = useCallback(() => {
     setTheme(theme === "light" ? "dark" : "light");
-  };
+  }, [theme, setTheme]);
 
-  const settingsActions = [
-    {
-      id: 1,
-      title: t("theme_mode"),
-      icon: (size: number, color: string) => (
-        <Ionicons name="invert-mode" size={size} color={color} />
-      ),
-      onPress: toggleTheme,
-    },
-    {
-      id: 2,
-      title: t("change_language"),
-      icon: (size: number, color: string) => (
-        <MaterialIcons name="language" size={size} color={color} />
-      ),
-      onPress: () =>
-        safeNavigate(() =>
-          role === "Customer"
-            ? router.push(AppRoutes.customer.profile.settings.language)
-            : router.push(AppRoutes.driver.profile.settings.language)
+  // 🔹 Navigate helper
+  const handleNavigate = useCallback((path: string) => {
+    safeNavigate(() => router.push(path));
+  }, []);
+
+  // 🔹 Settings actions
+  const settingsActions = useMemo(
+    () => [
+      {
+        id: "theme",
+        title: t("theme_mode"),
+        icon: (size: number, color: string) => (
+          <Ionicons name="invert-mode" size={size} color={color} />
         ),
-    },
-    {
-      id: 3,
-      title: t("logout"),
-      icon: (size: number, color: string) => (
-        <AntDesign name="logout" size={size} color={color} />
-      ),
-      onPress: () => {
-        setActionType("logout");
-        setAlertVisible(true);
+        onPress: toggleTheme,
       },
-    },
-    {
-      id: 4,
-      title: t("delete_account"),
-      icon: (size: number, color: string) => (
-        <MaterialIcons name="delete" size={size} color={color} />
-      ),
-      onPress: () => {
-        setActionType("delete_acc");
-        setAlertVisible(true);
+      {
+        id: "language",
+        title: t("change_language"),
+        icon: (size: number, color: string) => (
+          <MaterialIcons name="language" size={size} color={color} />
+        ),
+        onPress: () =>
+          handleNavigate(
+            role === "Customer"
+              ? AppRoutes.customer.profile.settings.language
+              : AppRoutes.driver.profile.settings.language
+          ),
       },
-    },
-  ];
+      {
+        id: "logout",
+        title: t("logout"),
+        icon: (size: number, color: string) => (
+          <AntDesign name="logout" size={size} color={color} />
+        ),
+        onPress: () => {
+          setActionType("logout");
+          setAlertVisible(true);
+        },
+      },
+      {
+        id: "delete",
+        title: t("delete_account"),
+        icon: (size: number, color: string) => (
+          <MaterialIcons name="delete" size={size} color={color} />
+        ),
+        onPress: () => {
+          setActionType("delete_acc");
+          setAlertVisible(true);
+        },
+      },
+    ],
+    [t, toggleTheme, handleNavigate, role]
+  );
+
+  const handleModalConfirm = useCallback(() => {
+    if (actionType === "logout") handleLogout();
+    else if (actionType === "delete_acc") () => {};
+
+    setAlertVisible(false);
+    setActionType(null);
+  }, [actionType, handleLogout]);
 
   const cachedStyles = useMemo(() => styles(Colors), [Colors]);
 
-  const handleModalConfirm = () => {
-    if (actionType === "logout") {
-      handleLogout();
-    } else if (actionType === "delete_acc") {
-      console.log("delete_acc");
-    }
-    setAlertVisible(false);
-    setActionType(null);
-  };
+  // 🔹 FlatList renderItem
+  const renderItem: ListRenderItem<(typeof settingsActions)[0]> = useCallback(
+    ({ item }) => (
+      <ProfileActionBox
+        icon={item.icon}
+        title={item.title}
+        onPress={item.onPress}
+      />
+    ),
+    []
+  );
 
   return (
     <View
@@ -106,23 +396,25 @@ const SettingsCustomerPage = () => {
         { backgroundColor: Colors.pageBackground },
       ]}
     >
-      <PageHeader title="Sozlamalar" enableBack />
+      <PageHeader title={t("settings")} enableBack />
 
-      <ScrollView
-        style={cachedStyles.scroll}
-        contentContainerStyle={{ paddingBottom: 30 }}
-      >
-        <View style={{ gap: 10 }}>
-          {settingsActions.map((item) => (
-            <ProfileActionBox
-              key={item.id}
-              icon={item.icon}
-              title={item.title}
-              onPress={item.onPress}
-            />
-          ))}
-        </View>
-      </ScrollView>
+      <FlatList
+        style={{
+          marginTop: 5,
+          paddingTop: Spacing.horizontal - 5,
+          borderRadius: 5,
+          overflow: "hidden",
+          marginHorizontal: Spacing.horizontal,
+        }}
+        data={settingsActions}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={{
+          paddingBottom: 30,
+          gap: 10,
+        }}
+      />
+
       <SheetModal
         type="yesno"
         open={alertVisible}
@@ -141,9 +433,8 @@ const SettingsCustomerPage = () => {
 export default SettingsCustomerPage;
 
 // -------------------------
-// 🔹 ProfileActionBox
+// 🔹 ProfileActionBox (memoized)
 // -------------------------
-
 type ProfileActionBoxProps = {
   icon: (size: number, color: string) => React.ReactElement;
   title: string;
@@ -155,9 +446,24 @@ const ProfileActionBox = memo(
   ({ icon, title, onPress, style }: ProfileActionBoxProps) => {
     const Colors = useThemeColors();
     const cachedStyles = useMemo(() => styles(Colors), [Colors]);
+    const { t } = useTranslation();
 
-    // 🔸 Icon va fon ranglarini boshqaruvchi funksiya
-    const { iconColor, iconBackColor, shadow } = getIconColors(title, Colors);
+    const { iconColor, iconBackColor } = useMemo(() => {
+      switch (title) {
+        case t("theme_mode"):
+          return { iconColor: Colors.primary, iconBackColor: Colors.primary02 };
+        case t("change_language"):
+          return { iconColor: Colors.green, iconBackColor: Colors.green02 };
+        case t("logout"):
+        case t("delete_account"):
+          return { iconColor: Colors.red, iconBackColor: Colors.red02 };
+        default:
+          return {
+            iconColor: Colors.textPrimary,
+            iconBackColor: Colors.Boxbackground,
+          };
+      }
+    }, [title, Colors, t]);
 
     return (
       <TouchableOpacity
@@ -173,7 +479,6 @@ const ProfileActionBox = memo(
           </View>
           <AppText style={cachedStyles.boxText}>{title}</AppText>
         </View>
-
         <ArrowIcon
           color={Colors.textSecondary}
           direction="right"
@@ -185,58 +490,11 @@ const ProfileActionBox = memo(
 );
 
 // -------------------------
-// 🎨 Ranglar funksiyasi
+// 🔹 Styles
 // -------------------------
-
-const getIconColors = (title: string, Colors: IThemeColors) => {
-  const { t } = useTranslation();
-  switch (title) {
-    case t("theme_mode"):
-      return {
-        iconColor: Colors.primary,
-        iconBackColor: Colors.primary02,
-        shadow: Shadow.medium,
-      };
-    case t("change_language"):
-      return {
-        iconColor: Colors.green,
-        iconBackColor: Colors.green02,
-        shadow: Shadow.medium,
-      };
-    case t("logout"):
-      return {
-        iconColor: Colors.red,
-        iconBackColor: Colors.red02,
-        shadow: Shadow.light,
-      };
-    case t("delete_account"):
-      return {
-        iconColor: Colors.red,
-        iconBackColor: Colors.red02,
-        shadow: Shadow.light,
-      };
-    default:
-      return {
-        iconColor: Colors.textPrimary,
-        iconBackColor: Colors.Boxbackground,
-        shadow: Shadow.light,
-      };
-  }
-};
-
-// -------------------------
-// 🧱 StyleSheet
-// -------------------------
-
 const styles = (Colors: IThemeColors) =>
   StyleSheet.create({
     container: { flex: 1 },
-    scroll: {
-      marginTop: 15,
-      borderRadius: 15,
-      overflow: "hidden",
-      marginHorizontal: 12,
-    },
     smallBox: {
       flexDirection: "row",
       alignItems: "center",
@@ -254,9 +512,5 @@ const styles = (Colors: IThemeColors) =>
       justifyContent: "center",
       alignItems: "center",
     },
-    boxText: {
-      fontSize: 15,
-      fontWeight: "600",
-      color: Colors.textPrimary,
-    },
+    boxText: { fontSize: 15, fontWeight: "600", color: Colors.textPrimary },
   });

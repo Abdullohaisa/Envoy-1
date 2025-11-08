@@ -1,154 +1,203 @@
-import { StyleSheet, View } from "react-native";
+// import {
+//   RefreshControl,
+//   ScrollView,
+//   StyleSheet,
+//   View,
+//   Alert,
+// } from "react-native";
+// import PageHeader from "@/components/Header/PageHeader/PageHeader";
+// import { useThemeColors } from "@/theme/useThemeColors";
+// import { MaterialIcons } from "@expo/vector-icons";
+// import CustomerActiveOrderInfoList from "@/components/OrderInfoList/CustomerActiveOrderInfoList";
+// import SheetModal from "@/components/Modal/SheetModal";
+// import { useState, useCallback } from "react";
+// import { useLocalSearchParams, useRouter } from "expo-router";
+// import AppText from "@/components/Texts/Text";
+// import { useFetchSingleOrder } from "@/service/order/fetch-single-order/controller";
+// import api from "@/axios/axios.config";
+// import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
+
+// const ActiveOrder = () => {
+//   const Colors = useThemeColors();
+//   const router = useRouter();
+//   const [open, setOpen] = useState(false);
+//   const [refreshing, setRefreshing] = useState(false);
+
+//   const [deleteLoading, setDeleteLoading] = useState(false);
+//   const [deleteError, setDeleteError] = useState<string | null>(null);
+//   const fetchOrders = useFetchCustomerOrders();
+
+//   const params = useLocalSearchParams();
+//   const orderId = params.order_id as string;
+
+//   const { order, requestedDrivers, isLoading, error, refetch } =
+//     useFetchSingleOrder(orderId);
+
+//   console.log(error);
+
+//   const onRefresh = useCallback(async () => {
+//     setRefreshing(true);
+//     await refetch();
+//     setRefreshing(false);
+//   }, [refetch]);
+
+//   const deleteOrder = async () => {
+//     setDeleteLoading(true);
+//     setDeleteError(null);
+
+//     try {
+//       await api.delete(`/order/delete-order/${orderId}/`);
+//       setDeleteLoading(false);
+//       fetchOrders();
+//       router.back(); // sahifa ortga
+//     } catch (err: any) {
+//       console.log(err);
+//       setDeleteError(err.response?.data || "Buyurtma o'chirishda xatolik");
+//       setDeleteLoading(false);
+//     }
+//   };
+
+//   return (
+//     <View
+//       style={[styles.container, { backgroundColor: Colors.pageBackground }]}
+//     >
+//       <PageHeader
+//         title="Yuk ma'lumotlari"
+//         enableBack
+//         rightIcon={
+//           <MaterialIcons
+//             name="delete-outline"
+//             size={24}
+//             color={Colors.textSecondary}
+//           />
+//         }
+//         onRightPress={() => setOpen(true)}
+//       />
+
+//       {/* Loading */}
+//       {isLoading && !refreshing && (
+//         <View style={{ padding: 20 }}>
+//           <AppText style={{ color: Colors.textSecondary, textAlign: "center" }}>
+//             Ma'lumotlar yuklanmoqda...
+//           </AppText>
+//         </View>
+//       )}
+
+//       {/* Error */}
+//       {error && (
+//         <View style={{ padding: 20 }}>
+//           <AppText style={{ color: "red", textAlign: "center" }}>
+//             {error}
+//           </AppText>
+//         </View>
+//       )}
+
+//       {/* Delete Error */}
+
+//       {/* Order */}
+//       {!isLoading && !error && order && (
+//         <ScrollView
+//           contentContainerStyle={{ paddingBottom: 40 }}
+//           refreshControl={
+//             <RefreshControl
+//               refreshing={refreshing}
+//               onRefresh={onRefresh}
+//               tintColor={Colors.primary}
+//               colors={["#fff"]}
+//               progressBackgroundColor={Colors.primary}
+//             />
+//           }
+//         >
+//           {deleteError && (
+//             <View style={{ padding: 20 }}>
+//               <AppText style={{ color: "red", textAlign: "center" }}>
+//                 {deleteError}
+//               </AppText>
+//             </View>
+//           )}
+//           <CustomerActiveOrderInfoList
+//             order={order}
+//             requestedDrivers={requestedDrivers}
+//           />
+//         </ScrollView>
+//       )}
+
+//       {/* Delete confirmation modal */}
+//       <SheetModal
+//         open={open}
+//         onDismiss={() => setOpen(false)}
+//         message={
+//           deleteLoading ? "O'chirilmoqda..." : "Buyurtmani o'chirmoqchimisiz"
+//         }
+//         type="yesno"
+//         onYes={() => deleteOrder()}
+//       />
+//     </View>
+//   );
+// };
+
+// export default ActiveOrder;
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1 },
+// });
+
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+  Alert,
+} from "react-native";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomerActiveOrderInfoList from "@/components/OrderInfoList/CustomerActiveOrderInfoList";
 import SheetModal from "@/components/Modal/SheetModal";
-import { useState } from "react";
-
-const cargo = {
-  cargo: {
-    weight: { value: 10, unit: "tonna" },
-    quantity: { value: 100, unit: "quti" },
-    type: { value: "Apple", unit: null },
-  },
-  truck: 1,
-  locations: {
-    pickup: [
-      {
-        id: "here:cm:namedplace:23835488",
-        full_title: "Tashkent, Chilonzor, 10-district",
-        short_title: "Tashkent",
-        coordinates: { latitude: 41.2856, longitude: 69.2033 },
-        contact: { name: "Javlonbek", phone: "+998901112233" },
-      },
-      {
-        id: "here:cm:namedplace:99999999",
-        full_title: "Chirchiq, Uzbekistan",
-        short_title: "Chirchiq",
-        coordinates: { latitude: 41.4689, longitude: 69.5822 },
-        contact: { name: "Umid aka", phone: "+998909998877" },
-      },
-    ],
-    dropoff: [
-      {
-        id: "here:cm:namedplace:77777777",
-        full_title: "Samarkand, Uzbekistan",
-        short_title: "Samarkand",
-        coordinates: { latitude: 39.6542, longitude: 66.9597 },
-        contact: { name: "Sherzod", phone: "+998935551122" },
-      },
-    ],
-  },
-  driver: {
-    name: "Olimjon",
-    phone_number: "+998903923636",
-    photo: null,
-    driver_coordinates: { latitude: 39.6542, longitude: 66.9597 },
-    rating: {
-      score: 4.5,
-      count: 10,
-    },
-    comment_count: "38",
-  },
-  owner: {
-    name: "Ali Valiyev",
-    phone: "+998901234567",
-    rating: {
-      score: 4.5,
-      count: 10,
-    },
-    comment_count: "38",
-  },
-  time: {
-    created: "2025-08-25T10:00:00Z",
-    assigned: null,
-    loaded: null,
-    delivered: null,
-    specified_date: null,
-  },
-  status: {
-    order_status: "active",
-    driver: { departed: false, picked_up: false, delivered: false },
-  },
-  distances: { total: null },
-  price: { value: 1200000, currency: "UZS" },
-  comment: "Special cargo, handle with care",
-};
-
-interface DriverRequest {
-  id: number;
-  name: string;
-  phone_number: string;
-  image: string | null;
-  rating: {
-    score: number; // "number" o'rniga "score" – ball bahosi
-    count: number; // baholaganlar soni
-  };
-  comments_count: number; // "comment" o'rniga aniqroq nom
-}
-
-const requestedDrivers: DriverRequest[] = [
-  {
-    id: 1,
-    name: "Olimjon Qodirov",
-    phone_number: "+998901234567",
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
-    rating: {
-      score: 4.8,
-      count: 25,
-    },
-    comments_count: 18,
-  },
-  {
-    id: 2,
-    name: "Jamshid Karimov",
-    phone_number: "+998933452211",
-    image: null,
-    rating: {
-      score: 4.3,
-      count: 10,
-    },
-    comments_count: 7,
-  },
-  {
-    id: 3,
-    name: "Rustam Aliyev",
-    phone_number: "+998909887766",
-    image: "https://randomuser.me/api/portraits/men/85.jpg",
-    rating: {
-      score: 5.0,
-      count: 42,
-    },
-    comments_count: 33,
-  },
-  {
-    id: 4,
-    name: "Sardorbek Tursunov",
-    phone_number: "+998907654321",
-    image: null,
-    rating: {
-      score: 4.1,
-      count: 9,
-    },
-    comments_count: 5,
-  },
-  {
-    id: 5,
-    name: "Azizbek Rahmonov",
-    phone_number: "+998934561289",
-    image: "https://randomuser.me/api/portraits/men/22.jpg",
-    rating: {
-      score: 4.6,
-      count: 17,
-    },
-    comments_count: 11,
-  },
-];
+import { useState, useCallback } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import AppText from "@/components/Texts/Text";
+import { useFetchSingleOrder } from "@/service/order/fetch-single-order/controller";
+import api from "@/axios/axios.config";
+import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
 
 const ActiveOrder = () => {
   const Colors = useThemeColors();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const fetchOrders = useFetchCustomerOrders();
+  const params = useLocalSearchParams();
+  const orderId = params.order_id as string;
+
+  const { order, requestedDrivers, isLoading, error, refetch } =
+    useFetchSingleOrder(orderId);
+
+  // 🔁 Sahifani yangilash (har doim ishlaydi)
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
+  const deleteOrder = async () => {
+    setDeleteLoading(true);
+    setDeleteError(null);
+
+    try {
+      await api.delete(`/order/delete-order/${orderId}/`);
+      setDeleteLoading(false);
+      fetchOrders();
+      router.back();
+    } catch (err: any) {
+      console.log(err);
+      setDeleteError(err.response?.data || "Buyurtma o'chirishda xatolik");
+      setDeleteLoading(false);
+    }
+  };
 
   return (
     <View
@@ -158,23 +207,93 @@ const ActiveOrder = () => {
         title="Yuk ma'lumotlari"
         enableBack
         rightIcon={
-          <MaterialIcons name="delete-outline" size={24} color="red" />
+          <MaterialIcons
+            name="delete-outline"
+            size={24}
+            color={Colors.textSecondary}
+          />
         }
         onRightPress={() => setOpen(true)}
       />
 
-      <CustomerActiveOrderInfoList
-        order={cargo}
-        requestedDrivers={requestedDrivers}
-      />
+      {/* 🔹 Loading holati */}
+      {isLoading && !refreshing && (
+        <View style={styles.centerBox}>
+          <AppText style={{ color: Colors.textSecondary, textAlign: "center" }}>
+            Ma'lumotlar yuklanmoqda...
+          </AppText>
+        </View>
+      )}
 
+      {/* 🔹 Xatolik holati */}
+      {error && (
+        <ScrollView
+          contentContainerStyle={styles.centerBox}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.primary}
+              colors={["#fff"]}
+              progressBackgroundColor={Colors.primary}
+            />
+          }
+        >
+          <AppText style={{ color: "red", textAlign: "center", fontSize: 16 }}>
+            {error === "Network Error"
+              ? "Tarmoq bilan bog‘lanishda muammo yuz berdi."
+              : error}
+          </AppText>
+          <AppText
+            style={{
+              color: Colors.textSecondary,
+              textAlign: "center",
+              marginTop: 6,
+            }}
+          >
+            Biz bu muammoni tez orada hal qilamiz. Iltimos, birozdan so‘ng qayta
+            urinib ko‘ring.
+          </AppText>
+        </ScrollView>
+      )}
+
+      {/* 🔹 Asosiy ma'lumot */}
+      {!isLoading && !error && order && (
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 40 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.primary}
+              colors={["#fff"]}
+              progressBackgroundColor={Colors.primary}
+            />
+          }
+        >
+          {deleteError && (
+            <View style={{ padding: 20 }}>
+              <AppText style={{ color: "red", textAlign: "center" }}>
+                {deleteError}
+              </AppText>
+            </View>
+          )}
+          <CustomerActiveOrderInfoList
+            order={order}
+            requestedDrivers={requestedDrivers}
+          />
+        </ScrollView>
+      )}
+
+      {/* 🔹 O‘chirish tasdiqlovchi modal */}
       <SheetModal
         open={open}
-        onDismiss={() => {
-          setOpen(false);
-        }}
-        message="Buyurtmani o'chirmoqchimisiz"
+        onDismiss={() => setOpen(false)}
+        message={
+          deleteLoading ? "O'chirilmoqda..." : "Buyurtmani o'chirmoqchimisiz"
+        }
         type="yesno"
+        onYes={() => deleteOrder()}
       />
     </View>
   );
@@ -184,4 +303,10 @@ export default ActiveOrder;
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  centerBox: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
 });

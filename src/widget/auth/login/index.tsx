@@ -10,11 +10,6 @@ import {
 } from "@/shared/validation.scheme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAtom, useSetAtom } from "jotai";
-import {
-  authAtom,
-  authStateAtom,
-  authTempStateAtom,
-} from "@/service/auth/controller";
 import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { router } from "expo-router";
@@ -22,6 +17,7 @@ import { AppRoutes } from "@/constants/routes";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 import { isValidLoginAtom } from "@/atoms/reg.login.valid";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { authStateAtom } from "@/service/user/register-login/controller";
 
 interface LoginProps {
   onSubmitRef: React.MutableRefObject<() => void>;

@@ -94,7 +94,7 @@ const CargoForm = () => {
   };
 
   const onNext = () => {
-    router.push(AppRoutes.customer.getOrder.locations);
+    router.push(AppRoutes.customer.getOrder.locations.index);
   };
 
   const handleClear = () => {

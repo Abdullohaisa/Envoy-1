@@ -5,28 +5,53 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AppText from "../../Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { callPhone } from "@/utils/call-phone";
+import { Spacing } from "@/shared/token";
+import Feather from "@expo/vector-icons/Feather";
 
 // 🗺️ Xarita ochish
+// const openMap = async (lat?: number, lng?: number) => {
+//   if (!lat || !lng) {
+//     return Alert.alert("❗ Xatolik", "Manzil koordinatalari topilmadi");
+//   }
+
+//   const yandexApp = `yandexmaps://maps.yandex.ru/?pt=${lng},${lat}&z=12`;
+//   const googleApp = `comgooglemaps://?q=${lat},${lng}&zoom=14`;
+//   const gisApp = `dgis://2gis.ru/routeSearch/rsType/car/to/${lng},${lat}`;
+//   const googleWeb = `https://www.google.com/maps?q=${lat},${lng}`;
+
+//   try {
+//     if (await Linking.canOpenURL(yandexApp)) return Linking.openURL(yandexApp);
+//     if (await Linking.canOpenURL(googleApp)) return Linking.openURL(googleApp);
+//     if (await Linking.canOpenURL(gisApp)) return Linking.openURL(gisApp);
+//     return Linking.openURL(googleWeb);
+//   } catch {
+//     Alert.alert(
+//       "❗ Xarita ochib bo‘lmadi",
+//       "Iltimos, Google Maps, Yandex Maps yoki 2GIS ilovalaridan birini o‘rnating."
+//     );
+//   }
+// };
+
 const openMap = async (lat?: number, lng?: number) => {
   if (!lat || !lng) {
     return Alert.alert("❗ Xatolik", "Manzil koordinatalari topilmadi");
   }
 
-  const yandexApp = `yandexmaps://maps.yandex.ru/?pt=${lng},${lat}&z=12`;
-  const googleApp = `comgooglemaps://?q=${lat},${lng}&zoom=14`;
-  const gisApp = `dgis://2gis.ru/routeSearch/rsType/car/to/${lng},${lat}`;
-  const googleWeb = `https://www.google.com/maps?q=${lat},${lng}`;
+  const yandexUrl = `yandexmaps://maps.yandex.ru/?pt=${lng},${lat}&z=16`;
+  // z=16 → zoom darajasi, kerak bo‘lsa o‘zgartiring
 
+  // Platformga qarab ochish
   try {
-    if (await Linking.canOpenURL(yandexApp)) return Linking.openURL(yandexApp);
-    if (await Linking.canOpenURL(googleApp)) return Linking.openURL(googleApp);
-    if (await Linking.canOpenURL(gisApp)) return Linking.openURL(gisApp);
-    return Linking.openURL(googleWeb);
-  } catch {
-    Alert.alert(
-      "❗ Xarita ochib bo‘lmadi",
-      "Iltimos, Google Maps, Yandex Maps yoki 2GIS ilovalaridan birini o‘rnating."
-    );
+    const supported = await Linking.canOpenURL(yandexUrl);
+    if (supported) {
+      await Linking.openURL(yandexUrl);
+    } else {
+      // Agar Yandex Maps ilovasi o‘rnatilmagan bo‘lsa, web orqali ochiladi
+      const webUrl = `https://yandex.ru/maps/?pt=${lng},${lat}&z=16`;
+      await Linking.openURL(webUrl);
+    }
+  } catch (error) {
+    Alert.alert("❗ Xatolik", "Xaritani ochishda muammo yuz berdi");
   }
 };
 
@@ -69,6 +94,7 @@ export const OrderListCargo = ({ order }: any) => {
       )}
       {order?.truck && (
         <OrderListInfo
+          isLocation
           Colors={Colors}
           label="Yuk mashina"
           value={order.truck.toString()}
@@ -134,8 +160,15 @@ export const OrderListRequestDriver = ({
   const Colors = useThemeColors();
 
   return (
-    <OrderListSection title="So‘rov yuborgan haydovchilar" Colors={Colors}>
-      {drivers?.length > 0 ? (
+    <OrderListSection
+      title={
+        drivers?.length > 0
+          ? "So‘rov yuborgan haydovchilar"
+          : "So‘rov yuborgan haydovchilar yo'q"
+      }
+      Colors={Colors}
+    >
+      {drivers?.length > 0 &&
         drivers.map((driver: any) => (
           <OrderListDriverCard
             handleDriverPress={handleDriverPress}
@@ -144,12 +177,7 @@ export const OrderListRequestDriver = ({
             Colors={Colors}
             onCall={() => callPhone(driver?.phoneNumber)}
           />
-        ))
-      ) : (
-        <AppText style={{ color: Colors.textSecondary }}>
-          Hozircha haydovchilar yo‘q
-        </AppText>
-      )}
+        ))}
     </OrderListSection>
   );
 };
@@ -161,25 +189,29 @@ export const OrderListAddress = ({ locations }: any) => {
   const dropoffs = locations?.dropoff ?? [];
 
   return (
-    <OrderListSection title="Manzillar" Colors={Colors}>
+    <OrderListSection title="Manzillar">
+      <View
+        style={{
+          marginLeft: Spacing.horizontal,
+          marginTop: Spacing.horizontal,
+          flexDirection: "row",
+          gap: 5,
+          alignItems: "center",
+        }}
+      >
+        <Feather name="upload" size={16} color={Colors.textSecondary} />
+        <AppText>Ortish manzillari</AppText>
+      </View>
       {pickups.map((item: any) => (
         <View
           key={`pickup-${item?.id ?? Math.random()}`}
           style={[styles.subBox, { backgroundColor: Colors.borderColor }]}
         >
-          {item?.full_title && (
-            <OrderListInfo
-              Colors={Colors}
-              label="Jo‘natish"
-              value={item.full_title}
-              isLocation
-            />
-          )}
           {item?.short_title && (
             <OrderListInfo
               Colors={Colors}
-              label="Shahar"
-              value={item.short_title}
+              label="Manzil"
+              value={item.full_title}
               isLocation
             />
           )}
@@ -221,25 +253,28 @@ export const OrderListAddress = ({ locations }: any) => {
           )}
         </View>
       ))}
-
+      <View
+        style={{
+          marginLeft: Spacing.horizontal,
+          marginTop: Spacing.horizontal,
+          flexDirection: "row",
+          gap: 5,
+          alignItems: "center",
+        }}
+      >
+        <Feather name="download" size={16} color={Colors.textSecondary} />
+        <AppText>Tushirish manzillari</AppText>
+      </View>
       {dropoffs.map((item: any) => (
         <View
           key={`dropoff-${item?.id ?? Math.random()}`}
           style={[styles.subBox, { backgroundColor: Colors.borderColor }]}
         >
-          {item?.full_title && (
-            <OrderListInfo
-              Colors={Colors}
-              label="Yetkazish"
-              value={item.full_title}
-              isLocation
-            />
-          )}
           {item?.short_title && (
             <OrderListInfo
               Colors={Colors}
-              label="Shahar"
-              value={item.short_title}
+              label="Manzil"
+              value={item.full_title}
               isLocation
             />
           )}
@@ -327,20 +362,23 @@ const OrderListDriverCard = ({ driver, handleDriverPress, onCall }: any) => {
 // 🔹 Info satri
 export const OrderListInfo = ({ label, value, icon, isLocation }: any) => {
   const Colors = useThemeColors();
-  if (!value) return null; // ❗ bo‘sh bo‘lsa chiqmasin
+  if (!value) return null;
   return (
     <View
       style={[
         styles.infoRow,
-        { borderColor: isLocation ? Colors.Boxbackground : Colors.borderColor },
+        {
+          borderColor: isLocation ? Colors.Boxbackground : Colors.borderColor,
+          paddingHorizontal: 4,
+        },
       ]}
     >
-      <AppText style={[styles.label, { color: Colors.textPrimary }]}>
+      <AppText style={[styles.label, { color: Colors.textSecondary }]}>
         {label}:
       </AppText>
       <View style={[styles.valueWrapper, { flex: 1 }]}>
         {icon}
-        <AppText style={[styles.value, { color: Colors.textSecondary }]}>
+        <AppText style={[styles.value, { color: Colors.textPrimary }]}>
           {value}
         </AppText>
       </View>
@@ -360,7 +398,10 @@ const OrderListSection = ({ title, children }: any) => {
         },
       ]}
     >
-      <AppText style={[styles.sectionTitle, { color: Colors.textPrimary }]}>
+      <AppText
+        variant="semiBold"
+        style={[styles.sectionTitle, { color: Colors.textPrimary }]}
+      >
         {title}
       </AppText>
       {children}

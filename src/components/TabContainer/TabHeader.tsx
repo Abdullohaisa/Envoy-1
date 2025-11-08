@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import { useThemeColors } from "@/theme/useThemeColors";
-import { Radius } from "@/shared/token";
+import { Radius, Shadow } from "@/shared/token";
 import AppText from "../Texts/Text";
 
 const TabHeader = ({ pages, handlePress, scrollX }: any) => {
@@ -21,6 +21,7 @@ const TabHeader = ({ pages, handlePress, scrollX }: any) => {
           backgroundColor:
             theme === "light" ? Colors.primary08 : Colors.Boxbackground,
         },
+        Shadow.medium,
       ]}
     >
       <View
@@ -38,7 +39,7 @@ const TabHeader = ({ pages, handlePress, scrollX }: any) => {
               index={i}
               scrollX={scrollX}
               onPress={() => handlePress(i)} // button bosilganda shu pagega o'tadi
-              dataLength={p.orders.length}
+              dataLength={p.component()?.props?.orders?.length}
             />
           );
         })}
@@ -52,21 +53,9 @@ export default TabHeader;
 
 const styles = StyleSheet.create({
   header: {
-    borderColor: "#ddd",
     position: "relative",
     justifyContent: "flex-end",
     paddingBottom: 5,
     borderRadius: Radius.primary,
-  },
-  pageTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 10,
-  },
-  item: {
-    padding: 16,
-    backgroundColor: "#f5f5f5",
-    marginVertical: 6,
-    borderRadius: 8,
   },
 });

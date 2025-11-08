@@ -39,7 +39,7 @@ interface ButtonProps {
   isLoading?: boolean; // Yuklanish holati ko‘rsatiladimi
   vibration?: boolean; // Vibratsiya kerakmi
   vibrationType?: VibrationType; // Vibratsiya turi (enum)
-  variant?: "primary" | "outline" | "danger" | "dangerOutline" | "silver";
+  variant?: "primary" | "outline" | "silver";
   fullWidth?: boolean;
   width?: number | string; // Tugma uslubi (variant)
   disabled?: boolean;
@@ -47,12 +47,7 @@ interface ButtonProps {
 }
 
 // --- Tugma variantlari uchun tip ---
-type ButtonVariant =
-  | "primary"
-  | "outline"
-  | "danger"
-  | "dangerOutline"
-  | "silver";
+type ButtonVariant = "primary" | "outline" | "silver";
 
 // --- AnimatedPressable: Reanimated bilan ishlaydigan Pressable komponent ---
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -88,20 +83,6 @@ const AppButton = ({
           borderColor: Colors.primary,
           textColor: Colors.primary,
         };
-      case "danger":
-        return {
-          backgroundColor: "red",
-          borderWidth: 0,
-          borderColor: "transparent",
-          textColor: Colors.textPrimary,
-        };
-      case "dangerOutline":
-        return {
-          backgroundColor: "transparent",
-          borderWidth: 2,
-          borderColor: "red",
-          textColor: "red",
-        };
       case "silver":
         return {
           backgroundColor: Colors.borderColor,
@@ -120,7 +101,7 @@ const AppButton = ({
     }
   };
 
-  const { backgroundColor, borderWidth, borderColor, textColor } =
+  const { backgroundColor, borderWidth, borderColor } =
     getVariantStyles(variant);
 
   useEffect(() => {
@@ -141,7 +122,7 @@ const AppButton = ({
     if (!isLoading) {
       vibration &&
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle[vibrationType]);
-      scale.value = withSpring(0.98);
+      scale.value = withSpring(0.94);
     }
   };
 
@@ -181,11 +162,13 @@ const AppButton = ({
       style={[
         styles.button,
         buttonAnimatedStyle,
-        { backgroundColor: Colors.primary },
         isLoading && { opacity: 0.7 },
-        { width: fullWidth ? "100%" : width || "auto" },
-        { borderWidth, borderColor },
-        { backgroundColor: "red" },
+        {
+          width: fullWidth ? "100%" : width || "auto",
+          borderWidth,
+          borderColor,
+          borderRadius: 20,
+        },
       ]}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}

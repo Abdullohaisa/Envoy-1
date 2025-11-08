@@ -1,6 +1,7 @@
 import AppText from "@/components/Texts/Text";
 import { View } from "react-native";
 import { orderItemStyle as styles } from "@/styles/order-item-style";
+import { useThemeColors } from "@/theme/useThemeColors";
 
 export const OrderItemHeader = ({ order }: { order: any }) => {
   const months = [
@@ -18,14 +19,19 @@ export const OrderItemHeader = ({ order }: { order: any }) => {
     "dekabr",
   ];
   const date = new Date(order.time.created);
-  const formattedDate = `${date.getDate()}-${months[date.getMonth()]}, ${date.getFullYear()}`;
+  const formattedDate = `${date.getDate()}-${months[date.getMonth()]} ${date.getFullYear()}`;
+  const Colors = useThemeColors();
 
   return (
     <View style={styles.topSection}>
       <View style={styles.itemLengthBox}>
-        <AppText style={styles.itemLength}>Raqam - {order.id}</AppText>
+        <AppText style={[styles.itemLength, { color: Colors.textSecondary }]}>
+          Raqam - {order.id}
+        </AppText>
       </View>
-      <AppText style={styles.itemLength}>{formattedDate}</AppText>
+      <AppText style={[styles.itemLength, { color: Colors.textSecondary }]}>
+        {formattedDate}
+      </AppText>
     </View>
   );
 };

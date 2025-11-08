@@ -21,10 +21,10 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { authStateAtom } from "@/service/auth/controller";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import { registerTempValues } from "@/widget/auth/register/tempValues";
 import PasswordRequirements from "@/components/PasswordRequirements/PasswordRequirements";
+import { authStateAtom } from "@/service/user/register-login/controller";
 
 const RegisterUserPasswordPage = () => {
   const [focus, setFocus] = useState({

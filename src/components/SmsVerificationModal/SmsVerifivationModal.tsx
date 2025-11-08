@@ -7,7 +7,13 @@ import SmsCodeBox from "../SmsCodeBox/SmsCodeBox";
 import NumberKeyboard from "../Keyboard/Keyboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const SmsVerificationModal = ({ onClose }: { onClose: () => void }) => {
+const SmsVerificationModal = ({
+  onClose,
+  handleSaveNumber,
+}: {
+  onClose: () => void;
+  handleSaveNumber: () => void;
+}) => {
   const Colors = useThemeColors();
 
   const [code, setCode] = useState("");
@@ -31,6 +37,7 @@ const SmsVerificationModal = ({ onClose }: { onClose: () => void }) => {
       setTimeout(() => {
         if (code === "1234") {
           setIsCodeCorrect(true);
+          handleSaveNumber();
           setTimeout(() => {
             onClose(); // ✅ sheet 0.8s keyin yopiladi
           }, 800);

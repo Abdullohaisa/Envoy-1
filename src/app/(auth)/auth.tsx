@@ -9,8 +9,8 @@ import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/Keyboard
 import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
 import { atom, useAtomValue } from "jotai";
-import { authAtom, authStateAtom } from "@/service/auth/controller";
 import { isValidLoginAtom, isValidRegAtom } from "@/atoms/reg.login.valid";
+import { authStateAtom } from "@/service/user/register-login/controller";
 
 export default function Auth() {
   const Colors = useThemeColors();

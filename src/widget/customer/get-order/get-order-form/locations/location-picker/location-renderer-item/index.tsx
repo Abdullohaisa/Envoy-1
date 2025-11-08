@@ -5,13 +5,13 @@ import {
   getOrderLocationStatusAtom,
   getOrderLocationsAtom,
 } from "@/atoms/get-order/locations";
-import { clearLocationPickerAtom } from "@/service/get-order/controller";
 import { RefObject, memo, useMemo, useCallback } from "react";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import AppText from "@/components/Texts/Text";
 import IconRenderer from "./iconRenderer";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
+import { clearLocationPickerAtom } from "@/service/customer/get-order/controller";
 
 interface LocationItem {
   id: string;

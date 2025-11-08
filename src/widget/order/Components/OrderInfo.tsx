@@ -73,7 +73,9 @@ const InfoRow = ({ text }: { text: any }) => {
     <View
       style={[styles.orderTypeBox, { backgroundColor: Colors.borderColor }]}
     >
-      <AppText style={styles.orderType}>{text}</AppText>
+      <AppText style={[styles.orderType, { color: Colors.textPrimary }]}>
+        {text}
+      </AppText>
     </View>
   );
 };

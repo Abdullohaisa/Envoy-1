@@ -16,7 +16,6 @@ export const callPhone = async (phone: string) => {
       Alert.alert("Xatolik", "Qo‘ng‘iroqni amalga oshirib bo‘lmadi.");
     }
   } catch (error) {
-    console.log(error);
     Alert.alert("Xatolik", "Qo‘ng‘iroq vaqtida xato yuz berdi.");
   }
 };

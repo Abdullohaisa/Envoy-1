@@ -17,13 +17,14 @@ export const styleUser = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   avatar: { width: "100%", height: "100%" },
-  avatarText: { fontSize: 48, fontWeight: "bold", color: "#555" },
+  avatarText: { fontSize: 55 },
   editBox: {
     position: "absolute",
     right: 10,
     bottom: 10,
     flexDirection: "row",
     gap: 4,
+    borderRadius: 14,
   },
   editPhoto: {
     width: 40,

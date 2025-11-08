@@ -14,7 +14,7 @@ const OrderItemRequests = ({ order }: any) => {
       }}
     >
       <AppText
-        variant="semiBold"
+        variant="regular"
         style={{
           color: Colors.primary,
           fontSize: 12,
@@ -23,7 +23,7 @@ const OrderItemRequests = ({ order }: any) => {
           paddingTop: 7,
         }}
       >
-        Soralgan - 12
+        So'ralgan - 12
       </AppText>
     </View>
   );

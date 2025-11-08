@@ -20,8 +20,12 @@ const languageResources: Record<string, () => Promise<any>> = {
 
 // 🧩 i18n boshlang‘ich sozlamalari
 export const initLanguage = async () => {
-  const savedLang = (await AsyncStorage.getItem(LANGUAGE_KEY)) || "uzbekistan";
-  const resource = await languageResources[savedLang]();
+  const savedLangRaw = await AsyncStorage.getItem(LANGUAGE_KEY);
+  const savedLang = (savedLangRaw || "uzbekistan").toLowerCase();
+
+  const loadResource =
+    languageResources[savedLang] || languageResources["english"];
+  const resource = await loadResource();
 
   await i18n.use(initReactI18next).init({
     resources: { [savedLang]: { translation: resource.default } },
@@ -34,10 +38,13 @@ export const initLanguage = async () => {
 
 // 🌀 Tilni o‘zgartirish
 export const setLanguage = async (lang: string) => {
-  const resource = await languageResources[lang]();
-  i18n.addResources(lang, "translation", resource.default);
-  i18n.changeLanguage(lang);
-  await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+  const key = lang.toLowerCase();
+  const loadResource = languageResources[key] || languageResources["english"];
+  const resource = await loadResource();
+
+  i18n.addResources(key, "translation", resource.default);
+  i18n.changeLanguage(key);
+  await AsyncStorage.setItem(LANGUAGE_KEY, key);
 };
 
 export default i18n;

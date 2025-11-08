@@ -12,7 +12,6 @@ import AppButton from "@/components/Buttons/Button";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AppInput from "@/components/Input/Input";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { newPasswordAtom } from "@/service/new-password/controller";
 import { phoneForSmsAtom } from "./phone";
 import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -26,6 +25,7 @@ import PasswordRequirements from "@/components/PasswordRequirements/PasswordRequ
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
+import { newPasswordAtom } from "@/service/user/reset-password/controller";
 
 const RSNewPasswordPage = () => {
   const [focus1, setFocus1] = useState(false);

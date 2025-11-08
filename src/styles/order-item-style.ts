@@ -1,20 +1,22 @@
-import { Radius, screens } from "@/shared/token";
+import { Radius, Spacing, screens } from "@/shared/token";
 import { StyleSheet } from "react-native";
 
 export const orderItemStyle = StyleSheet.create({
   box: {
     justifyContent: "center",
     alignItems: "center",
-    width: screens.width - 10,
+    width: screens.width,
+    // paddingHorizontal: 5,
   },
   item: {
     width: "100%",
     justifyContent: "flex-start",
     overflow: "hidden",
-    paddingVertical: 5,
+    paddingVertical: Spacing.horizontal,
+    paddingTop: Spacing.horizontal,
     paddingHorizontal: screens.width * 0.03,
     paddingBottom: 10,
-    borderRadius: 20,
+    // borderRadius: 10,
     gap: 10,
   },
 
@@ -44,7 +46,6 @@ export const orderItemStyle = StyleSheet.create({
   },
   orderType: {
     fontSize: 12,
-    color: "#FFF",
     textAlign: "center",
     fontWeight: "700",
   },
@@ -62,7 +63,6 @@ export const orderItemStyle = StyleSheet.create({
     height: 1,
   },
   itemLength: {
-    color: "silver",
     fontSize: 12,
   },
   itemLengthBox: {

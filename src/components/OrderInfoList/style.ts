@@ -7,7 +7,7 @@ export const StyleOrderInfoList = StyleSheet.create({
     padding: 8,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     marginBottom: 8,
     marginTop: 5,
@@ -19,7 +19,7 @@ export const StyleOrderInfoList = StyleSheet.create({
     borderBottomWidth: 0.5,
     paddingVertical: 8,
   },
-  label: { fontWeight: "400", fontSize: 16 },
+  label: { fontWeight: "400", fontSize: 14 },
   valueWrapper: {
     flexDirection: "row",
     alignItems: "center",
@@ -27,12 +27,11 @@ export const StyleOrderInfoList = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-end",
   },
-  value: { textAlign: "right", fontSize: 16 },
+  value: { textAlign: "right", fontSize: 14 },
   subBox: {
     borderRadius: 20,
     padding: 10,
     marginVertical: 6,
-    elevation: 10,
   },
   mapRow: {
     flexDirection: "row",

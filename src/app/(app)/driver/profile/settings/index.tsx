@@ -15,7 +15,6 @@ import { AppRoutes } from "@/constants/routes";
 import { router } from "expo-router";
 import AppText from "@/components/Texts/Text";
 import { safeNavigate } from "@/utils/safe-navigation";
-import { authStateAtom, logoutAtom } from "@/service/auth/controller";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Shadow } from "@/shared/token";
@@ -23,6 +22,10 @@ import ArrowIcon from "@/assets/icon/arrow";
 import { IThemeColors } from "@/theme/colors.interface";
 import { useTranslation } from "react-i18next";
 import SheetModal from "@/components/Modal/SheetModal";
+import {
+  authStateAtom,
+  logoutAtom,
+} from "@/service/user/register-login/controller";
 
 const SettingsCustomerPage = () => {
   const Colors = useThemeColors();
@@ -93,7 +96,6 @@ const SettingsCustomerPage = () => {
     if (actionType === "logout") {
       handleLogout();
     } else if (actionType === "delete_acc") {
-      console.log("delete_acc");
     }
     setAlertVisible(false);
     setActionType(null);

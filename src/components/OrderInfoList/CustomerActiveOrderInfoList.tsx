@@ -32,7 +32,7 @@ const CustomerActiveOrderInfoList = ({ order, requestedDrivers }: any) => {
       "✅ Haydovchi tanlandi",
       `${selectedDriver.name} bilan bog‘lanishingiz mumkin.`
     );
-    // modalRef.current?.dismiss();
+    modalRef.current?.dismiss();
   };
 
   return (
@@ -48,7 +48,7 @@ const CustomerActiveOrderInfoList = ({ order, requestedDrivers }: any) => {
         handleDriverPress={handleDriverPress}
       />
       <OrderListCargo order={order} />
-      <OrderListAddress locations={order.locations} />
+      <OrderListAddress locations={order?.locations} />
 
       <DriverChooseModal
         modalRef={modalRef}
@@ -75,8 +75,6 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
       <BottomSheetScrollView style={styles.sheetScroll}>
         {driver && (
           <View style={styles.modalContent}>
-            {/* === DRIVER CARD === */}
-
             <View
               style={[
                 styles.driverCard,
@@ -111,7 +109,6 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
               </View>
             </View>
 
-            {/* === RATING CARD === */}
             <View
               style={[styles.infoCard, { backgroundColor: Colors.borderColor }]}
             >

@@ -1,38 +1,54 @@
-import api from "@/axios/axios.config";
-import TabHeader from "@/components/TabContainer/TabHeader";
-import { customerOrdersAtom } from "@/service/customer-orders/controller";
-import { ORDERS, screens } from "@/shared/token";
-import { useThemeColors } from "@/theme/useThemeColors";
-import CustomerActiveOrderList from "@/widget/customer/order-list/customerActiveOrderList";
-import CustomerFinishedOrderList from "@/widget/customer/order-list/customerFinishedOrderList";
-import CustomerGivenOrderList from "@/widget/customer/order-list/customerGivenOrderList";
-import { useAtom } from "jotai";
-import { memo, useEffect, useRef } from "react";
-import { View, FlatList, Dimensions } from "react-native";
+import React, { memo, useEffect, useRef } from "react";
+import { View, FlatList } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 
+import TabHeader from "@/components/TabContainer/TabHeader";
+import CustomerOrderList from "@/widget/customer/order-list/customerOrderList";
+import { useThemeColors } from "@/theme/useThemeColors";
+import { screens } from "@/shared/token";
+
+// 🧠 State management (Jotai)
+import {
+  useFetchCustomerOrders,
+  customerOrdersAtom,
+  customerOrdersStateAtom,
+} from "@/service/customer/customer-orders/controller";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/service/user/register-login/controller";
+
 const Orders = () => {
-  const scrollX = useSharedValue(0);
-  const flatRef = useRef<FlatList>(null);
   const Colors = useThemeColors();
-  const [{ orders, state }, setOrders] = useAtom(customerOrdersAtom);
+  const { access } = useAtomValue(authAtom);
+  console.log(access);
 
-  // console.log(orders);
+  // 📦 Orders ma'lumotlarini olish uchun hook
+  const fetchOrders = useFetchCustomerOrders();
+  const { active, attached, finished } = useAtomValue(customerOrdersAtom);
+  const customerOrdersState = useAtomValue(customerOrdersStateAtom);
 
+  console.log(active);
+  console.log(customerOrdersState);
+
+  // ⚙️ Komponent yuklanganda backenddan ma’lumot olish
   useEffect(() => {
-    setOrders();
+    fetchOrders();
   }, []);
 
+  // 📜 Gorizontal scroll uchun reanimated qiymat
+  const scrollX = useSharedValue(0);
+  const flatRef = useRef<FlatList>(null);
+
+  // Scroll harakatini kuzatish (header animatsiyasi uchun)
   const onScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
+    onScroll: (e) => {
+      scrollX.value = e.contentOffset.x;
     },
   });
 
-  // button bosilganda shu funksiya ishlaydi
+  // 🔘 Header tugmasi bosilganda sahifani almashtirish
   const handlePress = (index: number) => {
     flatRef.current?.scrollToOffset({
       offset: index * screens.width,
@@ -40,51 +56,68 @@ const Orders = () => {
     });
   };
 
+  // 🔹 Har bir sahifa komponenti
   const Page = memo(({ item }: any) => <>{item.component()}</>);
 
+  // 📄 Uchta sahifa (Faol, Berilgan, Tugatilgan)
   const pages = [
     {
       key: "active",
       title: "Faol",
-      orders: ORDERS,
       component: () => (
-        <CustomerActiveOrderList orders={ORDERS} state={state} />
+        <CustomerOrderList
+          orders={active}
+          state={customerOrdersState}
+          setOrders={fetchOrders}
+          type="active"
+        />
       ),
     },
     {
-      key: "given",
+      key: "attached",
       title: "Berilgan",
-      orders: ORDERS,
-      component: () => <CustomerGivenOrderList orders={ORDERS} />,
+      component: () => (
+        <CustomerOrderList
+          orders={attached}
+          state={customerOrdersState}
+          setOrders={fetchOrders}
+          type="attached"
+        />
+      ),
     },
     {
-      key: "completed",
+      key: "finished",
       title: "Tugatilgan",
-      orders: ORDERS,
-      component: () => <CustomerFinishedOrderList orders={ORDERS} />,
+      component: () => (
+        <CustomerOrderList
+          orders={finished}
+          state={customerOrdersState}
+          setOrders={fetchOrders}
+          type="finished"
+        />
+      ),
     },
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.pageBackground, gap: 5 }}>
-      {/* Header */}
+    <View style={{ flex: 1, backgroundColor: Colors.pageBackground }}>
+      {/* 🔝 Tab Header (Faol, Berilgan, Tugatilgan) */}
       <TabHeader pages={pages} handlePress={handlePress} scrollX={scrollX} />
 
-      {/* Pages */}
+      {/* 📲 Har bir sahifa uchun FlatList (swipe bilan o‘tish mumkin) */}
       <Animated.FlatList
         ref={flatRef}
         data={pages}
         horizontal
         pagingEnabled
-        showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.key}
+        showsHorizontalScrollIndicator={false}
         onScroll={onScroll}
         scrollEventThrottle={16}
         renderItem={({ item }) => <Page item={item} />}
         contentContainerStyle={{
-          paddingBottom: screens.height * 0.096,
+          paddingBottom: screens.height * 0.09 + 5,
         }}
-        scrollEnabled={true}
       />
     </View>
   );

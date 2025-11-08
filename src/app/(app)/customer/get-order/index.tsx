@@ -14,11 +14,9 @@ import { resetOrderAtom } from "@/atoms/get-order";
 import { OrderButton } from "@/widget/customer/get-order/get-order-button";
 import { useOrderFields } from "@/hooks/useOrderFields";
 import { OrderActions } from "@/widget/customer/get-order/order-action-button";
-import { orderButtons } from "@/widget/customer/get-order/orderButtons";
 import { useFocusEffect } from "expo-router";
 import OrderReviewSheet from "@/widget/customer/get-order/order-review-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { authStateAtom } from "@/service/auth/controller";
 import { AppRoutes } from "@/constants/routes";
 import { Feather } from "@expo/vector-icons";
 
@@ -141,13 +139,20 @@ const GetOrder = () => {
     <>
       <PageHeader title="Buyurtma berish" />
 
-      <View style={{ flex: 1, paddingTop: 15 }}>
+      <View style={{ flex: 1 }}>
         <FlatList
           data={buttons}
           renderItem={renderItem}
           keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles(Colors).container}
+          style={{
+            marginTop: 5,
+            paddingTop: Spacing.horizontal - 5,
+            borderRadius: 5,
+            overflow: "hidden",
+            marginHorizontal: Spacing.horizontal,
+          }}
         />
 
         <OrderActions
@@ -170,7 +175,7 @@ const styles = (Colors: any) =>
     container: {
       flexGrow: 1,
       gap: 10,
-      marginHorizontal: Spacing.horizontal,
+      // marginHorizontal: Spacing.horizontal,
       paddingBottom: 20,
     },
   });

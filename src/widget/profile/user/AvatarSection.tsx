@@ -4,8 +4,8 @@ import { screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { Image } from "expo-image";
-import { useRef } from "react";
-import { Pressable, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -16,6 +16,13 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import {
+  userDataAtom,
+  userDataStateAtom,
+} from "@/service/user/get-user-info/controller";
+import { useAtomValue } from "jotai";
+import AppImage from "@/components/Image/Image";
+import CustomSpinner from "@/components/Spinner/Spinner";
 
 const AvatarSection = ({
   image,
@@ -23,10 +30,22 @@ const AvatarSection = ({
   setFullImage,
   setEditMode,
   editMode,
+  isLoading: loading,
 }: any) => {
   const Colors = useThemeColors();
   const ref = useRef<BottomSheetModalMethods>(null);
   const { t } = useTranslation();
+  const userData = useAtomValue(userDataAtom);
+  const { isLoading } = useAtomValue(userDataStateAtom);
+  const [blur, setBlur] = useState(0);
+
+  useEffect(() => {
+    if (editMode) {
+      setBlur(10);
+    } else {
+      setTimeout(() => setBlur(0), 200);
+    }
+  }, [editMode]);
 
   const pickFromCamera = async () => {
     try {
@@ -43,7 +62,11 @@ const AvatarSection = ({
       });
 
       if (!result.canceled && result.assets?.length > 0) {
-        setImage(result.assets[0].uri);
+        setImage({
+          uri: result.assets[0].uri,
+          fileName: result.assets[0].fileName,
+          mimeType: result.assets[0].mimeType,
+        });
         ref.current?.dismiss();
       }
     } catch (error) {}
@@ -66,7 +89,11 @@ const AvatarSection = ({
       });
 
       if (!result.canceled && result.assets?.length > 0) {
-        setImage(result.assets[0].uri);
+        setImage({
+          uri: result.assets[0].uri,
+          fileName: result.assets[0].fileName,
+          mimeType: result.assets[0].mimeType,
+        });
         ref.current?.dismiss();
       }
     } catch (error) {}
@@ -80,6 +107,8 @@ const AvatarSection = ({
     return { height, backgroundColor };
   });
 
+  const thisImage = image.uri ? image.uri : userData.image;
+
   return (
     <Animated.View style={[styles.avatarContainer, animatedStyle]}>
       <Pressable
@@ -89,23 +118,49 @@ const AvatarSection = ({
           { backgroundColor: Colors.Boxbackground },
         ]}
       >
-        {image ? (
-          <Image
-            source={{ uri: image }}
+        {isLoading ||
+          (loading && (
+            <View
+              style={[
+                {
+                  backgroundColor: "rgb(0, 0, 0, .4)",
+                  position: "absolute",
+                  zIndex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+                StyleSheet.absoluteFill,
+              ]}
+            >
+              <CustomSpinner color={Colors.primary} />
+            </View>
+          ))}
+
+        {image.uri || userData.image ? (
+          <AppImage
+            source={thisImage}
             style={[styles.avatar]}
-            blurRadius={editMode ? 15 : 0}
+            blurRadius={blur}
           />
         ) : (
-          <AppText style={[styles.avatarText, { color: Colors.textPrimary }]}>
-            A
+          <AppText
+            variant="bold"
+            style={[styles.avatarText, { color: Colors.textPrimary }]}
+          >
+            {userData.username?.slice(0, 1)}
           </AppText>
         )}
       </Pressable>
 
       {/* Edit tugmalar */}
-      <View style={styles.editBox}>
+      <View
+        style={[
+          styles.editBox,
+          { backgroundColor: "rgba(0, 0, 0, 0.5)", borderRadius: 15 },
+        ]}
+      >
         <Pressable style={styles.editPhoto} onPress={() => setEditMode(true)}>
-          <MaterialIcons name="edit" size={20} color={Colors.primary} />
+          <MaterialIcons name="edit" size={20} color={Colors.textPrimary} />
         </Pressable>
         <Pressable
           style={styles.editPhoto}
@@ -114,7 +169,7 @@ const AvatarSection = ({
           <MaterialIcons
             name="add-photo-alternate"
             size={22}
-            color={Colors.primary}
+            color={Colors.textPrimary}
           />
         </Pressable>
       </View>

@@ -6,71 +6,164 @@ import {
   RefreshControl,
   BackHandler,
 } from "react-native";
-import { useThemeColors } from "@/theme/useThemeColors";
-import { Spacing, screens } from "@/shared/token";
 import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { AxiosError } from "axios";
+
+// 🔸 Mavzular, tokenlar, yo‘nalishlar
+import { useThemeColors } from "@/theme/useThemeColors";
+import { Spacing, screens } from "@/shared/token";
+import { AppRoutes } from "@/constants/routes";
+
+// 🔸 Komponentlar
 import ArrowIcon from "@/assets/icon/arrow";
+import AppText from "@/components/Texts/Text";
 import FullscreenImage from "@/components/FullScreenImage/FullScreenImage";
+import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
+import SmsVerificationModal from "@/components/SmsVerificationModal/SmsVerifivationModal";
+
+// 🔸 Profil vidjetlari
+import UserHeader from "@/widget/profile/user/UserHeader";
 import AvatarSection from "@/widget/profile/user/AvatarSection";
 import UserInfoRow from "@/widget/profile/user/UserInfoRow";
 import {
   UserCommentRow,
   UserRatingRow,
 } from "@/widget/profile/user/UserRatingRow";
-import UserHeader from "@/widget/profile/user/UserHeader";
+
+// 🔸 Xizmatlar
 import { safeNavigate } from "@/utils/safe-navigation";
 import { router } from "expo-router";
-import { AppRoutes } from "@/constants/routes";
-import AppText from "@/components/Texts/Text";
-import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import SmsVerificationModal from "@/components/SmsVerificationModal/SmsVerifivationModal";
-import { useTranslation } from "react-i18next";
+import api from "@/axios/axios.config";
+import {
+  useFetchUserData,
+  userDataAtom,
+} from "@/service/user/get-user-info/controller";
 
+// =====================================================
+//                 EditCustomerProfilePage
+// =====================================================
 const EditCustomerProfilePage = () => {
   const Colors = useThemeColors();
-  const [name, setName] = useState("Abdullah");
-  const [phone, setPhone] = useState("+998901234567");
-  const [originalPhone] = useState("+998901234567");
-  const [isPhoneChanged, setIsPhoneChanged] = useState(false);
-  const [rating] = useState(1);
-  const [image, setImage] = useState<string | null>(null);
-  const [fullImage, setFullImage] = useState<string | null>(null);
-  const [editMode, setEditMode] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
+  const userData = useAtomValue(userDataAtom);
+  const fetchUserData = useFetchUserData();
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const marginTop = withTiming(
-      editMode ? insets.top + screens.height * 0.083 : 15
-    );
-    return { marginTop };
+  // 🔹 State lar
+  const [name, setName] = useState(userData.username);
+  const [phone, setPhone] = useState(userData.phone);
+  const [originalPhone] = useState(userData.phone);
+  const [originalName] = useState(userData.username);
+  const [rating] = useState(1);
+  const [image, setImage] = useState({
+    uri: null,
+    fileName: null,
+    mimeType: null,
   });
+  const [f, setFullImage] = useState<string | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSave = () => {
+  // =====================================================
+  //                     FUNKSIYALAR
+  // =====================================================
+
+  // 🔹 Foydalanuvchi ma'lumotlarini saqlash
+  const handleSave = async () => {
     setEditMode(false);
-    if (phone !== originalPhone) {
-      setIsPhoneChanged(true);
+    const newData: any = {};
+
+    if (name !== originalName && phone === originalPhone) {
+      newData.username = name;
+      setIsLoading(true);
+      try {
+        const { data } = await api.post("/user/update/", newData);
+        await fetchUserData();
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          // console.log(error.response?.data.message);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (phone !== originalPhone) {
       sheetRef.current?.present();
-    } else {
-      setIsPhoneChanged(false);
     }
   };
 
-  // 🔹 Refresh funksiyasi
+  // 🔹 Telefon raqamini SMS orqali tasdiqlab saqlash
+  const handleSaveNumber = async () => {
+    const newData: any = {};
+
+    if (name !== originalName) newData.username = name;
+    if (phone !== originalPhone) newData.phone = phone;
+
+    setIsLoading(true);
+
+    try {
+      const { data } = await api.post("/user/update/", newData);
+      await fetchUserData();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleSaveImage = async () => {
+    if (!image || !image.uri) return;
+
+    const formData = new FormData();
+
+    // ✅ null bo‘lishining oldini olish
+    const uri = image.uri;
+    const name = image.fileName || "photo.jpg";
+    const type = image.mimeType || "image/jpeg";
+
+    // @ts-ignore
+    formData.append("image", { uri, name, type });
+    setIsLoading(true);
+    try {
+      const { data } = await api.post("/user/update/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // console.log("data", data);
+      await fetchUserData();
+      setImage({ uri: null, fileName: null, mimeType: null });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        // console.log(error.response?.data);
+      } else {
+        // console.log("Noma'lum xatolik:", error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleSaveImage();
+  }, [image?.uri]);
+
+  // 🔹 Yangilash (pull-to-refresh)
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1200);
+    setTimeout(() => setRefreshing(false), 1200);
   }, []);
 
+  // 🔹 Back tugmasi orqali edit rejimni yopish
   useEffect(() => {
     const onBackPress = () => {
       if (editMode) {
@@ -79,18 +172,31 @@ const EditCustomerProfilePage = () => {
       }
       return false;
     };
-    const subscration = BackHandler.addEventListener(
+
+    const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
       onBackPress
     );
-
-    return () => subscration.remove();
+    return () => subscription.remove();
   }, [editMode]);
 
+  // 🔹 Animatsion stil (edit rejimda yuqoriga siljitish)
+  const animatedStyle = useAnimatedStyle(() => {
+    const marginTop = withTiming(
+      editMode ? insets.top + screens.height * 0.083 : 15
+    );
+    return { marginTop };
+  });
+
+  // =====================================================
+  //                       RENDER
+  // =====================================================
   return (
     <View style={{ flex: 1, backgroundColor: Colors.pageBackground }}>
+      {/* 🔸 Yuqori header */}
       <UserHeader handleSave={handleSave} editMode={editMode} />
 
+      {/* 🔸 Orqaga qaytish tugmasi */}
       <Pressable
         onPress={() => router.back()}
         style={{
@@ -104,6 +210,7 @@ const EditCustomerProfilePage = () => {
         <ArrowIcon color={Colors.textSecondary} />
       </Pressable>
 
+      {/* 🔸 Asosiy scroll qismi */}
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -111,58 +218,56 @@ const EditCustomerProfilePage = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.primary} // iOS uchun
-            colors={[Colors.primary]} // Android uchun
+            tintColor={Colors.primary}
+            colors={[Colors.primary]}
             progressBackgroundColor={Colors.Boxbackground}
-            progressViewOffset={50} // 👈 indikatorni pastroqqa tushiradi
+            progressViewOffset={50}
           />
         }
       >
+        {/* 🔹 Avatar qismi */}
         <AvatarSection
           image={image}
           setImage={setImage}
           setFullImage={setFullImage}
           editMode={editMode}
           setEditMode={setEditMode}
+          isLoading={isLoading}
         />
 
+        {/* 🔹 Foydalanuvchi ma'lumotlari */}
         <Animated.View
           style={[
-            {
-              paddingHorizontal: Spacing.horizontal,
-              gap: 10,
-            },
+            { paddingHorizontal: Spacing.horizontal, gap: 10 },
             animatedStyle,
           ]}
         >
           <UserInfoRow
-            type={"name"}
+            type="name"
             label={t("name")}
             value={name}
             onChange={setName}
             editMode={editMode}
           />
           <UserInfoRow
+            type="phone"
             label={t("phone")}
             value={phone}
             originalValue={originalPhone}
             onChange={setPhone}
-            onChangeDetected={setIsPhoneChanged} // 👈 shu orqali tashqaridan bilib olamiz
             editMode={editMode}
-            type="phone"
           />
 
+          {/* 🔹 Telefon tasdiqlash eslatmasi */}
           {editMode && (
             <View
-              style={[
-                {
-                  backgroundColor: Colors.Boxbackground,
-                  justifyContent: "flex-start",
-                  borderRadius: 20,
-                  padding: 10,
-                  elevation: 10,
-                },
-              ]}
+              style={{
+                backgroundColor: Colors.Boxbackground,
+                justifyContent: "flex-start",
+                borderRadius: 20,
+                padding: 10,
+                elevation: 10,
+              }}
             >
               <AppText
                 style={{
@@ -176,6 +281,7 @@ const EditCustomerProfilePage = () => {
             </View>
           )}
 
+          {/* 🔹 Reyting va kommentlar */}
           {!editMode && (
             <>
               <UserRatingRow rating={rating} />
@@ -192,18 +298,23 @@ const EditCustomerProfilePage = () => {
         </Animated.View>
       </ScrollView>
 
+      {/* 🔹 SMS Tasdiqlash oynasi */}
       <CustomBottomSheetModal
         insetsTopEnabled
         ref={sheetRef}
         snapPoints={["100%"]}
         topInset={insets.top}
       >
-        <SmsVerificationModal onClose={() => sheetRef.current?.dismiss()} />
+        <SmsVerificationModal
+          onClose={() => sheetRef.current?.dismiss()}
+          handleSaveNumber={handleSaveNumber}
+        />
       </CustomBottomSheetModal>
 
-      {fullImage && (
+      {/* 🔹 To‘liq rasm */}
+      {/* {fullImage.uri && (
         <FullscreenImage uri={fullImage} onClose={() => setFullImage(null)} />
-      )}
+      )} */}
     </View>
   );
 };

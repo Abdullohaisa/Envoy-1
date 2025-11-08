@@ -15,16 +15,17 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
 import AppButton from "@/components/Buttons/Button";
 import AppText from "@/components/Texts/Text";
-import {
-  makeOrderAtom,
-  resetMakeOrderAtom,
-} from "@/service/get-order/controller";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { Spacing, screens } from "@/shared/token";
 import GetOrderInfoList from "@/components/OrderInfoList/GetOrderInfoList";
 import SheetModal from "@/components/Modal/SheetModal";
+import {
+  makeOrderAtom,
+  resetMakeOrderAtom,
+} from "@/service/customer/get-order/controller";
+import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
 
 // -------------------- 🔊 SUCCESS OVOZ FUNKSIYASI --------------------
 const useSuccessSound = (trigger: boolean) => {
@@ -143,6 +144,7 @@ const OrderReviewSheetComponent = ({ order, ref }: any) => {
   const topInset = useSafeAreaInsets().top;
   const [{ isLoading, makeOrder }, setMakeOrder] = useAtom(makeOrderAtom);
   const [, resetOrder] = useAtom(resetMakeOrderAtom);
+  const fetchOrders = useFetchCustomerOrders();
 
   useSuccessSound(makeOrder && !isLoading);
 
@@ -151,6 +153,12 @@ const OrderReviewSheetComponent = ({ order, ref }: any) => {
     resetOrder();
     setTimeout(() => router.push(AppRoutes.customer.orders), 500);
   };
+
+  useEffect(() => {
+    if (makeOrder) {
+      fetchOrders();
+    }
+  }, [makeOrder]);
 
   return (
     <CustomBottomSheetModal

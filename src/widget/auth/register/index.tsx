@@ -11,8 +11,8 @@ import { AppRoutes } from "@/constants/routes";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 import { vibration } from "@/utils/hapticks";
 import { RegisterTempValues, registerTempValues } from "./tempValues";
-import useCheckRegister from "@/service/check-register/controller";
-import { smsAtom } from "@/service/sms/controller";
+import useCheckRegister from "@/service/user/check-register/controller";
+import { smsAtom } from "@/service/user/sms/controller";
 import { isValidRegAtom } from "@/atoms/reg.login.valid";
 import { safeNavigate } from "@/utils/safe-navigation";
 

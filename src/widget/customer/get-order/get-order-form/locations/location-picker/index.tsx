@@ -11,11 +11,11 @@ import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAtom, useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
-import { locationPickerAtom } from "@/service/get-order/controller";
 import LocationPickerInput from "./input";
 import LocationPickerList from "./location-list";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius } from "@/shared/token";
+import { locationPickerAtom } from "@/service/customer/get-order/controller";
 
 // 🔹 Memo LocationPickerInput wrapper
 const MemoLocationPickerInput = forwardRef(

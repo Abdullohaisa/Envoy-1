@@ -2,6 +2,7 @@ import api from "@/axios/axios.config";
 import { atom } from "jotai";
 import { LOCATION_PICKER_API } from "./endpoint";
 import axios, { AxiosError } from "axios";
+import { useFetchCustomerOrders } from "../customer-orders/controller";
 
 // 📌 Oldin tuzgan interface
 export interface LocationSuggestion {

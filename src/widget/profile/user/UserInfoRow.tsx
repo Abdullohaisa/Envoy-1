@@ -217,7 +217,6 @@ const UserInfoRow = ({
   onChange,
   type,
   originalValue, // 🔹 Tashqaridan yuboriladi (asl qiymat)
-  onChangeDetected, // 🔹 Tashqariga signal yuboruvchi callback
 }: any) => {
   const Colors = useThemeColors();
   const [copy, setCopy] = useState(false);
@@ -242,15 +241,13 @@ const UserInfoRow = ({
 
   // 🔹 Har safar localValue o‘zgarsa, tashqariga signal yubor
   useEffect(() => {
-    if (!originalValue || !onChangeDetected) return;
+    if (!originalValue) return;
 
     // faqat textlarni normalizatsiya qilamiz
     const normalize = (v: string) => v.replace(/\s|[-+]/g, "").trim(); // +998 90 392-36-25 -> 998903923625
 
     const changed =
       normalize(localValue || "") !== normalize(originalValue || "");
-
-    onChangeDetected(changed);
   }, [localValue]);
 
   return (

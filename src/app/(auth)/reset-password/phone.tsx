@@ -16,8 +16,8 @@ import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/Keyboard
 import { atom, useAtom, useSetAtom } from "jotai";
 import { vibration } from "@/utils/hapticks";
 import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
-import useCheckRegister from "@/service/check-register/controller";
-import { smsAtom } from "@/service/sms/controller";
+import useCheckRegister from "@/service/user/check-register/controller";
+import { smsAtom } from "@/service/user/sms/controller";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { safeNavigate } from "@/utils/safe-navigation";
