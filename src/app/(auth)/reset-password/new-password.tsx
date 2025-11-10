@@ -186,7 +186,7 @@ const RSNewPasswordPage = () => {
                 style={{ paddingHorizontal: Spacing.horizontal }}
               >
                 <AppButton
-                  text="Yuborish"
+                  title="Yuborish"
                   onPress={handleSubmit(onSubmit)}
                   isLoading={state.isLoading}
                 />

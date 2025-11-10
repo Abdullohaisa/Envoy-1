@@ -32,11 +32,11 @@ const AuthButton = ({
     <View style={{}}>
       <KeyboardResponsiveView>
         <AppButton
-          text={text}
-          textStyle={textStyle}
+          title={text}
+          titleStyle={textStyle}
           style={style}
           disabled={disabled}
-          loading={loading}
+          isLoading={loading}
           {...props}
         />
       </KeyboardResponsiveView>

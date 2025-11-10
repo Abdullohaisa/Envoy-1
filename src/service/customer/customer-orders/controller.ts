@@ -140,7 +140,6 @@ export const useFetchCustomerOrders = () =>
 
     try {
       const { data } = await api.get("/order/customer-order/");
-      console.log("data -->", data);
       set(customerOrdersAtom, {
         active: data.active,
         attached: data.attached,
@@ -148,7 +147,6 @@ export const useFetchCustomerOrders = () =>
       });
       await AsyncStorage.setItem("customerOrders", JSON.stringify(data));
     } catch (error: any) {
-      console.log(error);
       if (error instanceof AxiosError) {
         set(customerOrdersStateAtom, (prev) => ({
           ...prev,
@@ -170,61 +168,3 @@ export const useFetchCustomerOrders = () =>
       set(customerOrdersStateAtom, (prev) => ({ ...prev, isLoading: false }));
     }
   });
-
-// const storage = createJSONStorage<ICustomerOrders>(() => AsyncStorage);
-
-// const customerOrdersState = atomWithStorage<ICustomerOrders>(
-//   "customerOrders",
-//   {
-//     active: [],
-//     attached: [],
-//     finished: [],
-//   },
-//   storage
-// );
-
-// const fetchState = atom<IFetchState>({
-//   isLoading: false,
-//   error: null,
-// });
-
-// export const customerOrdersAtom = atom(
-//   async (get) => {
-//     const orders = await get(customerOrdersState);
-//     const state = get(fetchState);
-
-//     return { orders, state };
-//   },
-//   async (_get, set) => {
-//     set(fetchState, {
-//       isLoading: true,
-//       error: null,
-//     });
-
-//     try {
-//       const { data } = await api.get("/order/customer-order/");
-//       set(customerOrdersState, {
-//         active: data.active,
-//         attached: data.attached,
-//         finished: data.finished,
-//       });
-//     } catch (error: any) {
-//       if (error instanceof AxiosError) {
-//         set(fetchState, (prev) => ({
-//           ...prev,
-//           error: error.response?.data?.message ?? "Server xatosi",
-//         }));
-//       } else {
-//         set(fetchState, (prev) => ({
-//           ...prev,
-//           error: "Noma’lum xato yuz berdi",
-//         }));
-//       }
-//     } finally {
-//       set(fetchState, (prev) => ({
-//         ...prev,
-//         isLoading: false,
-//       }));
-//     }
-//   }
-// );

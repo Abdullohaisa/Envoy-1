@@ -16,13 +16,14 @@ import LocationPickerList from "./location-list";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius } from "@/shared/token";
 import { locationPickerAtom } from "@/service/customer/get-order/controller";
+import { t } from "i18next";
 
 // 🔹 Memo LocationPickerInput wrapper
 const MemoLocationPickerInput = forwardRef(
   ({ value, onChangeText }: any, ref) => (
     <LocationPickerInput
       ref={ref}
-      placeholder="Qayerdan..."
+      placeholder={`${t("from")}...`}
       value={value}
       onChangeText={onChangeText}
     />

@@ -157,7 +157,7 @@ const RegisterUserInfoPage = () => {
           <KeyboardResponsiveView
             style={{ paddingHorizontal: Spacing.horizontal }}
           >
-            <AppButton text="Davom etish" onPress={handleSubmit(onSubmit)} />
+            <AppButton title="Davom etish" onPress={handleSubmit(onSubmit)} />
           </KeyboardResponsiveView>
         </Animated.View>
       </View>

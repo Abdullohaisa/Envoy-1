@@ -90,7 +90,6 @@ const EditCustomerProfilePage = () => {
         await fetchUserData();
       } catch (error) {
         if (error instanceof AxiosError) {
-          // console.log(error.response?.data.message);
         }
       } finally {
         setIsLoading(false);
@@ -139,14 +138,11 @@ const EditCustomerProfilePage = () => {
         },
       });
 
-      // console.log("data", data);
       await fetchUserData();
       setImage({ uri: null, fileName: null, mimeType: null });
     } catch (error) {
       if (error instanceof AxiosError) {
-        // console.log(error.response?.data);
       } else {
-        // console.log("Noma'lum xatolik:", error);
       }
     } finally {
       setIsLoading(false);

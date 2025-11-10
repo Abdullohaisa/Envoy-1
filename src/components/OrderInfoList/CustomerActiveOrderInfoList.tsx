@@ -141,7 +141,7 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
 
             {/* === BUTTONS === */}
             <AppButton
-              text="Tanlash"
+              title="Tanlash"
               onPress={() => setModal(true)}
               variant="primary"
             />

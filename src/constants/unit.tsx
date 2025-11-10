@@ -11,46 +11,47 @@ export type UnitType =
 
 type UnitOption = { label: string; short: string };
 
-export const UNIT_OPTIONS: Record<UnitType, UnitOption[]> = {
+export const UNIT_OPTIONS = (): Record<UnitType, UnitOption[]> => ({
   weight: [
-    { label: "Gramm", short: "g" },
-    { label: "Kilogramm", short: "kg" },
-    { label: "Tonna", short: "t" },
+    { label: t("gram"), short: t("g") },
+    { label: t("kilogram"), short: t("kg") },
+    { label: t("ton"), short: t("t") },
   ],
   length: [
-    { label: "Santimetr", short: "sm" },
-    { label: "Metr", short: "m" },
+    { label: t("centimeter"), short: t("cm") },
+    { label: t("meter"), short: t("m") },
   ],
   height: [
-    { label: "Santimetr", short: "sm" },
-    { label: "Metr", short: "m" },
+    { label: t("centimeter"), short: t("cm") },
+    { label: t("meter"), short: t("m") },
   ],
   width: [
-    { label: "Santimetr", short: "sm" },
-    { label: "Metr", short: "m" },
+    { label: t("centimeter"), short: t("cm") },
+    { label: t("meter"), short: t("m") },
   ],
   quantity: [
-    { label: "Dona", short: "dona" },
-    { label: "Quti", short: "quti" },
-    { label: "Qop", short: "qop" },
-    { label: "Palet", short: "palet" },
-    { label: "Shisha", short: "shisha" }, // ichimliklar uchun
+    { label: t("piece"), short: t("piece") },
+    { label: t("box"), short: t("box") },
+    { label: t("bag"), short: t("bag") },
+    { label: t("pallet"), short: t("pallet") },
+    { label: t("bottle"), short: t("bottle") },
   ],
   volume: [
-    { label: "Millilitr", short: "ml" },
-    { label: "Litr", short: "l" },
-    { label: "Kub metr", short: "m³" },
+    { label: t("milliliter"), short: t("ml") },
+    { label: t("liter"), short: t("l") },
+    { label: t("cubic_meter"), short: t("m3") },
   ],
-  cargoType: [], // ✅ yuk turi uchun joy (hozircha bo‘sh)
+  cargoType: [],
   price: [
-    { label: "So'm", short: "UZS" },
-    { label: "Dollar", short: "USD" },
-    { label: "Rubl", short: "RUB" },
+    { label: t("uzs"), short: t("uzs") },
+    { label: t("usd"), short: t("usd") },
+    { label: t("rub"), short: t("rub") },
   ],
   comment: [],
-};
+});
 
 import ArrowIcon from "@/assets/icon/arrow";
+import { t } from "i18next";
 import { JSX } from "react";
 
 export const UNIT_ICONS: Record<string, JSX.Element> = {

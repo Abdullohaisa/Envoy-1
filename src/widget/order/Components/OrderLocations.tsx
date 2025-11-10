@@ -21,18 +21,18 @@ export const OrderItemLocations = ({ order }: { order: any }) => {
           variant="semiBold"
           style={[styles.locationItemText, { color: Colors.textPrimary }]}
         >
-          {order.locations.pickup[0].short_title}
+          {order?.locations?.pickup[0]?.short_title}
         </AppText>
       </View>
 
       {/* O‘rtadagi */}
       <View style={styles.locationItem}>
-        {order.locations.pickup.map((_: any, i: number) =>
+        {order?.locations?.pickup?.map((_: any, i: number) =>
           i === 0 ? null : (
             <Octicons key={`p${i}`} name={"dot"} size={12} color={"#2ecc71"} />
           )
         )}
-        {order.locations.dropoff.map((_: any, i: number) =>
+        {order?.locations?.dropoff?.map((_: any, i: number) =>
           i === 0 ? null : (
             <Octicons key={`d${i}`} name={"dot"} size={12} color={"#e74c3c"} />
           )
@@ -45,7 +45,7 @@ export const OrderItemLocations = ({ order }: { order: any }) => {
           variant="semiBold"
           style={[styles.locationItemText, { color: Colors.textPrimary }]}
         >
-          {order.locations.dropoff[0].short_title}
+          {order?.locations?.dropoff[0]?.short_title}
         </AppText>
         <Octicons name={"dot"} size={12} color={"#e74c3c"} />
       </View>

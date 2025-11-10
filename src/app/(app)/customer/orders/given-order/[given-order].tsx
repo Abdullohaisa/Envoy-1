@@ -67,7 +67,7 @@ const cargo = {
   },
   status: {
     order_status: "active",
-    driver: { departed: true, picked_up: true, delivered: true },
+    driver: { departed: false, picked_up: false, delivered: false },
   },
   distances: { total: null },
   price: { value: 1200000, currency: "UZS" },

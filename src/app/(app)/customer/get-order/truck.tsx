@@ -7,11 +7,12 @@ import CustomerGetOrderTruckList from "@/widget/customer/get-order/get-order-for
 import { router, useFocusEffect } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 const TruckList: React.FC = () => {
   const Colors = useThemeColors();
   const flatListRef = useRef<FlatList<TruckItem> | null>(null);
-
+  const { t } = useTranslation();
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -29,7 +30,7 @@ const TruckList: React.FC = () => {
   return (
     <View style={[{ flex: 1, backgroundColor: Colors.pageBackground }]}>
       <PageHeader
-        title="Yuk mashina"
+        title={t("cargo_truck")}
         enableBack
         routePath={AppRoutes.customer.getOrder.index}
       />
@@ -40,5 +41,3 @@ const TruckList: React.FC = () => {
 };
 
 export default TruckList;
-
-const styles = StyleSheet.create({});

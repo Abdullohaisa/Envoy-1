@@ -55,12 +55,13 @@ const TopControls = ({
 }) => {
   const Colors = useThemeColors();
   const locationIndexType = useAtomValue(getOrderLocationStatusAtom);
+  const { t } = useTranslation();
 
   const index = locationIndexType.index + 1;
   const type =
-    locationIndexType.locationType === "pickup" ? "Yuklash" : "Tushirish";
+    locationIndexType.locationType === "pickup" ? t("pickup") : t("dropoff");
 
-  const title = `${index} chi ${type} manzili`;
+  const title = `${index}  ${type} ${t("address").toLowerCase()}`;
 
   return (
     <View style={[styles.box2]} pointerEvents="box-none">
@@ -73,7 +74,7 @@ const TopControls = ({
         }}
         onPress={() => router.back()}
       >
-        <CiricleArrowIcon />
+        <CiricleArrowIcon color={Colors.textSecondary} />
       </TouchableOpacity>
       <TouchableOpacity
         style={{
@@ -84,7 +85,7 @@ const TopControls = ({
         }}
         onPress={getUserLocation}
       >
-        <Ionicons name="locate" size={24} color="#fff" />
+        <Ionicons name="locate" size={24} color={Colors.textSecondary} />
       </TouchableOpacity>
 
       <View style={[styles.inputRow, { backgroundColor: Colors.borderColor }]}>
@@ -96,7 +97,7 @@ const TopControls = ({
             {title}
           </AppText>
         </View>
-        <AppButton text={"Tanlash"} onPress={onSelect} />
+        <AppButton title={t("select")} onPress={onSelect} />
       </View>
     </View>
   );
@@ -120,7 +121,7 @@ const MapComponent = ({
   const mapRef = useRef<MapView>(null);
   const HERE_API_KEY = process.env.EXPO_PUBLIC_HERE_API_KEY;
   const theme = useAtomValue(themeAtom);
-
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const scaleValue = useSharedValue(1);
@@ -239,7 +240,7 @@ const MapComponent = ({
       // 🔹 Faqat setNewLocation ga yozish
       setNewLocation(newLocation);
     } catch (err) {
-      alert("Manzilni olishda xatolik yuz berdi");
+      alert(t("address_error"));
     } finally {
       setLoading(false);
     }
@@ -289,12 +290,14 @@ const MapComponent = ({
 };
 
 import * as Location from "expo-location";
+import { useTranslation } from "react-i18next";
 
 // -------------------- 🔹 MapScreen --------------------
 export default function MapScreen() {
   const [visible, setVisible] = useState(false);
   const locationIndexType = useAtomValue(getOrderLocationStatusAtom);
   const [locations, setLocations] = useAtom(getOrderLocationsAtom);
+  const { t } = useTranslation();
 
   const initialLocation: ILocation =
     locations[locationIndexType.locationType][locationIndexType.index];
@@ -324,7 +327,7 @@ export default function MapScreen() {
 
       const updatedLocation: ILocation = {
         id: initialLocation.id || "",
-        full_title: initialLocation.full_title || "Manzil tanlanmagan",
+        full_title: initialLocation.full_title || t("address_not_selected"),
         short_title: initialLocation.short_title || "",
         coordinates: {
           latitude: lat,
@@ -387,11 +390,11 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   map: { flex: 1, zIndex: 0 },
   box2: {
-    minHeight: screens.height * 0.15,
+    minHeight: screens.height * 0.14,
     padding: 10,
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,
-    gap: 20,
+    gap: 10,
     position: "absolute",
     bottom: 0,
     left: 0,
@@ -427,7 +430,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, color: "#fff", fontSize: 12 },
   topButtons: {
     position: "absolute",
-    top: -screens.height * 0.08,
+    top: -screens.height * 0.06,
     width: 50,
     height: 50,
     alignItems: "center",

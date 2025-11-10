@@ -19,12 +19,14 @@ import OrderReviewSheet from "@/widget/customer/get-order/order-review-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { AppRoutes } from "@/constants/routes";
 import { Feather } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 const GetOrder = () => {
   const Colors = useThemeColors();
   const resetOrder = useSetAtom(resetOrderAtom);
   const { isFieldFilled, allFilled, anyFilled, order } = useOrderFields();
   const reviewSheetRef = useRef<BottomSheetModalMethods>(null);
+  const { t } = useTranslation();
 
   type TOrderButton = {
     key: string;
@@ -37,14 +39,14 @@ const GetOrder = () => {
   const orderButtons: TOrderButton[] = [
     {
       key: "cargo",
-      title: "Yuk",
+      title: t("cargo"),
       icon: (color, size) => <Feather name="box" size={size} color={color} />,
       route: AppRoutes.customer.getOrder.cargo,
       getValue: (order) => order?.cargo?.type?.value || null,
     },
     {
       key: "locations",
-      title: "Manzillar",
+      title: t("locations"),
       icon: (color, size) => (
         <Feather name="map-pin" size={size} color={color} />
       ),
@@ -60,14 +62,14 @@ const GetOrder = () => {
     },
     {
       key: "truck",
-      title: "Mashina",
+      title: t("truck"),
       icon: (color, size) => <Feather name="truck" size={size} color={color} />,
       route: AppRoutes.customer.getOrder.truck,
       getValue: (order) => order?.truck || null,
     },
     {
       key: "price",
-      title: "Narx",
+      title: t("price"),
       icon: (color, size) => (
         <Feather name="dollar-sign" size={size} color={color} />
       ),
@@ -77,7 +79,7 @@ const GetOrder = () => {
     },
     {
       key: "time",
-      title: "Vaqt",
+      title: t("time"),
       icon: (color, size) => <Feather name="clock" size={size} color={color} />,
       route: AppRoutes.customer.getOrder.time,
       getValue: (order) =>
@@ -87,7 +89,7 @@ const GetOrder = () => {
     },
     {
       key: "comment",
-      title: "Izoh",
+      title: t("comment"),
       icon: (color, size) => (
         <Feather name="message-square" size={size} color={color} />
       ),
@@ -137,7 +139,7 @@ const GetOrder = () => {
 
   return (
     <>
-      <PageHeader title="Buyurtma berish" />
+      <PageHeader title={t("make_order")} />
 
       <View style={{ flex: 1 }}>
         <FlatList

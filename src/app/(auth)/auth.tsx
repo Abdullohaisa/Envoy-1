@@ -8,7 +8,7 @@ import RegisterPhone, { checkRegLoading } from "@/widget/auth/register";
 import KeyboardResponsiveView from "@/components/KeyboardResponsiveView/KeyboardResponsiveView";
 import AuthTabs from "@/widget/auth/Tabs";
 import { useSharedValue } from "react-native-reanimated";
-import { atom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { isValidLoginAtom, isValidRegAtom } from "@/atoms/reg.login.valid";
 import { authStateAtom } from "@/service/user/register-login/controller";
 
@@ -59,7 +59,7 @@ export default function Auth() {
         style={{ paddingHorizontal: Spacing.horizontal }}
       >
         <AppButton
-          text={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
+          title={activePage === 0 ? "Dasturga kirish" : "Ro'yxatdan o'tish"}
           isLoading={isLoading || checkLoadingReg}
           disabled={activePage === 0 ? !isValidLogin : !isValidReg}
           onPress={() => {

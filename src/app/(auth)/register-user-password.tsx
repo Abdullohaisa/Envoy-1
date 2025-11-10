@@ -175,7 +175,7 @@ const RegisterUserPasswordPage = () => {
             style={{ paddingHorizontal: Spacing.horizontal }}
           >
             <AppButton
-              text="Davom etish"
+              title="Davom etish"
               onPress={handleSubmit(onSubmit)}
               isLoading={state.isLoading}
             />

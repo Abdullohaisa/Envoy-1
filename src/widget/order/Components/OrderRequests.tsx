@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 
-const OrderItemRequests = ({ order }: any) => {
+const OrderItemRequests = ({ requested_drivers_length }: any) => {
   const Colors = useThemeColors();
   return (
     <View
@@ -23,7 +23,7 @@ const OrderItemRequests = ({ order }: any) => {
           paddingTop: 7,
         }}
       >
-        So'ralgan - 12
+        So'ralgan - {requested_drivers_length}
       </AppText>
     </View>
   );

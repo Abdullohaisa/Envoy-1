@@ -63,7 +63,7 @@ const OrderDetailsView = ({ order, onConfirm }: any) => {
     <>
       <GetOrderInfoList order={order} />
       <View style={styles.confirmButtonWrapper}>
-        <AppButton text="Buyurtma berish" onPress={() => setModal(true)} />
+        <AppButton title="Buyurtma berish" onPress={() => setModal(true)} />
       </View>
 
       <SheetModal
@@ -83,6 +83,7 @@ const OrderDetailsView = ({ order, onConfirm }: any) => {
 // -------------------- ✅ SUCCESS KOMPONENT --------------------
 const SuccessView = ({ onClose }: { onClose: () => void }) => {
   const Colors = useThemeColors();
+  const bottomInset = useSafeAreaInsets().bottom;
 
   return (
     <Animated.View
@@ -91,13 +92,13 @@ const SuccessView = ({ onClose }: { onClose: () => void }) => {
       exiting={FadeOut.duration(300)}
     >
       <LinearGradient
-        colors={[Colors.primary, Colors.borderColor]}
+        colors={[Colors.primary, Colors.borderColor08]}
         style={styles.gradientBox}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
         <Animated.View
-          entering={ZoomIn.springify().damping(20)}
+          entering={ZoomIn.springify().damping(100)}
           exiting={ZoomOut.duration(200)}
           style={styles.iconWrapper}
         >
@@ -115,26 +116,22 @@ const SuccessView = ({ onClose }: { onClose: () => void }) => {
           <AppText
             style={[styles.subtitlesuccess, { color: Colors.textPrimary }]}
           >
-            Buyurtmangiz muvaffaqiyatli qabul qilindi. Operator tez orada siz
-            bilan bog‘lanadi.
+            Buyurtmangiz muvaffaqiyatli qabul qilindi. Tez orada haydovchilar
+            sizga murojaat qilishadi.
           </AppText>
         </View>
       </LinearGradient>
 
-      <AppButton
-        variant="silver"
-        text="Yopish"
-        onPress={onClose}
+      <View
         style={{
-          marginTop: 30,
-          width: "85%",
-          alignSelf: "center",
-          shadowColor: Colors.primary,
-          shadowOpacity: 0.25,
-          shadowRadius: 6,
-          elevation: 5,
+          position: "absolute",
+          bottom: 5 + bottomInset,
+          width: screens.width,
+          paddingHorizontal: Spacing.horizontal,
         }}
-      />
+      >
+        <AppButton variant='secondary' title="Yopish" onPress={onClose} />
+      </View>
     </Animated.View>
   );
 };
@@ -166,6 +163,8 @@ const OrderReviewSheetComponent = ({ order, ref }: any) => {
       snapPoints={["100%"]}
       topInset={topInset}
       enablePanDownToClose={!(isLoading || makeOrder)}
+      handleIndicatorStyle={{ display: "none" }} // 👈 chiziqcha yashiriladi
+      handleComponent={null}
     >
       <View style={{ flex: 1 }}>
         {isLoading ? (
@@ -188,17 +187,15 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     gap: 10,
+    flex: 1,
   },
   gradientBox: {
-    borderRadius: 20,
     paddingVertical: 35,
     paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 4,
+    flex: 1,
+    height: "100%",
   },
   iconWrapper: {
     marginBottom: 20,

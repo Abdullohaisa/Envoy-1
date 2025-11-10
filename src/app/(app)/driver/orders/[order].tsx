@@ -1,87 +1,102 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
 import DriverActiveOrderInfoList from "@/components/OrderInfoList/DriverActiveOrderInfoList";
+import AppText from "@/components/Texts/Text";
+import { ORDERS, screens } from "@/shared/token";
+import AppButton from "@/components/Buttons/Button";
+import { useEffect, useState } from "react";
+import SheetModal from "@/components/Modal/SheetModal";
+import api from "@/axios/axios.config";
 
-const cargo = {
-  cargo: {
-    weight: { value: 10, unit: "tonna" },
-    quantity: { value: 100, unit: "quti" },
-    type: { value: "Apple", unit: null },
-  },
-  truck: 1,
-  locations: {
-    pickup: [
-      {
-        id: "here:cm:namedplace:23835488",
-        full_title: "Tashkent, Chilonzor, 10-district",
-        short_title: "Tashkent",
-        coordinates: { latitude: 41.2856, longitude: 69.2033 },
-        contact: { name: "Javlonbek", phone: "+998901112233" },
-      },
-      {
-        id: "here:cm:namedplace:99999999",
-        full_title: "Chirchiq, Uzbekistan",
-        short_title: "Chirchiq",
-        coordinates: { latitude: 41.4689, longitude: 69.5822 },
-        contact: { name: "Umid aka", phone: "+998909998877" },
-      },
-    ],
-    dropoff: [
-      {
-        id: "here:cm:namedplace:77777777",
-        full_title: "Samarkand, Uzbekistan",
-        short_title: "Samarkand",
-        coordinates: { latitude: 39.6542, longitude: 66.9597 },
-        contact: { name: "Sherzod", phone: "+998935551122" },
-      },
-    ],
-  },
-  driver: {
-    name: "Olimjon",
-    phone_number: "+998903923636",
-    photo: null,
-    driver_coordinates: { latitude: 39.6542, longitude: 66.9597 },
-    rating: {
-      score: 4.5,
-      count: 10,
-    },
-    comment_count: "38",
-  },
-  owner: {
-    name: "Ali Valiyev",
-    phone: "+998901234567",
-    rating: {
-      score: 4.5,
-      count: 10,
-    },
-    comment_count: "38",
-  },
-  time: {
-    created: "2025-08-25T10:00:00Z",
-    assigned: null,
-    loaded: null,
-    delivered: null,
-    specified_date: null,
-  },
-  status: {
-    order_status: "active",
-    driver: { departed: false, picked_up: false, delivered: false },
-  },
-  distances: { total: null },
-  price: { value: 1200000, currency: "UZS" },
-  comment: "Special cargo, handle with care",
-};
+const requestURL = "/driver/request-order/";
 
 const DriverActiveOrder = () => {
   const Colors = useThemeColors();
+  const [requestVisible, setRequestVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [resVisible, setResVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [isRequested, setIsRequested] = useState(null);
+
+  console.log(isRequested);
+
+  const handleRequestOrder = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await api.post(requestURL, {
+        order_id: 63,
+      });
+      // console.log(data);
+      if (data.message === "request is sent successfully") {
+        setModalMessage("So'rov yuborildi");
+      } else if (data.message === "request is returned back successfully") {
+        setModalMessage("So'rov bekor qilindi");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+      setResVisible(true);
+      fetchRequestOrder();
+    }
+  };
+
+  const fetchRequestOrder = async () => {
+    try {
+      const { data } = await api.get(requestURL + "63/");
+      setIsRequested(data.is_requested);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequestOrder();
+  }, []);
 
   return (
     <View
       style={[styles.container, { backgroundColor: Colors.pageBackground }]}
     >
       <PageHeader title="Yuk ma'lumotlari" enableBack />
-      <DriverActiveOrderInfoList order={cargo} />
+      <DriverActiveOrderInfoList order={ORDERS[0]} isRequested={isRequested} />
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          height: screens.height * 0.1,
+          backgroundColor: Colors.Boxbackground,
+          width: screens.width,
+          padding: 12,
+          paddingTop: 7,
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+          borderColor: Colors.pageBackground,
+        }}
+      >
+        <AppButton
+          title={isRequested ? "So'rovni bekor qilish" : "So'rov yuborish"}
+          variant="secondary"
+          onPress={() => setRequestVisible(true)}
+          isLoading={isLoading}
+          titleStyle={{ color: isRequested ? "red" : "red" }}
+        />
+      </View>
+      <SheetModal
+        open={requestVisible}
+        onDismiss={() => setRequestVisible(false)}
+        type="yesno"
+        message="Siz so'rov yubormoqchimisiz ?"
+        onYes={handleRequestOrder}
+      />
+      <SheetModal
+        open={resVisible}
+        onDismiss={() => setResVisible(false)}
+        type="ok"
+        message={modalMessage}
+        onYes={handleRequestOrder}
+      />
     </View>
   );
 };

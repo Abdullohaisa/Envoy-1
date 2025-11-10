@@ -183,7 +183,6 @@ const FullscreenImage = ({
   }));
 
   const fullUrl = process.env.EXPO_PUBLIC_PREFIX + uri;
-  console.log(uri);
 
   return (
     <GestureDetector gesture={composedGesture}>

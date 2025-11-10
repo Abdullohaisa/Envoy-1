@@ -29,7 +29,7 @@ function ActiveDriverOrderItem({
   };
 
   return (
-    <View style={[styles.box, {}]}>
+    <View style={styles.box}>
       <Pressable
         onPress={inOrder}
         android_ripple={{
@@ -48,7 +48,7 @@ function ActiveDriverOrderItem({
 
         <OrderItemLocations order={order} />
 
-        <OrderItemRequests />
+        <OrderItemRequests requested_drivers_length={"?"} />
 
         <View style={[styles.line, { backgroundColor: Colors.borderColor }]} />
 

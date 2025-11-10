@@ -22,15 +22,14 @@ import { authAtom } from "@/service/user/register-login/controller";
 const Orders = () => {
   const Colors = useThemeColors();
   const { access } = useAtomValue(authAtom);
-  console.log(access);
+  // console.log(access);
 
   // 📦 Orders ma'lumotlarini olish uchun hook
   const fetchOrders = useFetchCustomerOrders();
   const { active, attached, finished } = useAtomValue(customerOrdersAtom);
   const customerOrdersState = useAtomValue(customerOrdersStateAtom);
 
-  console.log(active);
-  console.log(customerOrdersState);
+  console.log("active -> ", active);
 
   // ⚙️ Komponent yuklanganda backenddan ma’lumot olish
   useEffect(() => {
@@ -78,7 +77,7 @@ const Orders = () => {
       title: "Berilgan",
       component: () => (
         <CustomerOrderList
-          orders={attached}
+          orders={[]}
           state={customerOrdersState}
           setOrders={fetchOrders}
           type="attached"
@@ -90,7 +89,7 @@ const Orders = () => {
       title: "Tugatilgan",
       component: () => (
         <CustomerOrderList
-          orders={finished}
+          orders={[]}
           state={customerOrdersState}
           setOrders={fetchOrders}
           type="finished"

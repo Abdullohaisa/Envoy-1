@@ -7,6 +7,7 @@ const LANGUAGE_KEY = "appLanguage";
 // 🌍 Tarjimalarni dynamic import qilish
 const languageResources: Record<string, () => Promise<any>> = {
   uzbekistan: () => import("./uzbekistan.json"),
+  uzbekistan_cyril: () => import("./uzbekistan.cyril.json"),
   kazakhstan: () => import("./kazakhstan.json"),
   kyrgyzstan: () => import("./kyrgyzstan.json"),
   tajikistan: () => import("./tajikistan.json"),

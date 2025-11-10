@@ -24,7 +24,6 @@ export const useFetchSingleOrder = (orderId?: string) => {
       setOrder(data);
       setRequestedDrivers(data.requestedDrivers || []);
     } catch (err: any) {
-      console.log("err -> ", err);
       if (err instanceof AxiosError)
         setError(err.response?.data || "Tarmoq xatosi");
     } finally {

@@ -5,12 +5,14 @@ import LocationPickerRendererItem from "./location-renderer-item";
 import LocationPickerSkeletonItem from "./location-renderer-item/skeleton";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
-import { LocationSuggestion } from "@/service/get-order/controller";
+
 import { RefObject, useMemo } from "react";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import LocationIcon from "@/assets/icon/location";
 import { useThemeColors } from "@/theme/useThemeColors";
 import AppText from "@/components/Texts/Text";
+import { useTranslation } from "react-i18next";
+import { LocationSuggestion } from "@/service/customer/get-order/controller";
 
 interface Props {
   isLoading: boolean;
@@ -27,6 +29,7 @@ const LocationPickerList = ({
 }: Props) => {
   const theme = useAtomValue(themeAtom);
   const Colors = useThemeColors();
+  const { t } = useTranslation();
 
   const skeletonData = useMemo(() => Array(10).fill(null), []);
 
@@ -64,7 +67,7 @@ const LocationPickerList = ({
       <AppText
         style={{ color: theme === "dark" ? "white" : "gray", fontSize: 16 }}
       >
-        Manzil qidiring
+        {t("search_address")}
       </AppText>
     </View>
   );

@@ -12,6 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius, screens } from "@/shared/token";
 
+import { useTranslation } from "react-i18next";
+
 // ------------------------
 // 🔹 Mini komponent: AnimatedIcon
 // ------------------------
@@ -117,6 +119,7 @@ const TabBarWrapper = React.memo(({ showTabBar, children }: any) => {
 const CustomerLayout = () => {
   const Colors = useThemeColors();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const visibleRouters = useMemo(
     () => ["/customer/orders", "/customer/get-order", "/customer/profile"],
@@ -165,19 +168,21 @@ const CustomerLayout = () => {
       <Tabs.Screen
         name="orders"
         options={{
-          title: "Yuklar",
           tabBarIcon: ({ focused, color }) => (
             <AnimatedIcon name="cube-outline" focused={focused} color={color} />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Yuklar" focused={focused} color={color} />
+            <AnimatedLabel
+              label={t("cargos")}
+              focused={focused}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="get-order"
         options={{
-          title: "Yaratish",
           tabBarIcon: ({ focused, color }) => (
             <AnimatedIcon
               name="add-circle-outline"
@@ -186,14 +191,17 @@ const CustomerLayout = () => {
             />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Yaratish" focused={focused} color={color} />
+            <AnimatedLabel
+              label={t("create")}
+              focused={focused}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profil",
           tabBarIcon: ({ focused, color }) => (
             <AnimatedIcon
               name="person-outline"
@@ -202,7 +210,11 @@ const CustomerLayout = () => {
             />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Profil" focused={focused} color={color} />
+            <AnimatedLabel
+              label={t("profile")}
+              focused={focused}
+              color={color}
+            />
           ),
         }}
       />

@@ -14,6 +14,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { getOrderTime } from "@/atoms/get-order/time";
 import GetOrderBackButton from "@/widget/customer/get-order/back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 export default function DatePicker() {
   const [time, setTime] = useAtom(getOrderTime);
@@ -22,6 +23,7 @@ export default function DatePicker() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const flatListRef = useRef<FlatList | null>(null);
   const { monthNames, weekDays } = useMemo(() => DateNames(), []);
+  const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<{
     day: number;
     month: number;
@@ -80,7 +82,7 @@ export default function DatePicker() {
   return (
     <View style={{ flex: 1 }}>
       <PageHeader
-        title="Yuklash vaqti"
+        title={t("loading_time")}
         enableBack
         routePath={AppRoutes.customer.getOrder.index}
       />
@@ -120,13 +122,13 @@ export default function DatePicker() {
         }}
       >
         <GetOrderBackButton
-          title="Narx"
+          title={t("price")}
           onPress={() =>
             safeNavigate(() => router.push(AppRoutes.customer.getOrder.price))
           }
         />
         <GetOrderNextButton
-          title="Izoh"
+          title={t("comment")}
           onPress={() => {
             safeNavigate(() =>
               router.push(AppRoutes.customer.getOrder.comment)

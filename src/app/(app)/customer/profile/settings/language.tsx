@@ -11,6 +11,7 @@ import i18n from "@/locales/_i18n"; // import qilib olayapmiz, tilni tekshirish 
 // NOTE: bu yerda code'lar _i18n resources_ bilan mos bo'lishi kerak
 const languages = [
   { code: "uzbekistan", nativeName: "Oʻzbekcha" },
+  { code: "uzbekistan_cyril", nativeName: "Ўзбекча (кирилча)" },
   { code: "russia", nativeName: "Русский" },
   { code: "english", nativeName: "English" },
   { code: "turkey", nativeName: "Türkçe" },

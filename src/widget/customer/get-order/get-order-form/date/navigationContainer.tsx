@@ -5,6 +5,7 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import AppText from "@/components/Texts/Text";
 import { Dispatch, RefObject } from "react";
 import { SetStateAction } from "jotai";
+import { useTranslation } from "react-i18next";
 
 interface SelectedDate {
   day: number;
@@ -30,6 +31,7 @@ export default function DateNavigationContainer({
   setSelectedYear,
 }: DateNavigationContainerProps) {
   const Colors = useThemeColors();
+  const { t } = useTranslation();
 
   const handlePrevMonth = () => {
     if (selectedMonth === 0) {
@@ -85,7 +87,7 @@ export default function DateNavigationContainer({
             <AppText
               style={[styles.selectedDateText, { color: Colors.primary }]}
             >
-              Yukni olish vaqtini tanlang
+              <AppText>{t("select_pickup_time")}</AppText>
             </AppText>
           )}
         </View>

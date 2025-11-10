@@ -1,7 +1,7 @@
 import TabHeader from "@/components/TabContainer/TabHeader";
 import { ORDERS, Spacing, screens } from "@/shared/token";
 import DriverActiveOrderLIst from "@/widget/driver/order-list/driverActiveOrderLIst";
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { View, FlatList, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
@@ -20,25 +20,8 @@ import { AppRoutes } from "@/constants/routes";
 import { router } from "expo-router";
 import { useAtomValue } from "jotai";
 import { authAtom } from "@/service/user/register-login/controller";
-
-// 🔹 Faol buyurtmalarni render qilish
-const renderActiveOrders = () => <DriverActiveOrderLIst orders={ORDERS} />;
-
-// 🔹 Sahifalar ro‘yxati
-const pages = [
-  {
-    key: "active",
-    title: "Yuklar",
-    orders: ORDERS,
-    component: renderActiveOrders,
-  },
-  {
-    key: "so'ralgan",
-    title: "So'ralgan",
-    orders: ORDERS,
-    component: renderActiveOrders,
-  },
-];
+import api from "@/axios/axios.config";
+import { AxiosError } from "axios";
 
 // ==========================
 // 🔸 Tugmalar qutisi komponenti
@@ -70,8 +53,6 @@ const ButtonBox = ({ scrollX }: { scrollX: any }) => {
 
   return (
     <Animated.View
-      entering={FadeIn.duration(300)}
-      exiting={FadeOut.duration(300)}
       style={[
         {
           position: "absolute",
@@ -150,7 +131,52 @@ const DriverGetOrders = () => {
   const scrollX = useSharedValue(0);
   const flatRef = useRef<FlatList>(null);
   const { access } = useAtomValue(authAtom);
-  console.log(access);
+  const [orderState, setOrderState] = useState({
+    isLoading: false,
+    error: null,
+    orders: {
+      nearby: [],
+      other: [],
+    },
+  });
+
+  const fetchOrders = async () => {
+    setOrderState({
+      isLoading: true,
+      error: null,
+      orders: {
+        nearby: [],
+        other: [],
+      },
+    });
+    try {
+      const { data } = await api.get("order/all-active-orders/");
+      console.log("data -> ", data);
+      setOrderState({
+        isLoading: false,
+        error: null,
+        orders: {
+          nearby: data.nearby,
+          other: data.other,
+        },
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setOrderState({
+          isLoading: false,
+          error: error.response?.data,
+          orders: {
+            nearby: [],
+            other: [],
+          },
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -166,6 +192,27 @@ const DriverGetOrders = () => {
   };
 
   const Page = memo(({ item }: any) => <>{item.component()}</>);
+  const renderActiveOrders = () => (
+    <DriverActiveOrderLIst
+      //  orders={orderState?.orders?.other}
+      orders={ORDERS}
+    />
+  );
+
+  const pages = [
+    {
+      key: "active",
+      title: "Yuklar",
+      orders: orderState?.orders?.other,
+      component: renderActiveOrders,
+    },
+    {
+      key: "so'ralgan",
+      title: "So'ralgan",
+      orders: orderState?.orders?.other,
+      component: renderActiveOrders,
+    },
+  ];
 
   return (
     <View style={{ flex: 1, gap: 5 }}>

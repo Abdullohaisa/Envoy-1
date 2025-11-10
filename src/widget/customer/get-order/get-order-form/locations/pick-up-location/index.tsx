@@ -17,27 +17,35 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { safeNavigate } from "@/utils/safe-navigation";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
+import { useTranslation } from "react-i18next";
 
 // 🔹 Location Header
-const LocationHeader = memo(({ locationType, Colors }: any) => (
-  <View style={{ flexDirection: "row", gap: 10, padding: 5 }}>
-    {locationType === "pickup" ? (
-      <>
-        <MaterialIcons
-          name="my-location"
-          size={24}
-          color={Colors.borderColor}
-        />
-        <AppText>Ortish manzillari</AppText>
-      </>
-    ) : (
-      <>
-        <Ionicons name="location-sharp" size={24} color={Colors.borderColor} />
-        <AppText>Tushirish manzillari</AppText>
-      </>
-    )}
-  </View>
-));
+const LocationHeader = memo(({ locationType, Colors }: any) => {
+  const { t } = useTranslation();
+  return (
+    <View style={{ flexDirection: "row", gap: 10, padding: 5 }}>
+      {locationType === "pickup" ? (
+        <>
+          <MaterialIcons
+            name="my-location"
+            size={24}
+            color={Colors.borderColor}
+          />
+          <AppText>{t("dropoff_locations")}</AppText>
+        </>
+      ) : (
+        <>
+          <Ionicons
+            name="location-sharp"
+            size={24}
+            color={Colors.borderColor}
+          />
+          <AppText>{t("pickup_locations")}</AppText>
+        </>
+      )}
+    </View>
+  );
+});
 
 // 🔹 Location Item
 const LocationItem = memo(
@@ -51,6 +59,7 @@ const LocationItem = memo(
     addPickup,
     openMap,
   }: any) => {
+    const { t } = useTranslation();
     return (
       <TouchableOpacity
         onPress={() => openSheet(index)}
@@ -72,8 +81,8 @@ const LocationItem = memo(
             {location.full_title
               ? `  -  ${location.full_title}`
               : locationType === "pickup"
-                ? "  - Qayerdan"
-                : "  - Qayerga"}
+                ? `  - ${t("from")}`
+                : `  - ${t("to")}`}
           </AppText>
         </View>
 

@@ -23,6 +23,8 @@ const UnitPicker: React.FC<UnitPickerProps> = ({
 }) => {
   const Colors = useThemeColors();
 
+  const unitOptions = UNIT_OPTIONS()[type]; // 🔹 funksiya orqali i18n tayyor
+
   const renderItem = ({
     item,
     index,
@@ -81,7 +83,7 @@ const UnitPicker: React.FC<UnitPickerProps> = ({
     >
       <View style={styles.options}>
         <FlatList
-          data={UNIT_OPTIONS[type]}
+          data={unitOptions}
           keyExtractor={(item) => item.short}
           renderItem={renderItem}
           numColumns={3} // 🔹 3 ustunli grid

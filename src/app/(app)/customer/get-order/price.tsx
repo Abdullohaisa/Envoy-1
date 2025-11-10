@@ -20,6 +20,7 @@ import { useFocusEffect, useRouter } from "expo-router"; // yoki react-navigatio
 import { AppRoutes } from "@/constants/routes";
 import GetOrderBackButton from "@/widget/customer/get-order/back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 const Price = () => {
   const { control, watch, setValue } = useForm({
@@ -36,6 +37,7 @@ const Price = () => {
   const theme = useAtomValue(themeAtom);
   const setOrder = useSetAtom(getOrderPriceAtom);
   const router = useRouter();
+  const { t } = useTranslation();
 
   // 🔹 Raqamni formatlash
   const formatPrice = (value: number) =>
@@ -77,7 +79,7 @@ const Price = () => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={{ flex: 1 }}>
         <PageHeader
-          title="Narx"
+          title={t("price")}
           enableBack
           routePath={AppRoutes.customer.getOrder.index}
         />
@@ -88,7 +90,7 @@ const Price = () => {
             name="price"
             render={({ field: { onChange, value } }) => (
               <AppInputWithUnit
-                label="Narx"
+                label={t("price")}
                 value={formatPrice(value)}
                 onChangeText={(text) => {
                   const numeric = text.replace(/\D/g, "");
@@ -106,12 +108,28 @@ const Price = () => {
             )}
           />
 
-          <AppText
-            style={{ marginTop: 16, fontSize: 16, color: Colors.textPrimary }}
+          <View
+            style={{
+              marginTop: 16,
+              padding: 16,
+              borderRadius: 20,
+              backgroundColor: Colors.Boxbackground,
+            }}
           >
-            <AppText style={{ color: Colors.textSecondary }}>narx:</AppText>{" "}
-            {formatPrice(priceValue)} {currencyValue}
-          </AppText>
+            <AppText style={{ fontSize: 14, color: Colors.textSecondary }}>
+              {t("proposed_price")}
+            </AppText>
+            <AppText
+              style={{
+                fontSize: 24,
+                fontWeight: "600",
+                color: Colors.textPrimary,
+                marginTop: 4,
+              }}
+            >
+              {formatPrice(priceValue)} {currencyValue}
+            </AppText>
+          </View>
 
           <View
             style={{
@@ -121,7 +139,7 @@ const Price = () => {
             }}
           >
             <GetOrderBackButton
-              title="Yuk mashina"
+              title={t("cargo_truck")}
               onPress={() =>
                 safeNavigate(() =>
                   router.push(AppRoutes.customer.getOrder.truck)
@@ -129,7 +147,7 @@ const Price = () => {
               }
             />
             <GetOrderNextButton
-              title="Vaqt"
+              title={t("time")}
               onPress={() =>
                 safeNavigate(() =>
                   router.push(AppRoutes.customer.getOrder.time)

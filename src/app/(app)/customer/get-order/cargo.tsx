@@ -26,17 +26,20 @@ import { AppRoutes } from "@/constants/routes";
 import { useCallback, useEffect, useRef, useState } from "react";
 import GetOrderBackButton from "@/widget/customer/get-order/back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 const CargoForm = () => {
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
   const [cargoAtom, setCargoAtom] = useAtom(getOrderCargoAtom);
   const [isChanged, setIsChanged] = useState(false); // 👈 o‘zgarish kuzatish
+  const { t } = useTranslation();
 
   const {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isDirty },
   } = useForm<CargoType>({
     resolver: zodResolver(cargoSchema),
@@ -56,34 +59,34 @@ const CargoForm = () => {
     reset({
       type: {
         value: cargoAtom?.type?.value || "",
-        unit: cargoAtom?.type?.unit || null,
+        unit: t("none"), // null o‘rniga
       },
       weight: {
         value: String(cargoAtom?.weight?.value || ""),
-        unit: cargoAtom?.weight?.unit || "kg",
+        unit: cargoAtom?.weight?.unit || t("kg"),
       },
       volume: {
         value: String(cargoAtom?.volume?.value || ""),
-        unit: cargoAtom?.volume?.unit || "m³",
+        unit: cargoAtom?.volume?.unit || t("m3"),
       },
       quantity: {
         value: String(cargoAtom?.quantity?.value || ""),
-        unit: cargoAtom?.quantity?.unit || "dona",
+        unit: cargoAtom?.quantity?.unit || t("piece"),
       },
       length: {
         value: String(cargoAtom?.length?.value || ""),
-        unit: cargoAtom?.length?.unit || "m",
+        unit: cargoAtom?.length?.unit || t("m"),
       },
       height: {
         value: String(cargoAtom?.height?.value || ""),
-        unit: cargoAtom?.height?.unit || "m",
+        unit: cargoAtom?.height?.unit || t("m"),
       },
       width: {
         value: String(cargoAtom?.width?.value || ""),
-        unit: cargoAtom?.width?.unit || "m",
+        unit: cargoAtom?.width?.unit || t("m"),
       },
     });
-  }, []);
+  }, [t]);
 
   // ✅ faqat saqlash tugmasi bosilganda atom yangilanadi
   const onSave = (data: CargoType) => {
@@ -91,6 +94,7 @@ const CargoForm = () => {
     setCargoAtom(normalizedData);
     setIsChanged(false);
     Keyboard.dismiss();
+    console.log(data);
   };
 
   const onNext = () => {
@@ -170,63 +174,89 @@ const CargoForm = () => {
     }, [])
   );
 
+  const formValues = watch();
+  const anyFilled = Object.values(formValues).some(
+    (f: any) => f?.value && String(f.value).trim() !== ""
+  );
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{ flex: 1 }}>
         <PageHeader
-          title="Yuk"
+          title={t("cargo")}
           enableBack
           animated
           routePath={AppRoutes.customer.getOrder.index}
         />
 
         <View style={styles.container}>
-          {renderInput("type", "Yuk turi")}
+          {renderInput("type", t("cargo_type"))}
           <View style={styles.row}>
             <View style={[styles.half, { marginRight: 5 }]}>
-              {renderInput("weight", "Vazni", true)}
+              {renderInput("weight", t("weight"), true)}
             </View>
             <View style={[styles.half, { marginLeft: 5 }]}>
-              {renderInput("volume", "Hajmi", true)}
+              {renderInput("volume", t("volume"), true)}
             </View>
           </View>
           <View style={styles.row}>
             <View style={[styles.half, { marginRight: 5 }]}>
-              {renderInput("quantity", "Soni", true)}
+              {renderInput("quantity", t("quantity"), true)}
             </View>
             <View style={[styles.half, { marginLeft: 5 }]}>
-              {renderInput("length", "Uzunligi", true)}
+              {renderInput("length", t("length"), true)}
             </View>
           </View>
           <View style={styles.row}>
             <View style={[styles.half, { marginRight: 5 }]}>
-              {renderInput("height", "Balandligi", true)}
+              {renderInput("height", t("height"), true)}
             </View>
             <View style={[styles.half, { marginLeft: 5 }]}>
-              {renderInput("width", "Kengligi", true)}
+              {renderInput("width", t("width"), true)}
             </View>
           </View>
           <View style={styles.row}>
-            <Pressable onPress={handleClear}>
-              <AppText style={{ color: "red" }}>Tozalash</AppText>
+            <Pressable
+              onPress={handleClear}
+              disabled={!anyFilled}
+              style={{
+                padding: 7,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: anyFilled ? Colors.red : Colors.borderColor,
+              }}
+            >
+              <AppText
+                style={{ color: anyFilled ? Colors.red : Colors.borderColor }}
+              >
+                {t("clear")}
+              </AppText>
             </Pressable>
 
-            {/* Keyingisi -> Manzillar */}
             <View>
-              <Pressable onPress={handleSubmit(onSave)} disabled={!isChanged}>
+              <Pressable
+                onPress={handleSubmit(onSave)}
+                disabled={!isChanged}
+                style={{
+                  padding: 7,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: isChanged ? Colors.green : Colors.borderColor,
+                }}
+              >
                 <AppText
                   style={{
-                    color: isChanged ? Colors.primary : "#ccc",
+                    color: isChanged ? Colors.green : Colors.borderColor,
                     textAlign: "center",
                   }}
                 >
-                  Saqlash
+                  {t("save")}
                 </AppText>
               </Pressable>
             </View>
           </View>
           <View style={{ alignItems: "flex-end" }}>
-            <GetOrderNextButton title="Manzillar" onPress={onNext} />
+            <GetOrderNextButton title={t("locations")} onPress={onNext} />
           </View>
         </View>
       </View>

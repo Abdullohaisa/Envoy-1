@@ -120,6 +120,7 @@ const PageHeader = ({
         )}
 
         <AppText
+          variant="semiBold"
           style={[
             styles.title,
             {

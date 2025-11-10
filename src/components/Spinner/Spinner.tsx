@@ -10,10 +10,10 @@ import Animated, {
 import { useEffect } from "react";
 import { useThemeColors } from "@/theme/useThemeColors";
 
-const DOTS = 8; // nechta nuqta
+const DOTS = 7; // nechta nuqta
 const RADIUS = 10; // doira radiusi (px)
-const DOT_SIZE = 6; // nuqta diametri (px)
-const DURATION = 1200; // 1 to‘liq “aylanish” (ms)
+const DOT_SIZE = 5; // nuqta diametri (px)
+const DURATION = 1000; // 1 to‘liq “aylanish” (ms)
 
 // Asosiy rang (variantga ko‘ra dinamik qilsa ham bo‘ladi)
 
@@ -37,16 +37,9 @@ export default function CustomSpinner({ color }: { color?: string }) {
   return (
     <View style={styles.wrapper}>
       {Array.from({ length: DOTS }).map((_, i) => {
-        /** Har bir nuqta uchun opacity hisobi */
         const dotStyle = useAnimatedStyle(() => {
-          // progress.value 0-1-2-3… bo‘lib o‘sadi
-          // diff 0 bo‘lsa – eng yorqin, diff → DOTS – eng xira
           const diff = (i - progress.value + DOTS) % DOTS;
-          const opacity = interpolate(
-            diff,
-            [0, DOTS / 2, DOTS],
-            [1, 0.3, 1] // gradatsiya: eng yorqin → xira → yana yorqin
-          );
+          const opacity = interpolate(diff, [0, DOTS / 1, DOTS], [0.1, 1, 0]);
           return { opacity };
         });
 

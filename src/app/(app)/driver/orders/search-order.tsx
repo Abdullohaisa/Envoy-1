@@ -99,8 +99,8 @@ const DriverActiveOrderListWithSearch = ({ onRefreshOrders }: any) => {
     const cityCenter = cityCenterEntry[1];
 
     return ORDERS.filter((order) => {
-      const pickup = order.locations.pickup[0].coordinates;
-      const dropoff = order.locations.dropoff[0].coordinates;
+      const pickup = order?.locations?.pickup[0]?.coordinates;
+      const dropoff = order?.locations?.dropoff[0]?.coordinates;
       return (
         getDistanceKm(cityCenter, pickup) <= 30 ||
         getDistanceKm(cityCenter, dropoff) <= 30

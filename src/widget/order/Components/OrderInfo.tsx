@@ -47,9 +47,9 @@ export const OrderItemInfo = ({ order }: { order: any }) => {
 
   const rows = [
     [
-      renderFormattedPrice(order.price.value, order.price.currency),
-      order.cargo.type.value,
-      getTruckType(order.truck), // 🔹 endi yuk mashina turi chiqadi
+      renderFormattedPrice(order?.price?.value, order?.price?.currency),
+      order?.cargo?.type?.value,
+      getTruckType(order?.truck), // 🔹 endi yuk mashina turi chiqadi
     ],
   ];
 

@@ -43,7 +43,7 @@ function GivenCustomerOrderItem({
         <OrderItemLocations order={order} />
         <View style={[styles.line, { backgroundColor: Colors.borderColor }]} />
         <OrderItemInfo order={order} />
-        <DriverTimeline status={order.status.driver} />
+        <DriverTimeline status={order?.status?.driver} />
       </Pressable>
     </View>
   );

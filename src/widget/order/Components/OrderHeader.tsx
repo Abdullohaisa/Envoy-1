@@ -18,7 +18,7 @@ export const OrderItemHeader = ({ order }: { order: any }) => {
     "noyabr",
     "dekabr",
   ];
-  const date = new Date(order.time.created);
+  const date = new Date(order?.time?.created);
   const formattedDate = `${date.getDate()}-${months[date.getMonth()]} ${date.getFullYear()}`;
   const Colors = useThemeColors();
 

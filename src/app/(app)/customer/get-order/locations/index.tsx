@@ -8,8 +8,10 @@ import { AppRoutes } from "@/constants/routes";
 import { useCallback } from "react";
 import GetOrderBackButton from "@/widget/customer/get-order/back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 const LocationForm = () => {
+  const { t } = useTranslation();
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -27,7 +29,7 @@ const LocationForm = () => {
   return (
     <View style={styles.container}>
       <PageHeader
-        title="Manzil"
+        title={t("address")}
         enableBack
         routePath={AppRoutes.customer.getOrder.index}
       />
@@ -40,7 +42,7 @@ const LocationForm = () => {
             style={{ justifyContent: "space-between", flexDirection: "row" }}
           >
             <GetOrderBackButton
-              title="Yuk"
+              title={t("cargo")}
               onPress={() =>
                 safeNavigate(() =>
                   router.push(AppRoutes.customer.getOrder.cargo)
@@ -48,7 +50,7 @@ const LocationForm = () => {
               }
             />
             <GetOrderNextButton
-              title="Yuk mashina"
+              title={t("cargo_truck")}
               onPress={() =>
                 safeNavigate(() =>
                   router.push(AppRoutes.customer.getOrder.truck)

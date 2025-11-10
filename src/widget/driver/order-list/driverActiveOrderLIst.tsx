@@ -35,7 +35,7 @@ const DriverActiveOrderList = ({ orders, onRefreshOrders }: any) => {
   );
 
   return (
-    <View style={{ width: screens.width, flex: 1, paddingHorizontal: 2.5 }}>
+    <View style={{ width: screens.width, flex: 1 }}>
       <FlatList
         style={{ borderRadius: Radius.primary, overflow: "hidden" }}
         showsVerticalScrollIndicator={false}

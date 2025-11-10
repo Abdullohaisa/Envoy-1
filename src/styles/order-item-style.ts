@@ -6,7 +6,7 @@ export const orderItemStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: screens.width,
-    // paddingHorizontal: 5,
+    paddingHorizontal: 2.5,
   },
   item: {
     width: "100%",
@@ -16,7 +16,7 @@ export const orderItemStyle = StyleSheet.create({
     paddingTop: Spacing.horizontal,
     paddingHorizontal: screens.width * 0.03,
     paddingBottom: 10,
-    // borderRadius: 10,
+    borderRadius: 5,
     gap: 10,
   },
 

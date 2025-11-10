@@ -28,6 +28,7 @@ import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import GetOrderBackButton from "../../../back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   flatListRef: RefObject<FlatList<TruckItem> | null>;
@@ -40,6 +41,7 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const AnimatedButton = Animated.createAnimatedComponent(TouchableOpacity);
+  const { t } = useTranslation();
 
   // ✅ Truck tanlash faqat raqam sifatida saqlanadi
   const selectTruck = (truckId: string) => {
@@ -78,30 +80,29 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
       <View style={styles.item}>
         <Image style={styles.image} source={item.image} contentFit="cover" />
         <AppText style={[styles.title, { color: Colors.textPrimary }]}>
-          {item.title}
+          {t(item.title)}
         </AppText>
 
         <View style={{ marginTop: 10, width: "100%", alignItems: "center" }}>
           <AnimatedButton
             onPress={() => selectTruck(item.id)}
-            entering={FadeIn.duration(500)}
-            exiting={FadeOut.duration(500)}
+            entering={FadeIn.duration(100)}
+            exiting={FadeOut.duration(100)}
             style={[
               styles.chooseButton,
               {
-                backgroundColor: isSelected
-                  ? Colors.primary
-                  : Colors.Boxbackground,
+                backgroundColor: Colors.Boxbackground,
               },
             ]}
           >
             <AppText
+              variant="semiBold"
               style={[
                 styles.chooseButtonText,
-                { color: isSelected ? "#fff" : Colors.textPrimary },
+                { color: isSelected ? Colors.red : Colors.textPrimary },
               ]}
             >
-              {isSelected ? "Tanlangan" : "Tanlash"}
+              {isSelected ? t("cancel") : t("select")}
             </AppText>
           </AnimatedButton>
         </View>
@@ -111,22 +112,28 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
 
   const TruckListItem = React.memo(({ truck, onPress }: any) => {
     const Colors = useThemeColors();
+
     if (!truck) return null;
 
     return (
       <AnimatedPressable
-        layout={Layout.springify()}
-        entering={FadeInUp.duration(200)}
-        exiting={FadeOutDown.duration(200)}
         onPress={onPress}
         style={{
           borderBottomWidth: 1,
           borderColor: Colors.Boxbackground,
           paddingVertical: 15,
+          flexDirection: "row",
+          gap: 10,
         }}
       >
         <AppText style={{ color: Colors.textPrimary, fontSize: 18 }}>
-          {truck.title}
+          {t("selected")}:
+        </AppText>
+        <AppText
+          variant="semiBold"
+          style={{ color: Colors.green, fontSize: 18 }}
+        >
+          {t(truck.title)}
         </AppText>
       </AnimatedPressable>
     );
@@ -189,22 +196,6 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
         </TouchableOpacity>
       </View>
 
-      {/* Tanlangan truck */}
-      {/* <ScrollView
-        contentContainerStyle={{
-          marginTop: 15,
-          paddingHorizontal: 15,
-          backgroundColor: "red",
-        }}
-      >
-        {truck && (
-          <TruckListItem
-            truck={truckData.find((t) => Number(t.id) === truck)}
-            onPress={() => scrollToTruck(truck)}
-          />
-        )}
-      </ScrollView> */}
-
       <View style={{ flexGrow: 0 }}>
         <ScrollView
           contentContainerStyle={{
@@ -230,7 +221,7 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
         }}
       >
         <GetOrderBackButton
-          title="Manzil"
+          title={t("address")}
           onPress={() =>
             safeNavigate(() =>
               router.push(AppRoutes.customer.getOrder.locations.index)
@@ -238,7 +229,7 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
           }
         />
         <GetOrderNextButton
-          title="Narx"
+          title={t("price")}
           onPress={() =>
             safeNavigate(() => router.push(AppRoutes.customer.getOrder.price))
           }

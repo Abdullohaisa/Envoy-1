@@ -21,7 +21,6 @@ export default function DateHeader({
 }: DateHeaderProps) {
   const Colors = useThemeColors();
 
-  // shared values
   const opacity1 = useSharedValue(0);
   const opacity2 = useSharedValue(0);
   const translateY1 = useSharedValue(-10);

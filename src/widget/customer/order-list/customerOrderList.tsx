@@ -68,6 +68,8 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({
   // 🔹 Element render qilish
   const renderItem: ListRenderItem<IOrder> = useCallback(
     ({ item, index }) => {
+      if (!item) return null;
+      console.log(item);
       switch (type) {
         case "active":
           return (
@@ -106,7 +108,7 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({
         style={{ marginTop: 5, overflow: "hidden", borderRadius: 5 }}
         ref={flatListRef}
         data={[...orders].reverse()} // 🔹 Teskari tartibda ko‘rsatish
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item?.id?.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={true}
         indicatorStyle={indicatorStyle}
