@@ -4,23 +4,20 @@ import { memo, useCallback, useState } from "react";
 import { useThemeColors } from "@/theme/useThemeColors";
 import ActiveDriverOrderItem from "@/widget/order/driver/active-order/ActiveDriverOrderItem";
 
-const DriverActiveOrderList = ({ orders, onRefreshOrders }: any) => {
+const DriverActiveOrderList = ({ orders, fetchOrders }: any) => {
   const Colors = useThemeColors();
   const [refreshing, setRefreshing] = useState(false);
 
   // 🔹 Refresh funksiyasi
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
     try {
-      setRefreshing(true);
-      if (onRefreshOrders) {
-        await onRefreshOrders();
-      } else {
-        await new Promise((res) => setTimeout(res, 1500));
-      }
+      await fetchOrders(); // atom ichidagi fetch
+    } catch (err) {
     } finally {
-      setRefreshing(false);
+      setRefreshing(false); // faqat fetch tugagach false qilamiz
     }
-  };
+  }, [fetchOrders]);
 
   // 🔹 Har bir itemni chizish
   const renderItem = useCallback(
@@ -39,7 +36,7 @@ const DriverActiveOrderList = ({ orders, onRefreshOrders }: any) => {
       <FlatList
         style={{ borderRadius: Radius.primary, overflow: "hidden" }}
         showsVerticalScrollIndicator={false}
-        data={orders}
+        data={[...orders].reverse()} // 🔹 Teskari tartib
         keyExtractor={(_, i) => i.toString()}
         contentContainerStyle={{ flexGrow: 1, gap: 5 }}
         renderItem={renderItem}

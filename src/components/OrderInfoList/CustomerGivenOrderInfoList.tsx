@@ -2,7 +2,8 @@ import { StyleSheet, View } from "react-native";
 import {
   OrderListAddress,
   OrderListCargo,
-  OrderListUser,
+  OrderListDriver,
+  OrderListOther,
 } from "./Components/Components";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import AppText from "../Texts/Text";
@@ -46,9 +47,10 @@ const CustomerGivenOrderInfoList = ({ order }: any) => {
           {status.text}
         </AppText>
       </View>
-      <OrderListUser order={order} title={"Haydovchi"} />
+      <OrderListDriver order={order} title={"Haydovchi"} />
       <OrderListCargo order={order} />
       <OrderListAddress locations={order.locations} />
+      <OrderListOther order={order} />
     </Animated.ScrollView>
   );
 };

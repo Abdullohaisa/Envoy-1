@@ -1,9 +1,9 @@
-import { StyleSheet, View } from "react-native";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   OrderListAddress,
   OrderListCargo,
-  OrderListRequestDriver,
+  OrderListCustomer,
 } from "./Components/Components";
 import Animated, {
   FadeIn,
@@ -20,66 +20,38 @@ import { themeAtom } from "@/theme/theme";
 import AppText from "../Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 
-const DriverActiveOrderInfoList = ({ order, isRequested }: any) => {
-  const modalRef = useRef<any>(null);
+const DriverActiveOrderInfoList = ({
+  order,
+  isRequested,
+  onRefresh,
+  refreshing,
+}: any) => {
   const theme = useAtomValue(themeAtom);
   const indicatorStyle = theme === "dark" ? "white" : "black";
   const Colors = useThemeColors();
-  const [showStatus, setShowStatus] = useState(isRequested);
-
-  useEffect(() => {
-    if (isRequested) {
-      setShowStatus(true);
-    } else {
-      // animatsiyaga vaqt berish
-      setTimeout(() => setShowStatus(false), 600); // FadeOut bilan bir xil
-    }
-  }, [isRequested]);
 
   return (
-    // <Animated.ScrollView
-    //   entering={FadeInDown.duration(600)}
-    //   exiting={FadeOutUp.duration(600)}
-    //   scrollIndicatorInsets={{ right: -4 }}
-    //   style={styles.scrollView}
-    //   contentContainerStyle={styles.scrollContent}
-    //   indicatorStyle={indicatorStyle}
-    // >
-    //   {showStatus && (
-    //     <Animated.View
-    //       entering={FadeInDown.duration(600)}
-    //       exiting={FadeOutUp.duration(600)}
-    //       style={[
-    //         styles.statusCard,
-    //         { backgroundColor: Colors.primary + "33" },
-    //       ]}
-    //     >
-    //       <AppText
-    //         style={[styles.statusTitle, { color: Colors.textSecondary }]}
-    //       >
-    //         Buyurtma holati
-    //       </AppText>
-    //       <AppText style={[styles.statusText, { color: Colors.primary }]}>
-    //         So'rov yuborgansiz
-    //       </AppText>
-    //     </Animated.View>
-    //   )}
-
-    //   <OrderListCargo order={order} />
-    //   <OrderListAddress locations={order.locations} />
-    // </Animated.ScrollView>
     <Animated.ScrollView
       entering={FadeInDown.duration(600)}
       exiting={FadeOutUp.duration(600)}
       scrollIndicatorInsets={{ right: -4 }}
       style={styles.scrollView}
       indicatorStyle={indicatorStyle}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={Colors.primary}
+          colors={["#fff"]}
+          progressBackgroundColor={Colors.primary}
+        />
+      }
     >
       <Animated.View
-        layout={Layout.springify().duration(400)} // ✨ ichki layout ham silliq bo‘ladi
+        layout={Layout.springify().duration(400)}
         style={styles.scrollContent}
       >
-        {showStatus && (
+        {isRequested && (
           <Animated.View
             entering={FadeInDown.duration(600)}
             exiting={FadeOutUp.duration(600)}
@@ -99,9 +71,9 @@ const DriverActiveOrderInfoList = ({ order, isRequested }: any) => {
             </AppText>
           </Animated.View>
         )}
-
+        <OrderListCustomer order={order} title="Buyurtmachi" />
         <OrderListCargo order={order} />
-        <OrderListAddress locations={order.locations} />
+        <OrderListAddress locations={order?.locations} />
       </Animated.View>
     </Animated.ScrollView>
   );

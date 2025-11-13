@@ -48,7 +48,7 @@ function ActiveDriverOrderItem({
 
         <OrderItemLocations order={order} />
 
-        <OrderItemRequests requested_drivers_length={"?"} />
+        <OrderItemRequests requested_drivers_length={order.requested} />
 
         <View style={[styles.line, { backgroundColor: Colors.borderColor }]} />
 

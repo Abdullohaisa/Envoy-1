@@ -1,4 +1,4 @@
-import { Alert, Linking, Pressable, View } from "react-native";
+import { Alert, Linking, Pressable, StyleSheet, View } from "react-native";
 import { StyleOrderInfoList as styles } from "../style";
 import { Image } from "expo-image";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -7,32 +7,15 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { callPhone } from "@/utils/call-phone";
 import { Spacing } from "@/shared/token";
 import Feather from "@expo/vector-icons/Feather";
+import { formatDate } from "@/utils/date-formater";
+import { useState } from "react";
+import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import SheetModal from "@/components/Modal/SheetModal";
+import AppButton from "@/components/Buttons/Button";
+import RatingStars from "@/components/RatingStars";
 
-// 🗺️ Xarita ochish
-// const openMap = async (lat?: number, lng?: number) => {
-//   if (!lat || !lng) {
-//     return Alert.alert("❗ Xatolik", "Manzil koordinatalari topilmadi");
-//   }
-
-//   const yandexApp = `yandexmaps://maps.yandex.ru/?pt=${lng},${lat}&z=12`;
-//   const googleApp = `comgooglemaps://?q=${lat},${lng}&zoom=14`;
-//   const gisApp = `dgis://2gis.ru/routeSearch/rsType/car/to/${lng},${lat}`;
-//   const googleWeb = `https://www.google.com/maps?q=${lat},${lng}`;
-
-//   try {
-//     if (await Linking.canOpenURL(yandexApp)) return Linking.openURL(yandexApp);
-//     if (await Linking.canOpenURL(googleApp)) return Linking.openURL(googleApp);
-//     if (await Linking.canOpenURL(gisApp)) return Linking.openURL(gisApp);
-//     return Linking.openURL(googleWeb);
-//   } catch {
-//     Alert.alert(
-//       "❗ Xarita ochib bo‘lmadi",
-//       "Iltimos, Google Maps, Yandex Maps yoki 2GIS ilovalaridan birini o‘rnating."
-//     );
-//   }
-// };
-
-const openMap = async (lat?: number, lng?: number) => {
+export const openMap = async (lat?: number, lng?: number) => {
   if (!lat || !lng) {
     return Alert.alert("❗ Xatolik", "Manzil koordinatalari topilmadi");
   }
@@ -61,6 +44,9 @@ export const OrderListCargo = ({ order }: any) => {
 
   return (
     <OrderListSection title="Yuk" Colors={Colors}>
+      {order?.id && (
+        <OrderListInfo Colors={Colors} label="Raqam" value={order.id} />
+      )}
       {order?.cargo?.type?.value && (
         <OrderListInfo
           Colors={Colors}
@@ -89,12 +75,8 @@ export const OrderListCargo = ({ order }: any) => {
           value={`${order.price.value.toLocaleString?.()} ${order.price.currency ?? ""}`}
         />
       )}
-      {order?.comment && (
-        <OrderListInfo Colors={Colors} label="Izoh" value={order.comment} />
-      )}
       {order?.truck && (
         <OrderListInfo
-          isLocation
           Colors={Colors}
           label="Yuk mashina"
           value={order.truck.toString()}
@@ -104,7 +86,38 @@ export const OrderListCargo = ({ order }: any) => {
   );
 };
 
-export const OrderListUser = ({ order, title }: any) => {
+export const OrderListOther = ({ order }: any) => {
+  const Colors = useThemeColors();
+
+  return (
+    <OrderListSection title="Qo'shimcha" Colors={Colors}>
+      {order?.time.created && (
+        <OrderListInfo
+          Colors={Colors}
+          label="Yaratilgan vaqt"
+          value={formatDate(order?.time.created)}
+        />
+      )}
+      {order?.time.deadline && (
+        <OrderListInfo
+          Colors={Colors}
+          label="Yukni olish vaqti"
+          value={formatDate(order?.time.deadline)}
+        />
+      )}
+      {order?.comment && (
+        <OrderListInfo
+          Colors={Colors}
+          label="Izoh"
+          value={order.comment}
+          isLocation
+        />
+      )}
+    </OrderListSection>
+  );
+};
+
+export const OrderListDriver = ({ order, title }: any) => {
   const Colors = useThemeColors();
 
   return (
@@ -148,6 +161,29 @@ export const OrderListUser = ({ order, title }: any) => {
             </View>
           </Pressable>
         )}
+    </OrderListSection>
+  );
+};
+
+export const OrderListCustomer = ({ order, title }: any) => {
+  const Colors = useThemeColors();
+
+  return (
+    <OrderListSection title={title}>
+      {order?.owner?.name && (
+        <OrderListInfo label="Ismi" value={order?.owner?.name} />
+      )}
+      {order?.owner?.phone && (
+        <Pressable onPress={() => callPhone(order?.driver?.phone)}>
+          <OrderListInfo label="Telefon raqami" value={order?.owner?.phone} />
+        </Pressable>
+      )}
+      {/* {order?.owner?.rating.score && ( */}
+      <OrderListInfo label="Reyting" value={order?.owner?.rating.score} />
+      {/* )} */}
+      {/* {order?.owner?.comment_count && ( */}
+      <OrderListInfo label="Izohlar" value={order?.owner?.comment_count} />
+      {/* )} */}
     </OrderListSection>
   );
 };
@@ -362,7 +398,7 @@ const OrderListDriverCard = ({ driver, handleDriverPress, onCall }: any) => {
 // 🔹 Info satri
 export const OrderListInfo = ({ label, value, icon, isLocation }: any) => {
   const Colors = useThemeColors();
-  if (!value) return null;
+  if (!value && value !== 0) return null;
   return (
     <View
       style={[
@@ -408,3 +444,212 @@ const OrderListSection = ({ title, children }: any) => {
     </View>
   );
 };
+
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
+const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
+  const Colors = useThemeColors();
+  const [modal, setModal] = useState(false);
+
+  return (
+    <CustomBottomSheetModal
+      ref={modalRef}
+      snapPoints={["55%"]}
+      backdropOpacity={0.6}
+      backgroundStyle={{ backgroundColor: Colors.Boxbackground }}
+    >
+      <BottomSheetScrollView style={driverChooseModalStyles.sheetScroll}>
+        {driver && (
+          <View style={driverChooseModalStyles.modalContent}>
+            <View
+              style={[
+                driverChooseModalStyles.driverCard,
+                { backgroundColor: Colors.borderColor },
+              ]}
+            >
+              <View style={driverChooseModalStyles.modalImage}>
+                {driver.image ? (
+                  <Image
+                    source={{ uri: driver.image }}
+                    style={driverChooseModalStyles.driverImage}
+                  />
+                ) : (
+                  <MaterialIcons
+                    name="account-circle"
+                    size={80}
+                    color={Colors.textSecondary}
+                  />
+                )}
+              </View>
+              <View style={driverChooseModalStyles.driverInfo}>
+                <AppText
+                  style={[
+                    driverChooseModalStyles.modalName,
+                    { color: Colors.textPrimary },
+                  ]}
+                >
+                  {driver.name}
+                </AppText>
+                <AppText
+                  style={[
+                    driverChooseModalStyles.modalPhone,
+                    { color: Colors.textSecondary },
+                  ]}
+                >
+                  {driver.phone_number}
+                </AppText>
+              </View>
+            </View>
+
+            <View
+              style={[
+                driverChooseModalStyles.infoCard,
+                { backgroundColor: Colors.borderColor },
+              ]}
+            >
+              <View style={driverChooseModalStyles.ratingLeft}>
+                <AppText>Reyting</AppText>
+                <View style={driverChooseModalStyles.ratingFriends}>
+                  <FontAwesome5 name="user-friends" size={14} color="silver" />
+                  <AppText style={driverChooseModalStyles.modalRating}>
+                    {driver.rating.count}
+                  </AppText>
+                </View>
+              </View>
+              <View style={driverChooseModalStyles.ratingRight}>
+                <AppText style={driverChooseModalStyles.modalRating}>
+                  {driver.rating.score}
+                </AppText>
+                <RatingStars rating={driver.rating.score} />
+              </View>
+            </View>
+
+            {/* === COMMENTS CARD === */}
+            <View
+              style={[
+                driverChooseModalStyles.infoCard,
+                { backgroundColor: Colors.borderColor },
+              ]}
+            >
+              <AppText>Boshqa Mijozlar fikri</AppText>
+              <AppText style={driverChooseModalStyles.modalRating}>
+                {driver.comments_count}
+              </AppText>
+            </View>
+
+            {/* === BUTTONS === */}
+            <AppButton
+              title="Tanlash"
+              onPress={() => setModal(true)}
+              variant="primary"
+            />
+
+            <Pressable
+              style={[
+                driverChooseModalStyles.phoneButton,
+                { backgroundColor: Colors.borderColor },
+              ]}
+            >
+              <FontAwesome6 name="phone" size={25} color={Colors.green} />
+            </Pressable>
+
+            <SheetModal
+              type="yesno"
+              open={modal}
+              onDismiss={() => setModal(false)}
+              message="Haydovchini tanlamoqchimisiz"
+              onYes={handleSelectDriver}
+            />
+          </View>
+        )}
+      </BottomSheetScrollView>
+    </CustomBottomSheetModal>
+  );
+};
+
+export default DriverChooseModal;
+
+const driverChooseModalStyles = StyleSheet.create({
+  scrollView: {
+    overflow: "hidden",
+    marginTop: 5,
+    borderRadius: 20,
+    marginHorizontal: 5,
+  },
+  scrollContent: {
+    gap: 10,
+    paddingBottom: 50,
+    paddingTop: 5,
+  },
+  sheetScroll: {
+    padding: 10,
+  },
+  modalContent: {
+    gap: 10,
+  },
+  driverCard: {
+    flexDirection: "row",
+    gap: 20,
+    borderRadius: 20,
+    padding: 5,
+  },
+  modalImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 15,
+    overflow: "hidden",
+  },
+  driverImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 15,
+  },
+  driverInfo: {
+    justifyContent: "center",
+    alignItems: "flex-start",
+    gap: 5,
+  },
+  modalName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  modalPhone: {
+    fontSize: 14,
+    color: "gray",
+  },
+  infoCard: {
+    flexDirection: "row",
+    gap: 20,
+    borderRadius: 20,
+    padding: 15,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  ratingLeft: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+  ratingFriends: {
+    flexDirection: "row",
+    gap: 4,
+    alignItems: "center",
+  },
+  ratingRight: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+  },
+  modalRating: {
+    fontWeight: "600",
+  },
+  phoneButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "flex-end",
+  },
+});

@@ -23,6 +23,7 @@ import {
 import { useAtomValue } from "jotai";
 import AppImage from "@/components/Image/Image";
 import CustomSpinner from "@/components/Spinner/Spinner";
+import { themeAtom } from "@/theme/theme";
 
 const AvatarSection = ({
   image,
@@ -38,6 +39,7 @@ const AvatarSection = ({
   const userData = useAtomValue(userDataAtom);
   const { isLoading } = useAtomValue(userDataStateAtom);
   const [blur, setBlur] = useState(0);
+  const theme = useAtomValue(themeAtom);
 
   useEffect(() => {
     if (editMode) {
@@ -118,7 +120,7 @@ const AvatarSection = ({
           { backgroundColor: Colors.Boxbackground },
         ]}
       >
-        {isLoading ||
+        {/* {isLoading ||
           (loading && (
             <View
               style={[
@@ -134,7 +136,7 @@ const AvatarSection = ({
             >
               <CustomSpinner color={Colors.primary} />
             </View>
-          ))}
+          ))} */}
 
         {image.uri || userData.image ? (
           <AppImage
@@ -156,12 +158,27 @@ const AvatarSection = ({
       <View
         style={[
           styles.editBox,
-          { backgroundColor: "rgba(0, 0, 0, 0.5)", borderRadius: 15 },
+          {
+            backgroundColor:
+              theme === "dark"
+                ? "rgba(0, 0, 0, 0.5)"
+                : "rgba(255, 255, 255, 0.5)",
+            // backgroundColor: Colors.pageBackground,
+            borderRadius: 15,
+          },
         ]}
       >
         <Pressable style={styles.editPhoto} onPress={() => setEditMode(true)}>
           <MaterialIcons name="edit" size={20} color={Colors.textPrimary} />
         </Pressable>
+        <View
+          style={{
+            width: 1,
+            height: 20,
+            backgroundColor: Colors.textSecondary,
+            alignSelf: "center",
+          }}
+        />
         <Pressable
           style={styles.editPhoto}
           onPress={() => ref.current?.present()}

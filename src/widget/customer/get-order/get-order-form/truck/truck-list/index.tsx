@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import React, { RefObject, useState } from "react";
-import { TruckItem, truckData } from "../data";
+
 import { Spacing, screens } from "@/shared/token";
 import { Image } from "expo-image";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -29,6 +29,7 @@ import { AppRoutes } from "@/constants/routes";
 import GetOrderBackButton from "../../../back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
 import { useTranslation } from "react-i18next";
+import { TruckItem, truckData } from "@/data/truck-data";
 
 interface Props {
   flatListRef: RefObject<FlatList<TruckItem> | null>;

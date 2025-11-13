@@ -5,9 +5,14 @@ import DriverActiveOrderInfoList from "@/components/OrderInfoList/DriverActiveOr
 import AppText from "@/components/Texts/Text";
 import { ORDERS, screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SheetModal from "@/components/Modal/SheetModal";
 import api from "@/axios/axios.config";
+import { useLocalSearchParams } from "expo-router";
+import { useFetchSingleOrder } from "@/service/order/fetch-single-order/controller";
+import OrderLoading from "@/components/OrderLoading/OrderLoading";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/service/user/register-login/controller";
 
 const requestURL = "/driver/request-order/";
 
@@ -18,23 +23,31 @@ const DriverActiveOrder = () => {
   const [resVisible, setResVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [isRequested, setIsRequested] = useState(null);
-
-  console.log(isRequested);
+  const params = useLocalSearchParams();
+  const orderId = params.order_id as string;
+  const [refreshing, setRefreshing] = useState(false);
+  const {
+    order,
+    requestedDrivers,
+    isLoading: loading,
+    error,
+    refetch,
+  } = useFetchSingleOrder(`/order/all-active-orders/${orderId}/`, "post");
+  const { access } = useAtomValue(authAtom);
+  console.log(access);
 
   const handleRequestOrder = async () => {
     setIsLoading(true);
     try {
       const { data } = await api.post(requestURL, {
-        order_id: 63,
+        order_id: orderId,
       });
-      // console.log(data);
       if (data.message === "request is sent successfully") {
         setModalMessage("So'rov yuborildi");
       } else if (data.message === "request is returned back successfully") {
         setModalMessage("So'rov bekor qilindi");
       }
     } catch (error) {
-      console.log(error);
     } finally {
       setIsLoading(false);
       setResVisible(true);
@@ -44,23 +57,39 @@ const DriverActiveOrder = () => {
 
   const fetchRequestOrder = async () => {
     try {
-      const { data } = await api.get(requestURL + "63/");
+      const { data } = await api.get(requestURL + `${orderId}/`);
       setIsRequested(data.is_requested);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
     fetchRequestOrder();
   }, []);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    await fetchRequestOrder();
+    setRefreshing(false);
+  }, [refetch]);
+
   return (
     <View
       style={[styles.container, { backgroundColor: Colors.pageBackground }]}
     >
       <PageHeader title="Yuk ma'lumotlari" enableBack />
-      <DriverActiveOrderInfoList order={ORDERS[0]} isRequested={isRequested} />
+      {(isLoading || loading) && !refreshing && (
+        <OrderLoading Colors={Colors} />
+      )}
+      {(!isLoading || !loading) && !error && order && (
+        <DriverActiveOrderInfoList
+          order={order}
+          isRequested={isRequested}
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+        />
+      )}
+
       <View
         style={{
           position: "absolute",
@@ -79,8 +108,8 @@ const DriverActiveOrder = () => {
           title={isRequested ? "So'rovni bekor qilish" : "So'rov yuborish"}
           variant="secondary"
           onPress={() => setRequestVisible(true)}
-          isLoading={isLoading}
-          titleStyle={{ color: isRequested ? "red" : "red" }}
+          isLoading={isLoading || loading}
+          titleStyle={{ color: isRequested ? Colors.red : Colors.textPrimary }}
         />
       </View>
       <SheetModal

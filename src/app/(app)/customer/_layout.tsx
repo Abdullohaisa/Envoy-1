@@ -13,6 +13,8 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius, screens } from "@/shared/token";
 
 import { useTranslation } from "react-i18next";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/service/user/register-login/controller";
 
 // ------------------------
 // 🔹 Mini komponent: AnimatedIcon
@@ -20,6 +22,8 @@ import { useTranslation } from "react-i18next";
 const AnimatedIcon = React.memo(({ name, focused, color }: any) => {
   const scale = useSharedValue(focused ? 1.15 : 1);
   const rotate = useSharedValue(focused ? 0 : 0);
+  const { access } = useAtomValue(authAtom);
+  console.log(access);
 
   useEffect(() => {
     scale.value = withTiming(focused ? 1.2 : 1, {

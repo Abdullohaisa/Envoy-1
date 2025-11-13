@@ -1,14 +1,21 @@
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
-  PermissionsAndroid,
-  Platform,
+  Pressable,
+  ScrollView,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { useRef, useState, useMemo, useEffect } from "react";
+import {
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  RefObject,
+  memo,
+} from "react";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
@@ -16,156 +23,214 @@ import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft } from "lucide-react-native";
 import * as Location from "expo-location";
 import AppText from "@/components/Texts/Text";
-
-// 🔹 Buyurtmalar (butun O‘zbekiston bo‘ylab)
-const ORDERS = [
-  {
-    id: 1,
-    title: "Toshkent → Samarqand",
-    city: "Toshkent",
-    lat: 41.3111,
-    lon: 69.2797,
-    price: "200 000 so‘m",
-    distance: "310 km",
-  },
-  {
-    id: 2,
-    title: "Samarqand → Buxoro",
-    city: "Samarqand",
-    lat: 39.6542,
-    lon: 66.9597,
-    price: "230 000 so‘m",
-    distance: "270 km",
-  },
-  {
-    id: 3,
-    title: "Buxoro → Navoiy",
-    city: "Buxoro",
-    lat: 39.7747,
-    lon: 64.4286,
-    price: "150 000 so‘m",
-    distance: "110 km",
-  },
-  {
-    id: 4,
-    title: "Farg‘ona → Andijon",
-    city: "Farg‘ona",
-    lat: 40.3736,
-    lon: 71.7978,
-    price: "90 000 so‘m",
-    distance: "80 km",
-  },
-  {
-    id: 5,
-    title: "Namangan → Toshkent",
-    city: "Namangan",
-    lat: 41.0011,
-    lon: 71.6726,
-    price: "210 000 so‘m",
-    distance: "290 km",
-  },
-  {
-    id: 6,
-    title: "Urganch → Xiva",
-    city: "Xorazm",
-    lat: 41.5565,
-    lon: 60.631,
-    price: "70 000 so‘m",
-    distance: "35 km",
-  },
-  {
-    id: 7,
-    title: "Qarshi → Termiz",
-    city: "Qashqadaryo",
-    lat: 38.8606,
-    lon: 65.7891,
-    price: "250 000 so‘m",
-    distance: "290 km",
-  },
-  {
-    id: 8,
-    title: "Nukus → Urganch",
-    city: "Qoraqalpog‘iston",
-    lat: 42.4619,
-    lon: 59.616,
-    price: "190 000 so‘m",
-    distance: "160 km",
-  },
-];
+import { allActiveOrdersAtom } from "@/service/driver/fetch-all-active-orders/controller";
+import Octicons from "@expo/vector-icons/Octicons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { truckData } from "@/data/truck-data";
+import { useTranslation } from "react-i18next";
+import { Spacing } from "@/shared/token";
+import { IThemeColors } from "@/theme/colors.interface";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { safeNavigate } from "@/utils/safe-navigation";
+import { router } from "expo-router";
+import ArrowIcon from "@/assets/icon/arrow";
+import { MaterialIcons } from "@expo/vector-icons";
+import Entypo from "@expo/vector-icons/Entypo";
+import { APIKEY } from "@/constants/locations";
 
 export default function DriverOrdersMapScreen() {
   const Colors = useThemeColors();
   const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const navigation = useNavigation();
-  const theme = useAtomValue(themeAtom);
-  const mapStyle = theme === "dark" ? darkMapStyle : lightMapStyle;
-
-  const snapPoints = useMemo(() => ["25%"], []);
+  const { t } = useTranslation();
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  const [region, setRegion] = useState<any>(null);
+  const allActiveOrders = useAtomValue(allActiveOrdersAtom);
+  const combineOrder = useMemo(
+    () => [...allActiveOrders.nearby, ...allActiveOrders.other],
+    [allActiveOrders]
+  );
+  const snapPoints = useMemo(() => ["35%"], []);
+  const inset = useSafeAreaInsets();
 
-  // 🔹 Lokatsiyani olish
+  const [markerReady, setMarkerReady] = useState(true);
+  const [hereRouteCoords, setHereRouteCoords] = useState<any[]>([]);
+
+  // 🔹 Lokatsiyani olish va xaritani boshlang‘ich joylashtirish
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      const loc = await Location.getCurrentPositionAsync({});
       mapRef.current?.animateToRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.5,
-        longitudeDelta: 0.5,
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+        latitudeDelta: 13,
+        longitudeDelta: 13,
       });
     })();
   }, []);
 
+  // 🔹 Marker render tayyorligi
+  useEffect(() => {
+    const timer = setTimeout(() => setMarkerReady(false), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   // 🔹 Marker bosilganda sheet ochish
-  const handleMarkerPress = (order: any) => {
+  const handleMarkerPress = useCallback((order: any) => {
     setSelectedOrder(order);
     sheetRef.current?.expand();
-  };
+  }, []);
 
-  // 🔹 Xarita harakatlansa sheetni yopish
-  const handleMapPan = () => {
+  const handleMapPan = useCallback(() => {
     sheetRef.current?.close();
+  }, []);
+
+  // 🔹 Here API bilan pickup → dropoff yo‘lini olish
+  useEffect(() => {
+    const fetchHereRoute = async () => {
+      if (!selectedOrder) return;
+
+      try {
+        const apiKey = process.env.EXPO_PUBLIC_HERE_API_KEY; // shu yerga API key
+        const pickup = selectedOrder.locations.pickup[0]?.coordinates;
+        const dropoff = selectedOrder.locations.dropoff[0]?.coordinates;
+
+        if (!pickup || !dropoff) return;
+
+        const url = `https://router.hereapi.com/v8/routes?transportMode=car&origin=${pickup.latitude},${pickup.longitude}&destination=${dropoff.latitude},${dropoff.longitude}&return=polyline&apikey=${apiKey}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data?.routes?.length) {
+          const polyline = data.routes[0].sections[0].polyline;
+          const coords = decodeHerePolyline(polyline);
+          setHereRouteCoords(coords);
+        }
+      } catch (error) {}
+    };
+
+    fetchHereRoute();
+  }, [selectedOrder]);
+
+  // 🔹 Here API polyline decode funksiyasi
+  const decodeHerePolyline = (encoded: string) => {
+    let index = 0,
+      lat = 0,
+      lng = 0,
+      coordinates: { latitude: number; longitude: number }[] = [];
+
+    while (index < encoded.length) {
+      let result = 1,
+        shift = 0,
+        b;
+      do {
+        b = encoded.charCodeAt(index++) - 63 - 1;
+        result += b << shift;
+        shift += 5;
+      } while (b >= 0x1f);
+      lat += result & 1 ? ~(result >> 1) : result >> 1;
+
+      result = 1;
+      shift = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63 - 1;
+        result += b << shift;
+        shift += 5;
+      } while (b >= 0x1f);
+      lng += result & 1 ? ~(result >> 1) : result >> 1;
+
+      coordinates.push({ latitude: lat * 1e-5, longitude: lng * 1e-5 });
+    }
+
+    return coordinates;
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       {/* 🔹 Xarita */}
       <MapView
         ref={mapRef}
-        style={{ flex: 1 }}
+        style={styles.map}
         mapType="standard"
-        region={region}
         showsUserLocation
+        showsMyLocationButton={false}
         initialRegion={{
           latitude: 41.3,
           longitude: 64.5,
-          latitudeDelta: 10,
-          longitudeDelta: 10,
+          latitudeDelta: 5,
+          longitudeDelta: 5,
         }}
         onPanDrag={handleMapPan}
-        customMapStyle={mapStyle}
       >
-        {ORDERS.map((order) => (
+        {/* Combine order markerlari */}
+        {!selectedOrder &&
+          combineOrder.map((order) => (
+            <Marker
+              key={order.id}
+              coordinate={{
+                latitude: order?.locations?.pickup[0]?.coordinates?.latitude,
+                longitude: order?.locations?.dropoff[0]?.coordinates?.longitude,
+              }}
+              onPress={() => handleMarkerPress(order)}
+              tracksViewChanges={!markerReady}
+            >
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: "#fff", borderColor: Colors.primary },
+                ]}
+              />
+            </Marker>
+          ))}
+
+        {/* Selected order pickup markerlari */}
+        {selectedOrder?.locations?.pickup.map((item: any, index: number) => (
           <Marker
-            key={order.id}
-            coordinate={{ latitude: order.lat, longitude: order.lon }}
-            onPress={() => handleMarkerPress(order)}
+            key={index}
+            coordinate={{
+              latitude: item.coordinates?.latitude,
+              longitude: item.coordinates?.longitude,
+            }}
+            tracksViewChanges={!markerReady}
           >
             <View
               style={[
                 styles.dot,
-                { backgroundColor: Colors.primary, borderColor: "#fff" },
+                { backgroundColor: "#fff", borderColor: Colors.red },
               ]}
             />
           </Marker>
         ))}
+        {/* Selected order dropoff markerlari */}
+        {selectedOrder?.locations?.dropoff.map((item: any, index: number) => (
+          <Marker
+            key={index}
+            coordinate={{
+              latitude: item.coordinates?.latitude,
+              longitude: item.coordinates?.longitude,
+            }}
+            tracksViewChanges={!markerReady}
+          >
+            <View
+              style={[
+                styles.dot,
+                { backgroundColor: "#fff", borderColor: Colors.green },
+              ]}
+            />
+          </Marker>
+        ))}
+
+        {/* 🔹 Here API yo‘lini chizish */}
+        {hereRouteCoords.length > 0 && (
+          <Polyline
+            coordinates={hereRouteCoords}
+            strokeColor={Colors.primary}
+            strokeWidth={4}
+          />
+        )}
       </MapView>
 
       {/* 🔹 Back tugmasi */}
@@ -176,37 +241,60 @@ export default function DriverOrdersMapScreen() {
         <ArrowLeft size={22} color={Colors.textPrimary} />
       </TouchableOpacity>
 
-      {/* 🔹 Bottom Sheet (buyurtma tafsiloti) */}
+      {/* 🔹 User location button */}
+      <UserLocationButton mapRef={mapRef} />
+
+      {/* 🔹 Bottom Sheet */}
       <BottomSheet
         enableDynamicSizing={false}
         ref={sheetRef}
+        index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
-        backgroundStyle={{ backgroundColor: Colors.Boxbackground }}
-        handleIndicatorStyle={{ backgroundColor: Colors.textSecondary }}
+        handleComponent={null}
+        handleStyle={{ height: 10 }}
+        backgroundStyle={{
+          backgroundColor: Colors.pageBackground,
+          elevation: 20,
+        }}
       >
         <View style={styles.sheetContent}>
           {selectedOrder ? (
-            <>
-              <AppText
-                style={[styles.sheetTitle, { color: Colors.textPrimary }]}
-              >
-                {selectedOrder.title}
-              </AppText>
-              <AppText
-                style={[styles.sheetItem, { color: Colors.textSecondary }]}
-              >
-                📍 Shahar: {selectedOrder.city}
-              </AppText>
-              <AppText
-                style={[styles.sheetItem, { color: Colors.textSecondary }]}
-              >
-                🚗 Masofa: {selectedOrder.distance}
-              </AppText>
-              <AppText style={[styles.sheetItem, { color: Colors.primary }]}>
-                💰 Narx: {selectedOrder.price}
-              </AppText>
-            </>
+            <View
+              style={{
+                gap: 5,
+                height: "100%",
+                justifyContent: "space-between",
+                paddingBottom: inset.bottom + 5,
+              }}
+            >
+              <View style={{ gap: 10 }}>
+                <View
+                  style={{
+                    gap: 5,
+                    borderBottomWidth: 1,
+                    paddingBottom: 10,
+                    borderColor: Colors.borderColor,
+                  }}
+                >
+                  <LocationTags
+                    data={selectedOrder.locations.pickup}
+                    iconName="upload"
+                    color={Colors.yellow}
+                    Colors={Colors}
+                  />
+                  <LocationTags
+                    data={selectedOrder.locations.dropoff}
+                    iconName="download"
+                    color={Colors.green}
+                    Colors={Colors}
+                  />
+                </View>
+
+                <OrderInfoTags order={selectedOrder} Colors={Colors} t={t} />
+              </View>
+              <ActionButtons Colors={Colors} order={selectedOrder} />
+            </View>
           ) : (
             <AppText
               style={[styles.sheetItem, { color: Colors.textSecondary }]}
@@ -220,8 +308,181 @@ export default function DriverOrdersMapScreen() {
   );
 }
 
+// 🔹 Pickup yoki dropoff joylarini ko‘rsatish
+const LocationTags = ({
+  data,
+  iconName,
+  color,
+  Colors,
+}: {
+  data: any;
+  iconName: any;
+  color: string;
+  Colors: IThemeColors;
+}) => {
+  const theme = useAtomValue(themeAtom);
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+      <Octicons name={iconName} size={18} color={color} />
+      <ScrollView horizontal contentContainerStyle={styles.scrollContainer}>
+        {data.map((location: any, index: number) => (
+          <View
+            key={index}
+            style={{ flexDirection: "row", alignItems: "center" }}
+          >
+            {/* Location tag */}
+            <View
+              style={[
+                styles.locationTag,
+                { backgroundColor: Colors.borderColor + "77" },
+              ]}
+            >
+              <AppText style={styles.sheetTitle}>
+                {location.short_title}
+              </AppText>
+            </View>
+
+            {index < data.length - 1 && (
+              <View style={{ marginLeft: 5 }}>
+                <ArrowIcon
+                  direction="right"
+                  size={12}
+                  color={Colors.textSecondary}
+                />
+              </View>
+            )}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
+
+// 🔹 Yuk turi va narx ma’lumotlari
+const OrderInfoTags = ({
+  order,
+  Colors,
+  t,
+}: {
+  order: any;
+  Colors: IThemeColors;
+  t: any;
+}) => (
+  <View style={styles.infoRow}>
+    <View
+      style={[styles.infoTag, { backgroundColor: Colors.borderColor + "77" }]}
+    >
+      <FontAwesome5 name="truck" size={18} color={Colors.primary} />
+      <AppText style={styles.sheetTitle}>
+        {t(truckData[order?.truck]?.title)}
+      </AppText>
+    </View>
+    <View
+      style={[styles.infoTag, { backgroundColor: Colors.borderColor + "77" }]}
+    >
+      <FontAwesome5 name="money-bill" size={18} color={Colors.primary} />
+      <AppText style={styles.sheetTitle}>
+        {order.price.value} {order.price.currency}
+      </AppText>
+    </View>
+  </View>
+);
+
+// 🔹 Sheet ichidagi butonlar
+const ActionButtons = ({
+  Colors,
+  order,
+}: {
+  Colors: IThemeColors;
+  order: any;
+}) => {
+  const theme = useAtomValue(themeAtom);
+  const inOrder = () => {
+    safeNavigate(() =>
+      router.push({
+        pathname: "(app)/driver/orders/" + order.id,
+        params: { order_id: JSON.stringify(order.id) },
+      })
+    );
+  };
+  return (
+    <View style={styles.actionRow}>
+      <Pressable
+        style={[styles.buttonPrimary, { backgroundColor: Colors.primary }]}
+      >
+        <AppText variant="semiBold" style={styles.buttonText}>
+          So‘rov yuborish
+        </AppText>
+      </Pressable>
+      <Pressable
+        onPress={inOrder}
+        style={[
+          styles.buttonSecondary,
+          { backgroundColor: Colors.borderColor + "77" },
+        ]}
+      >
+        <AppText style={styles.buttonSecondaryText}>Tafsilotlari</AppText>
+      </Pressable>
+    </View>
+  );
+};
+
+interface Props {
+  mapRef: RefObject<MapView>;
+}
+
+const UserLocationButtonComponent = ({ mapRef }: Props) => {
+  const Colors = useThemeColors();
+  const [hasError, setHasError] = useState(false);
+
+  const handlePress = useCallback(async () => {
+    try {
+      setHasError(false);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setHasError(true);
+        return;
+      }
+
+      const loc = await Location.getCurrentPositionAsync({});
+      mapRef.current?.animateToRegion(
+        {
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        500
+      );
+    } catch (error) {
+      setHasError(true);
+    }
+  }, [mapRef]);
+
+  return (
+    <Pressable
+      style={[styles.userLocationButton, { backgroundColor: Colors.primary }]}
+      onPress={handlePress}
+    >
+      {hasError ? (
+        <Entypo name="help" size={24} color="#fff" />
+      ) : (
+        <MaterialIcons
+          name={hasError ? "help" : "my-location"}
+          size={24}
+          color="#fff"
+        />
+      )}
+    </Pressable>
+  );
+};
+
+export const UserLocationButton = memo(UserLocationButtonComponent);
+
 // 🔹 Styles
 const styles = StyleSheet.create({
+  container: { flex: 1 },
+  map: { flex: 1 },
   dot: {
     width: 16,
     height: 16,
@@ -240,56 +501,65 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   sheetContent: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.horizontal,
+    paddingVertical: Spacing.horizontal,
   },
   sheetTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 6,
+    fontSize: 14,
   },
   sheetItem: {
     fontSize: 15,
-    marginBottom: 4,
+    textAlign: "center",
+  },
+  scrollContainer: { gap: 7 },
+  locationTag: {
+    flexDirection: "row",
+    gap: 7,
+    alignItems: "center",
+    padding: 7,
+    borderRadius: 10,
+  },
+  infoRow: {
+    flexDirection: "row",
+    gap: 7,
+    flexWrap: "wrap",
+  },
+  infoTag: {
+    flexDirection: "row",
+    gap: 7,
+    alignItems: "center",
+    padding: 7,
+    borderRadius: 10,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  buttonPrimary: {
+    height: 45,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
+  buttonSecondary: {
+    height: 45,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
+  buttonText: { fontSize: 16, color: "#fff" },
+  buttonSecondaryText: { fontSize: 16 },
+  userLocationButton: {
+    position: "absolute",
+    bottom: 80,
+    right: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
   },
 });
-
-// 🌑 DARK MODE XARITA
-const darkMapStyle = [
-  { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
-  {
-    featureType: "road",
-    elementType: "geometry",
-    stylers: [{ color: "#304a7d" }],
-  },
-  {
-    featureType: "water",
-    elementType: "geometry",
-    stylers: [{ color: "#0e1626" }],
-  },
-  { featureType: "poi", stylers: [{ visibility: "off" }] },
-];
-
-// ☀️ LIGHT MODE XARITA
-const lightMapStyle = [
-  { elementType: "geometry", stylers: [{ color: "#ebe3cd" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
-  {
-    featureType: "road",
-    elementType: "geometry",
-    stylers: [{ color: "#f5f1e6" }],
-  },
-  {
-    featureType: "road.arterial",
-    elementType: "geometry",
-    stylers: [{ color: "#fdfcf8" }],
-  },
-  {
-    featureType: "water",
-    elementType: "geometry.fill",
-    stylers: [{ color: "#c9c9c9" }],
-  },
-];

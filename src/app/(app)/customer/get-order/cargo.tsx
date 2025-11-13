@@ -94,7 +94,6 @@ const CargoForm = () => {
     setCargoAtom(normalizedData);
     setIsChanged(false);
     Keyboard.dismiss();
-    console.log(data);
   };
 
   const onNext = () => {

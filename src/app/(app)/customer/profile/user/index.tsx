@@ -45,6 +45,8 @@ import {
   useFetchUserData,
   userDataAtom,
 } from "@/service/user/get-user-info/controller";
+import { themeAtom } from "@/theme/theme";
+import UserBackButton from "@/widget/profile/user/BackButton";
 
 // =====================================================
 //                 EditCustomerProfilePage
@@ -72,6 +74,7 @@ const EditCustomerProfilePage = () => {
   const [editMode, setEditMode] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useAtomValue(themeAtom);
 
   // =====================================================
   //                     FUNKSIYALAR
@@ -190,21 +193,14 @@ const EditCustomerProfilePage = () => {
   return (
     <View style={{ flex: 1, backgroundColor: Colors.pageBackground }}>
       {/* 🔸 Yuqori header */}
-      <UserHeader handleSave={handleSave} editMode={editMode} />
+      <UserHeader
+        handleSave={handleSave}
+        editMode={editMode}
+        setEditMode={setEditMode}
+      />
 
       {/* 🔸 Orqaga qaytish tugmasi */}
-      <Pressable
-        onPress={() => router.back()}
-        style={{
-          position: "absolute",
-          top: 11 + insets.top,
-          left: 5,
-          padding: 10,
-          zIndex: 10,
-        }}
-      >
-        <ArrowIcon color={Colors.textSecondary} />
-      </Pressable>
+      <UserBackButton />
 
       {/* 🔸 Asosiy scroll qismi */}
       <ScrollView

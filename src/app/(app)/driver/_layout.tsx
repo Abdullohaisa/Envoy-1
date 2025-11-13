@@ -11,6 +11,7 @@ import Animated, {
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius, screens } from "@/shared/token";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 // ------------------------
 // 🔹 Mini komponent: AnimatedIcon
@@ -51,15 +52,9 @@ const AnimatedLabel = React.memo(({ label, focused, color }: any) => {
     opacity.value = withTiming(focused ? 1 : 0.6, { duration: 300 });
   }, [focused]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: focused ? -1 : 0 }],
-  }));
-
   return (
     <Animated.Text
       style={[
-        // animatedStyle,
         {
           fontSize: 12,
           color,
@@ -119,7 +114,12 @@ const DriverLayout = () => {
   const pathname = usePathname();
 
   const visibleRouters = useMemo(
-    () => ["/driver/orders", "/driver/profile", "/driver"],
+    () => [
+      "/driver/orders",
+      "/driver/profile",
+      "/driver",
+      "/driver/driver-order",
+    ],
     []
   );
   const showTabBar = useMemo(
@@ -138,8 +138,8 @@ const DriverLayout = () => {
         position: "absolute",
         backgroundColor: Colors.Boxbackground,
         borderTopWidth: 0,
-        borderTopLeftRadius: Platform.OS === "ios" ? Radius.primary : 0,
-        borderTopRightRadius: Platform.OS === "ios" ? Radius.primary : 0,
+        borderTopLeftRadius: Platform.OS === "ios" ? Radius.primary : 5,
+        borderTopRightRadius: Platform.OS === "ios" ? Radius.primary : 5,
         height: screens.height * 0.09,
         zIndex: 10,
       },
@@ -174,22 +174,31 @@ const DriverLayout = () => {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="drivers-order"
+      <Tabs.Screen
+        name="driver-order"
         options={{
-          title: "Yaratish",
+          title: "Yukingiz",
+          tabBarStyle: {
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: 0,
+            position: "absolute",
+            backgroundColor: Colors.Boxbackground,
+            borderTopWidth: 0,
+            height: screens.height * 0.09,
+            zIndex: 10,
+          },
           tabBarIcon: ({ focused, color }) => (
-            <AnimatedIcon
-              name="add-circle-outline"
-              focused={focused}
+            <MaterialCommunityIcons
+              name="border-radius"
+              size={26}
               color={color}
             />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Yaratish" focused={focused} color={color} />
+            <AnimatedLabel label="Yukingiz" focused={focused} color={color} />
           ),
         }}
-      /> */}
+      />
       <Tabs.Screen
         name="profile"
         options={{

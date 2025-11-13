@@ -270,28 +270,20 @@ export default function SheetModal({
           entering={FadeInDown.delay(200)}
           style={styles.buttonsContainer}
         >
-          {type === "ok" && (
-            <AppButton
-              title={okText}
-              onPress={handleOk}
-              style={styles.okButton}
-              titleStyle={{ fontWeight: "600", fontSize: 16 }}
-            />
-          )}
+          {type === "ok" && <AppButton title={okText} onPress={handleOk} />}
 
           {type === "yesno" && (
             <View style={styles.row}>
               <AppButton
                 onPress={handleYes}
                 title={yesText}
-                titleStyle={{ fontWeight: "600" }}
-                style={{ backgroundColor: "red" }}
+                buttonStyle={{ flex: 1 }}
               />
               <AppButton
                 onPress={handleNo}
                 title={noText}
                 variant="secondary"
-                buttonStyle={{ backgroundColor: "red" }}
+                buttonStyle={{ flex: 1 }}
               />
             </View>
           )}

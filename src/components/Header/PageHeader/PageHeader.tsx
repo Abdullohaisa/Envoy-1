@@ -31,6 +31,7 @@ type PageHeaderProps = {
   onRightPress?: () => void; // 🔹 qo'shildi
   rightDisabled?: boolean; // 🔹 qo'shildi
   routePath?: string;
+  onLeftPress?: () => void;
 };
 
 const PageHeader = ({
@@ -42,6 +43,7 @@ const PageHeader = ({
   onRightPress,
   rightDisabled = false,
   routePath,
+  onLeftPress,
 }: PageHeaderProps) => {
   const Colors = useThemeColors();
   const insetsTop = useSafeAreaInsets().top;
@@ -105,11 +107,15 @@ const PageHeader = ({
         {enableBack && (
           <Pressable
             style={styles.backButton}
-            onPress={() =>
-              safeNavigate(() =>
-                routePath ? router.push(routePath) : router.back()
-              )
-            }
+            onPress={() => {
+              if (!onLeftPress) {
+                safeNavigate(() =>
+                  routePath ? router.push(routePath) : router.back()
+                );
+              } else {
+                onLeftPress();
+              }
+            }}
           >
             <ArrowIcon
               color={

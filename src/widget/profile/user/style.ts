@@ -23,7 +23,7 @@ export const styleUser = StyleSheet.create({
     right: 10,
     bottom: 10,
     flexDirection: "row",
-    gap: 4,
+    gap: 1,
     borderRadius: 14,
   },
   editPhoto: {

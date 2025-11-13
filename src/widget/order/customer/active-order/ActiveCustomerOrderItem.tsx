@@ -32,11 +32,6 @@ function ActiveCustomerOrderItem({
     <View style={[styles.box, {}]}>
       <Pressable
         onPress={inOrder}
-        android_ripple={{
-          color: Colors.borderColor,
-          borderless: false,
-          radius: 200,
-        }}
         style={[
           styles.item,
           {

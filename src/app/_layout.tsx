@@ -23,6 +23,23 @@ const Layout = () => {
     prepare();
   }, []);
 
+  // App.js yoki index.js ga birinchi satrlarda qo'ying
+  // App.js yoki index.js boshida qo'ying
+  const originalConsoleWarn = console.warn;
+  console.warn = (...args) => {
+    // Expo AV warninglarini filtrlash
+    if (
+      typeof args[0] === "string" &&
+      (args[0].includes("Expo AV has been deprecated") ||
+        args[0].includes(
+          "Reanimated] Reading from `value` during component render"
+        ))
+    ) {
+      return; // warningni o'chirib qo'yish
+    }
+    originalConsoleWarn(...args);
+  };
+
   if (!ready) return <View />; // yoki Splash, loading spinner
 
   return (

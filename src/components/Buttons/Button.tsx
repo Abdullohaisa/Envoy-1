@@ -9,10 +9,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 import AppText from "../Texts/Text";
-import AppTitle from "../Texts/Title";
 import CustomSpinner from "../Spinner/Spinner";
 import { useThemeColors } from "@/theme/useThemeColors";
 
@@ -78,7 +76,7 @@ export default function AppButton({
         <CustomSpinner />
       ) : (
         <AppText
-          variant="semiBold"
+          variant="medium"
           style={[styles.text, { color: textColor }, titleStyle]}
         >
           {title}

@@ -69,7 +69,6 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({
   const renderItem: ListRenderItem<IOrder> = useCallback(
     ({ item, index }) => {
       if (!item) return null;
-      console.log(item);
       switch (type) {
         case "active":
           return (
