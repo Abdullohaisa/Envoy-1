@@ -24,7 +24,6 @@ import { getOrderCargoAtom, normalizeCargoData } from "@/atoms/get-order/cargo";
 import { router, useFocusEffect } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { useCallback, useEffect, useRef, useState } from "react";
-import GetOrderBackButton from "@/widget/customer/get-order/back-button";
 import { safeNavigate } from "@/utils/safe-navigation";
 import { useTranslation } from "react-i18next";
 
@@ -152,11 +151,11 @@ const CargoForm = () => {
     />
   );
 
-  const inputBackColor = Colors.pageBackground;
+  const inputBackColor = theme === "dark" ? Colors.pageBackground : "#fff";
   const darkModeInputStyle =
     theme === "dark"
       ? { elevation: 0, backgroundColor: inputBackColor, borderWidth: 1 }
-      : {};
+      : { elevation: 0, backgroundColor: inputBackColor };
 
   useFocusEffect(
     useCallback(() => {
@@ -219,14 +218,16 @@ const CargoForm = () => {
               onPress={handleClear}
               disabled={!anyFilled}
               style={{
-                padding: 7,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: anyFilled ? Colors.red : Colors.borderColor,
+                padding: 10,
+                borderRadius: 15,
+                backgroundColor:
+                  // anyFilled ? Colors.red + "22":
+                  Colors.Boxbackground,
               }}
             >
               <AppText
-                style={{ color: anyFilled ? Colors.red : Colors.borderColor }}
+                variant="semiBold"
+                style={{ color: anyFilled ? Colors.red : Colors.textSecondary }}
               >
                 {t("clear")}
               </AppText>
@@ -237,15 +238,17 @@ const CargoForm = () => {
                 onPress={handleSubmit(onSave)}
                 disabled={!isChanged}
                 style={{
-                  padding: 7,
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: isChanged ? Colors.green : Colors.borderColor,
+                  padding: 10,
+                  borderRadius: 15,
+                  backgroundColor:
+                    // isChanged ? Colors.green + "22" :
+                    Colors.Boxbackground,
                 }}
               >
                 <AppText
+                  variant="semiBold"
                   style={{
-                    color: isChanged ? Colors.green : Colors.borderColor,
+                    color: isChanged ? Colors.green : Colors.textSecondary,
                     textAlign: "center",
                   }}
                 >

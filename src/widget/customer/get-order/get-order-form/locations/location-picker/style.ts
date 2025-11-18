@@ -2,32 +2,19 @@ import { Spacing } from "@/shared/token";
 import { StyleSheet } from "react-native";
 
 export const locationStyles = StyleSheet.create({
-  container: {
-    borderRadius: 15,
-    padding: 4,
-    gap: 5,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 15,
-  },
   scrollView: {
     flexGrow: 0,
   },
   locationItem: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     padding: Spacing.horizontal,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   locationButton: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   locationText: {
     fontSize: 16,

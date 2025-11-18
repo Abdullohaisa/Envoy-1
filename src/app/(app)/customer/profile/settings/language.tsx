@@ -44,7 +44,7 @@ const LanguagePage = () => {
     lang.nativeName.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleSelectLanguage = async (langCode: any) => {
+  const handleSelectLanguage = async (langCode: string) => {
     // changeLanguage ni chaqiramiz va state i18n.on orqali yangilanadi
     await setLanguage(langCode);
     // agar kerak bo'lsa, darhol ham update qilamiz

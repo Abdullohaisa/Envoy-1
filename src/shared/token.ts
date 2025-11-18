@@ -161,7 +161,7 @@ export const ORDERS = Array.from({ length: 10 }, (_, i) => ({
     assigned: "",
     loaded: "",
     delivered: "",
-    deadline: null,
+    expected_arrival_time: null,
   },
 
   status: {
@@ -185,3 +185,88 @@ export const ORDERS = Array.from({ length: 10 }, (_, i) => ({
 
   note: `Maxsus yuk ${i + 1}, ehtiyotkorlik bilan`,
 }));
+
+export let DRIVER_ORDER = {
+  id: 1,
+  cargo: {
+    weight: { value: 10, unit: "ton" },
+    quantity: { value: 100, unit: "dona" },
+    type: { value: "Olma", unit: null },
+    height: null,
+    length: null,
+    width: null,
+    volume: null,
+  },
+  truck: 1,
+  locations: {
+    pickup: [
+      {
+        id: "p1",
+        full_title: "Toshkent, Chilonzor, 10-tuman",
+        short_title: "Toshkent",
+        coordinates: { lat: 41.2856, lng: 69.2033 },
+        contact: { name: "Javlonbek", phone: "+998901000000" },
+      },
+      {
+        id: "p2",
+        full_title: "Toshkent, Sergeli, 3-mavze",
+        short_title: "Sergeli",
+        coordinates: { lat: 41.23, lng: 69.25 },
+        contact: { name: "Oybek", phone: "+998901112233" },
+      },
+    ],
+    dropoff: [
+      {
+        id: "d1",
+        full_title: "Samarqand shahar, Registon ko‘chasi",
+        short_title: "Samarqand",
+        coordinates: { lat: 39.6542, lng: 66.9597 },
+        contact: { name: "Sherzod", phone: "+99893550000" },
+      },
+      {
+        id: "d2",
+        full_title: "Buxoro viloyati, G‘ijduvon tumani",
+        short_title: "Buxoro",
+        coordinates: { lat: 39.75, lng: 64.43 },
+        contact: { name: "Bekzod", phone: "+99893551111" },
+      },
+    ],
+  },
+  driver: {
+    name: "Olim",
+    phone_number: "+998903923636",
+    photo: null,
+    driver_coordinates: { lat: 39.6542, lng: 66.9597 },
+    rating: { score: 4.2, count: 10 },
+    comment_count: 10,
+  },
+  owner: {
+    name: "Ali",
+    phone: "+998901234567",
+    rating: { score: 4.2, count: 10 },
+    comment_count: 10,
+  },
+  time: {
+    created: "2025-08-25T10:00:00Z",
+    assigned: "",
+    loaded: "",
+    delivered: "",
+    expected_arrival_time: null,
+  },
+  status: {
+    order_status: "yakunlangan",
+    driver_status: {
+      pickup: [
+        { location_id: "p1", departed: false, arrived: false },
+        { location_id: "p2", departed: false, arrived: false },
+      ],
+      dropoff: [
+        { location_id: "d1", departed: false, arrived: false },
+        { location_id: "d2", departed: false, arrived: false },
+      ],
+    },
+  },
+  distances: { total: 100 },
+  price: { value: 1200000, currency: "USD" },
+  note: "Maxsus yuk, ehtiyotkorlik bilan",
+};

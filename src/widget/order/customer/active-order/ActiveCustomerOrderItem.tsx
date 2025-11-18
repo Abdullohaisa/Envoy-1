@@ -8,16 +8,20 @@ import { OrderItemLocations } from "../../Components/OrderLocations";
 import { OrderItemInfo } from "../../Components/OrderInfo";
 import OrderItemRequests from "../../Components/OrderRequests";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
 
 function ActiveCustomerOrderItem({
   order,
   path,
+  index,
 }: {
   index: number;
   order: any;
   path: string;
 }) {
   const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
 
   const inOrder = () => {
     safeNavigate(() =>
@@ -35,7 +39,11 @@ function ActiveCustomerOrderItem({
         style={[
           styles.item,
           {
-            backgroundColor: Colors.Boxbackground,
+            backgroundColor:
+              theme === "dark" ? Colors.pageBackground : Colors.Boxbackground,
+            borderTopWidth: index === 0 ? 0 : 1,
+            borderColor:
+              theme === "dark" ? Colors.borderColor : Colors.borderColor,
           },
         ]}
       >
@@ -47,7 +55,7 @@ function ActiveCustomerOrderItem({
           requested_drivers_length={order?.requested_drivers?.length}
         />
 
-        <View style={[styles.line, { backgroundColor: Colors.borderColor }]} />
+        {/* <View style={[styles.line, { backgroundColor: Colors.borderColor }]} /> */}
 
         <OrderItemInfo order={order} />
       </Pressable>

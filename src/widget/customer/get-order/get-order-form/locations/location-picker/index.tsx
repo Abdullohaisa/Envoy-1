@@ -20,33 +20,36 @@ import { t } from "i18next";
 
 // 🔹 Memo LocationPickerInput wrapper
 const MemoLocationPickerInput = forwardRef(
-  ({ value, onChangeText }: any, ref) => (
+  ({ value, onChangeText, openMap }: any, ref) => (
     <LocationPickerInput
       ref={ref}
       placeholder={`${t("from")}...`}
       value={value}
       onChangeText={onChangeText}
+      openMap={openMap}
     />
   )
 );
 
 // 🔹 Memo LocationPickerList wrapper
 const MemoLocationPickerList = React.memo(
-  ({ sheetRef, isLoading, locations, setQuery }: any) => (
+  ({ sheetRef, isLoading, locations, setQuery, openMap }: any) => (
     <LocationPickerList
       sheetRef={sheetRef}
       isLoading={isLoading}
       locations={locations}
       setQuery={setQuery}
+      openMap={openMap}
     />
   )
 );
 
 interface Props {
   sheetRef: React.RefObject<BottomSheetModalMethods<any> | null>;
+  openMap: (index: number) => void;
 }
 
-const LocationPicker = ({ sheetRef }: Props) => {
+const LocationPicker = ({ sheetRef, openMap }: Props) => {
   const topInsets = useSafeAreaInsets().top;
   const Colors = useThemeColors();
   const [query, setQuery] = useState("");
@@ -128,12 +131,14 @@ const LocationPicker = ({ sheetRef }: Props) => {
           ref={inputRef}
           value={query}
           onChangeText={handleChangeText}
+          openMap={openMap}
         />
         <MemoLocationPickerList
           sheetRef={sheetRef}
           isLoading={isLoading}
           locations={locations}
           setQuery={setQuery}
+          openMap={openMap}
         />
       </View>
     </CustomBottomSheetModal>

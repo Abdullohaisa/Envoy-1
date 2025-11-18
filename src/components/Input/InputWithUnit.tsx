@@ -73,11 +73,16 @@ const AppInputWithUnit: React.FC<AppInputWithUnitProps> = ({
     left: 16,
     top: interpolate(labelAnim.value, [0, 1], [16, -9.5]),
     fontSize: interpolate(labelAnim.value, [0, 1], [16, 12]),
-    color: interpolateColor(labelAnim.value, [0, 1], ["#999", Colors.primary]),
+    color: interpolateColor(
+      labelAnim.value,
+      [0, 1],
+      [Colors.textSecondary, Colors.primary]
+    ),
     backgroundColor: back_color,
-    paddingHorizontal: 4,
-    borderRadius: 100,
+    paddingHorizontal: 7,
+    borderRadius: 5,
     zIndex: 10,
+    fontFamily: labelAnim.value === 0 ? Fonts.regular : Fonts.semiBold,
   }));
 
   return (
@@ -128,7 +133,9 @@ const AppInputWithUnit: React.FC<AppInputWithUnitProps> = ({
               styles.unitButton,
               {
                 backgroundColor:
-                  theme === "dark" ? Colors.Boxbackground : "#fff",
+                  theme === "dark"
+                    ? Colors.Boxbackground
+                    : Colors.pageBackground,
               },
             ]}
             onPress={(e) => {
@@ -138,7 +145,10 @@ const AppInputWithUnit: React.FC<AppInputWithUnitProps> = ({
               Keyboard.dismiss();
             }}
           >
-            <AppText style={{ color: Colors.primary, fontSize: 15 }}>
+            <AppText
+              variant="semiBold"
+              style={{ color: Colors.primary, fontSize: 15 }}
+            >
               {selectedUnit ?? ""}
             </AppText>
           </Pressable>
@@ -189,10 +199,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 4,
     borderRadius: 15,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
   },
 });

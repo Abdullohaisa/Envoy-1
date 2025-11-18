@@ -14,7 +14,7 @@ import Animated, {
   FadeOutUp,
   Layout,
 } from "react-native-reanimated";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import AppText from "../Texts/Text";
@@ -85,15 +85,12 @@ export default DriverActiveOrderInfoList;
 const styles = StyleSheet.create({
   scrollView: {
     overflow: "hidden",
-    marginTop: 5,
-    borderRadius: 5,
-    marginHorizontal: 5,
-    marginBottom: screens.height * 0.1 + 5,
+    marginBottom: screens.height * 0.1 + 0,
   },
   scrollContent: {
     gap: 10,
     paddingBottom: 150,
-    paddingTop: 5,
+    padding: Spacing.horizontal,
   },
   statusCard: {
     padding: 15,

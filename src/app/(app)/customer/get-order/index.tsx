@@ -18,8 +18,18 @@ import { useFocusEffect } from "expo-router";
 import OrderReviewSheet from "@/widget/customer/get-order/order-review-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { AppRoutes } from "@/constants/routes";
-import { Feather } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
+import MaterialsIcon from "@/assets/icon/materials";
+import MapIcon from "@/assets/icon/map";
+import RightTruckIcon from "@/assets/icon/right-truck";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import TimeIcon from "@/assets/icon/time";
+import CommentIcon from "@/assets/icon/comment";
+import PalletIcon from "@/assets/icon/pallet";
+import TruckIcon from "@/assets/icon/truck";
+import { truckData } from "@/data/truck-data";
+import { moneyFormatter } from "@/utils/money-formatter";
+import { formatDate } from "@/utils/date-formater";
 
 const GetOrder = () => {
   const Colors = useThemeColors();
@@ -36,69 +46,78 @@ const GetOrder = () => {
     getValue: (order: any) => string | null;
   };
 
-  const orderButtons: TOrderButton[] = [
-    {
-      key: "cargo",
-      title: t("cargo"),
-      icon: (color, size) => <Feather name="box" size={size} color={color} />,
-      route: AppRoutes.customer.getOrder.cargo,
-      getValue: (order) => order?.cargo?.type?.value || null,
-    },
-    {
-      key: "locations",
-      title: t("locations"),
-      icon: (color, size) => (
-        <Feather name="map-pin" size={size} color={color} />
-      ),
-      route: AppRoutes.customer.getOrder.locations.index,
-      getValue: (order) => {
-        const pickup = order?.locations?.pickup?.[0]?.short_title;
-        const dropoff = order?.locations?.dropoff?.[0]?.short_title;
-        if (pickup && dropoff) return `${pickup} → ${dropoff}`;
-        if (pickup) return pickup;
-        if (dropoff) return dropoff;
-        return null;
+  // 🔹 Order buttons array
+  const orderButtons: TOrderButton[] = useMemo(
+    () => [
+      {
+        key: "cargo",
+        title: t("cargo"),
+        icon: (color, size) => (
+          <MaterialsIconWrapper color={color} size={size} Colors={Colors} />
+        ),
+        route: AppRoutes.customer.getOrder.cargo,
+        getValue: (order) => order?.cargo?.type?.value || null,
       },
-    },
-    {
-      key: "truck",
-      title: t("truck"),
-      icon: (color, size) => <Feather name="truck" size={size} color={color} />,
-      route: AppRoutes.customer.getOrder.truck,
-      getValue: (order) => order?.truck || null,
-    },
-    {
-      key: "price",
-      title: t("price"),
-      icon: (color, size) => (
-        <Feather name="dollar-sign" size={size} color={color} />
-      ),
-      route: AppRoutes.customer.getOrder.price,
-      getValue: (order) =>
-        order?.price?.value ? `${order.price.value} UZS` : null,
-    },
-    {
-      key: "time",
-      title: t("time"),
-      icon: (color, size) => <Feather name="clock" size={size} color={color} />,
-      route: AppRoutes.customer.getOrder.time,
-      getValue: (order) =>
-        order?.time?.deadline?.day
-          ? `${order.time.deadline.day}.${order.time.deadline.month}.${order.time.deadline.year}`
-          : null,
-    },
-    {
-      key: "comment",
-      title: t("comment"),
-      icon: (color, size) => (
-        <Feather name="message-square" size={size} color={color} />
-      ),
-      route: AppRoutes.customer.getOrder.comment,
-      getValue: (order) => order?.comment || null,
-    },
-  ];
+      {
+        key: "locations",
+        title: t("locations"),
+        icon: (color, size) => (
+          <MapIconWrapper color={color} size={size} Colors={Colors} />
+        ),
+        route: AppRoutes.customer.getOrder.locations.index,
+        getValue: (order) => {
+          const pickup = order?.locations?.pickup?.[0]?.short_title;
+          const dropoff = order?.locations?.dropoff?.[0]?.short_title;
+          if (pickup && dropoff) return `${pickup} → ${dropoff}`;
+          return pickup || dropoff || null;
+        },
+      },
+      {
+        key: "truck",
+        title: t("truck"),
+        icon: (color, size) => (
+          <TruckIconWrapper color={color} size={size} Colors={Colors} />
+        ),
+        route: AppRoutes.customer.getOrder.truck,
+        getValue: (order) => t(truckData[order.truck]?.title) || null,
+      },
+      {
+        key: "price",
+        title: t("price"),
+        icon: (color, size) => (
+          <PriceIconWrapper color={color} size={size} Colors={Colors} />
+        ),
+        route: AppRoutes.customer.getOrder.price,
+        getValue: (order) =>
+          order?.price?.value
+            ? `${moneyFormatter(order?.price?.value)} ${order.price.currency}`
+            : null,
+      },
+      {
+        key: "time",
+        title: t("time"),
+        icon: (color, size) => (
+          <TimeIconWrapper color={color} size={size} Colors={Colors} />
+        ),
+        route: AppRoutes.customer.getOrder.time,
+        getValue: (order) => {
+          return formatDate(order?.time?.expected_arrival_time);
+        },
+      },
+      {
+        key: "comment",
+        title: t("comment"),
+        icon: (color, size) => (
+          <CommentIconWrapper color={color} size={size} Colors={Colors} />
+        ),
+        route: AppRoutes.customer.getOrder.comment,
+        getValue: (order) => order?.comment || null,
+      },
+    ],
+    [Colors, t, order]
+  );
 
-  // 🔹 BackHandler optimizatsiyasi
+  // 🔹 BackHandler
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -120,10 +139,10 @@ const GetOrder = () => {
         filled: !!isFieldFilled[btn.key as keyof typeof isFieldFilled],
         value: btn.getValue(order),
       })),
-    [order, isFieldFilled]
+    [order, isFieldFilled, orderButtons]
   );
 
-  // 🔹 Har bir tugma uchun render funksiyasi (memorized)
+  // 🔹 FlatList render item
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<(typeof buttons)[number]>) => (
       <OrderButton
@@ -141,20 +160,14 @@ const GetOrder = () => {
     <>
       <PageHeader title={t("make_order")} />
 
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <FlatList
           data={buttons}
           renderItem={renderItem}
           keyExtractor={(item) => item.key}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles(Colors).container}
-          style={{
-            marginTop: 5,
-            paddingTop: Spacing.horizontal - 5,
-            borderRadius: 5,
-            overflow: "hidden",
-            marginHorizontal: Spacing.horizontal,
-          }}
+          contentContainerStyle={styles.listContent}
+          style={{ marginTop: 5 }}
         />
 
         <OrderActions
@@ -172,12 +185,97 @@ const GetOrder = () => {
 
 export default React.memo(GetOrder);
 
-const styles = (Colors: any) =>
-  StyleSheet.create({
-    container: {
-      flexGrow: 1,
-      gap: 10,
-      // marginHorizontal: Spacing.horizontal,
-      paddingBottom: 20,
-    },
-  });
+// 🔹 Wrappers for icons to move inline styles to StyleSheet
+const MaterialsIconWrapper = ({ color, size, Colors }: any) => (
+  <View
+    style={[
+      iconWrapperStyles.wrapper,
+      { backgroundColor: Colors.pageBackground },
+    ]}
+  >
+    <PalletIcon color={color} size={40} />
+  </View>
+);
+const MapIconWrapper = ({ color, size, Colors }: any) => (
+  <View
+    style={[
+      iconWrapperStyles.wrapper,
+      { backgroundColor: Colors.pageBackground },
+    ]}
+  >
+    <MapIcon color={color} size={35} />
+  </View>
+);
+const TruckIconWrapper = ({ color, size, Colors }: any) => (
+  <View
+    style={[
+      iconWrapperStyles.wrapper,
+      {
+        backgroundColor: Colors.pageBackground,
+        overflow: "hidden",
+        borderWidth: 3,
+        borderColor: Colors.pageBackground,
+      },
+    ]}
+  >
+    <View style={{ marginRight: 60 }}>
+      <TruckIcon color={color} size={90} />
+    </View>
+  </View>
+);
+const PriceIconWrapper = ({ color, size, Colors }: any) => (
+  <View
+    style={[
+      iconWrapperStyles.wrapper,
+      { backgroundColor: Colors.pageBackground },
+    ]}
+  >
+    <FontAwesome6 name="coins" size={25} color={color} />
+  </View>
+);
+const TimeIconWrapper = ({ color, size, Colors }: any) => (
+  <View
+    style={[
+      iconWrapperStyles.wrapper,
+      { backgroundColor: Colors.pageBackground },
+    ]}
+  >
+    <TimeIcon color={color} size={size} />
+  </View>
+);
+const CommentIconWrapper = ({ color, size, Colors }: any) => (
+  <View
+    style={[
+      iconWrapperStyles.wrapper,
+      { backgroundColor: Colors.pageBackground },
+    ]}
+  >
+    <CommentIcon color={color} size={size} />
+  </View>
+);
+
+const iconWrapperStyles = StyleSheet.create({
+  wrapper: {
+    borderRadius: 13,
+    maxWidth: 45,
+    width: 45,
+    height: 45,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  listContent: {
+    flexGrow: 1,
+    gap: 10,
+    paddingBottom: 20,
+    paddingTop: Spacing.horizontal - 5,
+    borderRadius: 5,
+    overflow: "hidden",
+    marginHorizontal: Spacing.horizontal,
+  },
+});

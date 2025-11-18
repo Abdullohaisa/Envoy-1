@@ -7,8 +7,10 @@ import DriverChooseModal, {
   OrderListRequestDriver,
 } from "./Components/Components";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
+import { Spacing } from "@/shared/token";
+import api from "@/axios/axios.config";
 
-const CustomerActiveOrderInfoList = ({ order, requestedDrivers }: any) => {
+const CustomerActiveOrderInfoList = ({ order }: any) => {
   const modalRef = useRef<any>(null);
   const [selectedDriver, setSelectedDriver] = useState<any>(null);
 
@@ -17,12 +19,19 @@ const CustomerActiveOrderInfoList = ({ order, requestedDrivers }: any) => {
     modalRef.current?.present();
   };
 
-  const handleSelectDriver = () => {
-    Alert.alert(
-      "✅ Haydovchi tanlandi",
-      `${selectedDriver.name} bilan bog‘lanishingiz mumkin.`
-    );
-    modalRef.current?.dismiss();
+  const handleSelectDriver = async () => {
+    // Alert.alert(
+    //   "✅ Haydovchi tanlandi",
+    //   `${selectedDriver.name} bilan bog‘lanishingiz mumkin.`
+    // );
+    const acceptIds = {
+      order_id: order.id,
+      driver_id: selectedDriver.id,
+    };
+    try {
+      const { data } = await api.post("/customer/accept-request/", acceptIds);
+      modalRef.current?.dismiss();
+    } catch (error) {}
   };
 
   return (
@@ -34,7 +43,7 @@ const CustomerActiveOrderInfoList = ({ order, requestedDrivers }: any) => {
       contentContainerStyle={styles.scrollContent}
     >
       <OrderListRequestDriver
-        drivers={requestedDrivers}
+        drivers={order?.requested_driver}
         handleDriverPress={handleDriverPress}
       />
       <OrderListCargo order={order} />
@@ -55,13 +64,12 @@ export default CustomerActiveOrderInfoList;
 const styles = StyleSheet.create({
   scrollView: {
     overflow: "hidden",
-    marginTop: 5,
+    paddingTop: Spacing.horizontal,
     borderRadius: 20,
-    marginHorizontal: 5,
+    paddingHorizontal: Spacing.horizontal,
   },
   scrollContent: {
     gap: 10,
     paddingBottom: 50,
-    paddingTop: 5,
   },
 });

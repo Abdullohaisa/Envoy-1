@@ -4,6 +4,9 @@ import { useThemeColors } from "@/theme/useThemeColors";
 
 const OrderItemRequests = ({ requested_drivers_length }: any) => {
   const Colors = useThemeColors();
+
+  if (!requested_drivers_length) return;
+
   return (
     <View
       style={{

@@ -11,6 +11,7 @@ import { safeNavigate } from "@/utils/safe-navigation";
 function FinishedCustomerOrderItem({
   order,
   path,
+  index,
 }: {
   index: number;
   order: any;
@@ -39,7 +40,9 @@ function FinishedCustomerOrderItem({
         style={[
           styles.item,
           {
-            backgroundColor: Colors.Boxbackground,
+            backgroundColor: Colors.pageBackground,
+            borderTopWidth: index === 0 ? 0 : 1,
+            borderColor: Colors.borderColor,
           },
         ]}
       >
@@ -47,7 +50,7 @@ function FinishedCustomerOrderItem({
 
         <OrderItemLocations order={order} />
 
-        <View style={[styles.line, { backgroundColor: Colors.borderColor }]} />
+        {/* <View style={[styles.line, { backgroundColor: Colors.borderColor }]} /> */}
 
         <OrderItemInfo order={order} />
       </Pressable>

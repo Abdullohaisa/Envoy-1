@@ -15,67 +15,25 @@ import { Radius, screens } from "@/shared/token";
 import { useTranslation } from "react-i18next";
 import { useAtomValue } from "jotai";
 import { authAtom } from "@/service/user/register-login/controller";
+import AppText from "@/components/Texts/Text";
 
-// ------------------------
-// 🔹 Mini komponent: AnimatedIcon
-// ------------------------
 const AnimatedIcon = React.memo(({ name, focused, color }: any) => {
-  const scale = useSharedValue(focused ? 1.15 : 1);
-  const rotate = useSharedValue(focused ? 0 : 0);
-  const { access } = useAtomValue(authAtom);
-  console.log(access);
-
-  useEffect(() => {
-    scale.value = withTiming(focused ? 1.2 : 1, {
-      duration: 400,
-      easing: Easing.out(Easing.exp),
-    });
-    rotate.value = withTiming(focused ? 5 : 0, {
-      duration: 400,
-      easing: Easing.out(Easing.exp),
-    });
-  }, [focused]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }, { rotate: `${rotate.value}deg` }],
-  }));
-
-  return (
-    <Animated.View style={animatedStyle}>
-      <Ionicons name={name} size={26} color={color} />
-    </Animated.View>
-  );
+  return <Ionicons name={name} size={26} color={color} />;
 });
 
-// ------------------------
-// 🔹 Mini komponent: AnimatedLabel
-// ------------------------
 const AnimatedLabel = React.memo(({ label, focused, color }: any) => {
-  const opacity = useSharedValue(focused ? 1 : 0.6);
-
-  useEffect(() => {
-    opacity.value = withTiming(focused ? 1 : 0.6, { duration: 300 });
-  }, [focused]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: focused ? -1 : 0 }],
-  }));
-
   return (
-    <Animated.Text
+    <AppText
       style={[
-        animatedStyle,
         {
           fontSize: 12,
           color,
-          fontWeight: focused ? "600" : "400",
           marginTop: 2,
         },
       ]}
     >
       {label}
-    </Animated.Text>
+    </AppText>
   );
 });
 

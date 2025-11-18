@@ -59,8 +59,8 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModalMethods, Props>(
         backdropComponent={renderBackDrop}
         backgroundStyle={{ backgroundColor: Colors.pageBackground }}
         handleIndicatorStyle={{
-          backgroundColor: Colors.borderColor,
-          borderRadius: 10,
+          backgroundColor: Colors.textSecondary,
+          borderRadius: 20,
         }}
         {...props}
       >

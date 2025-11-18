@@ -15,6 +15,7 @@ export const formatDate = (input: string | DeadlineType) => {
 
   // 🔹 Agar bu object bo‘lsa (masalan: { day: 23, month: 10, year: 2025 })
   if (typeof input === "object") {
+    if (!input.day) return;
     day = input.day;
     monthIndex = input.month - 1; // Date’da 0-based index
     year = input.year;

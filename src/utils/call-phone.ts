@@ -2,14 +2,14 @@ import { Alert, Linking } from "react-native";
 
 export const callPhone = async (phone: string) => {
   if (!phone) {
-    Alert.alert("Xatolik", "Telefon raqami topilmadi.");
-    return;
+    Alert.alert("Xatolik", "Telefon raqam topilmadi");
   }
 
   const url = `tel:${phone}`;
 
   try {
     const supported = await Linking.canOpenURL(url);
+
     if (supported) {
       Linking.openURL(url);
     } else {

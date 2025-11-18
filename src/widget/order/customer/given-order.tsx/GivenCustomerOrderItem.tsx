@@ -12,6 +12,7 @@ import { safeNavigate } from "@/utils/safe-navigation";
 function GivenCustomerOrderItem({
   order,
   path,
+  index,
 }: {
   index: number;
   order: any;
@@ -37,11 +38,18 @@ function GivenCustomerOrderItem({
           borderless: false,
           radius: 200,
         }}
-        style={[styles.item, { backgroundColor: Colors.Boxbackground }]}
+        style={[
+          styles.item,
+          {
+            backgroundColor: Colors.pageBackground,
+            borderTopWidth: index === 0 ? 0 : 1,
+            borderColor: Colors.borderColor,
+          },
+        ]}
       >
         <OrderItemHeader order={order} />
         <OrderItemLocations order={order} />
-        <View style={[styles.line, { backgroundColor: Colors.borderColor }]} />
+        {/* <View style={[styles.line, { backgroundColor: Colors.borderColor }]} /> */}
         <OrderItemInfo order={order} />
         <DriverTimeline status={order?.status?.driver} />
       </Pressable>

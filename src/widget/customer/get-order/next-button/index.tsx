@@ -43,10 +43,10 @@ const GetOrderNextButton = ({
         onPressOut={handlePressOut}
         style={styles.button}
       >
-        <AppText style={[styles.text, { color: Colors.primary }]}>
+        <AppText style={[styles.text, { color: Colors.textSecondary }]}>
           {title}
         </AppText>
-        <ArrowIcon size={12} direction="right" color={Colors.primary} />
+        <ArrowIcon size={12} direction="right" color={Colors.textSecondary} />
       </Pressable>
     </Animated.View>
   );

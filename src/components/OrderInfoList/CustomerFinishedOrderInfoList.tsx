@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import { OrderListAddress, OrderListCargo } from "./Components/Components";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
+import { Spacing } from "@/shared/token";
 
 const CustomerFinishedOrderInfoList = ({ order }: any) => {
   return (
@@ -22,13 +23,10 @@ export default CustomerFinishedOrderInfoList;
 const styles = StyleSheet.create({
   scrollView: {
     overflow: "hidden",
-    marginTop: 5,
-    borderRadius: 20,
-    marginHorizontal: 5,
   },
   scrollContent: {
     gap: 10,
     paddingBottom: 50,
-    paddingTop: 5,
+    padding: Spacing.horizontal,
   },
 });

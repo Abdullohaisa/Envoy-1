@@ -29,11 +29,13 @@ export default function DatePicker() {
     month: number;
     year: number;
   } | null>(
-    time?.deadline?.day && time?.deadline?.month && time?.deadline?.year
+    time?.expected_arrival_time?.day &&
+      time?.expected_arrival_time?.month &&
+      time?.expected_arrival_time?.year
       ? {
-          day: time.deadline.day,
-          month: time.deadline.month,
-          year: time.deadline.year,
+          day: time.expected_arrival_time.day,
+          month: time.expected_arrival_time.month,
+          year: time.expected_arrival_time.year,
         }
       : null
   );
@@ -51,7 +53,7 @@ export default function DatePicker() {
       selectedDate?.month != null &&
       selectedDate?.year
     ) {
-      setTime({ deadline: selectedDate });
+      setTime({ expected_arrival_time: selectedDate });
     }
   }, [selectedDate]);
 

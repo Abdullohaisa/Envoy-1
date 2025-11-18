@@ -93,7 +93,7 @@ const PageHeader = ({
         {
           height: 55 + insetsTop,
           backgroundColor:
-            theme === "light" ? Colors.primary08 : Colors.Boxbackground,
+            theme === "light" ? Colors.primary : Colors.Boxbackground,
           borderColor: Colors.borderColor,
           borderBottomLeftRadius:
             Platform.OS === "ios" ? Radius.primary : Radius.primary,

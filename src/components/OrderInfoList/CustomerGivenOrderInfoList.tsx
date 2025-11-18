@@ -8,6 +8,7 @@ import {
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import AppText from "../Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { Spacing } from "@/shared/token";
 
 const CustomerGivenOrderInfoList = ({ order }: any) => {
   const Colors = useThemeColors();
@@ -60,14 +61,11 @@ export default CustomerGivenOrderInfoList;
 const styles = StyleSheet.create({
   scrollView: {
     overflow: "hidden",
-    marginTop: 5,
-    borderRadius: 20,
-    marginHorizontal: 5,
+    padding: Spacing.horizontal,
   },
   scrollContent: {
     gap: 10,
     paddingBottom: 50,
-    paddingTop: 5,
   },
   statusCard: {
     padding: 15,

@@ -72,9 +72,9 @@
   "liter": "Litr",
   "m3": "m³",
   "cubic_meter": "Kub metr",
-  "uzs": "So'm",
-  "usd": "Dollar",
-  "rub": "Rubl",
+  "uzs": "UZS",
+  "usd": "USD",
+  "rub": "RUB",
 
   "cargo_type": "Yuk turi",
   "weight": "Vazni",

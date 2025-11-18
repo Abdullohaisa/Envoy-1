@@ -34,6 +34,10 @@ export interface ILocationPoint {
     latitude: number;
     longitude: number;
   };
+  contact: {
+    phone: string;
+    name: string;
+  };
 }
 
 // Buyurtmadagi joylashuvlar
@@ -74,7 +78,7 @@ export interface IOrderTime {
   created: string;
   delivered: string | null;
   loaded: string | null;
-  deadline: {
+  expected_arrival_time: {
     day: number;
     month: number;
     year: number;

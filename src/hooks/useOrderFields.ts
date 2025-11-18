@@ -12,9 +12,9 @@ export const useOrderFields = () => {
     truck: !!order?.truck,
     price: !!order?.price?.value,
     time:
-      order?.time?.deadline?.day &&
-      order?.time?.deadline?.month &&
-      order?.time?.deadline?.year,
+      order?.time?.expected_arrival_time?.day &&
+      order?.time?.expected_arrival_time?.month &&
+      order?.time?.expected_arrival_time?.year,
     comment: !!order?.comment,
   };
 

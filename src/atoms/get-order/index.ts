@@ -34,6 +34,10 @@ export const resetOrderAtom = atom(null, (get, set) => {
         full_title: "",
         short_title: "",
         coordinates: { latitude: 0, longitude: 0 },
+        contact: {
+          name: "",
+          phone: "",
+        },
       },
     ],
     dropoff: [
@@ -42,10 +46,16 @@ export const resetOrderAtom = atom(null, (get, set) => {
         full_title: "",
         short_title: "",
         coordinates: { latitude: 0, longitude: 0 },
+        contact: {
+          name: "",
+          phone: "",
+        },
       },
     ],
   });
   set(getOrderPriceAtom, { value: null, currency: null });
   set(getOrderComment, null);
-  set(getOrderTime, { deadline: { day: null, month: null, year: null } });
+  set(getOrderTime, {
+    expected_arrival_time: { day: null, month: null, year: null },
+  });
 });

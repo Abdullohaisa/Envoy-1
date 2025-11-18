@@ -27,10 +27,11 @@ interface RenderItemProps {
   item: LocationItem;
   setQuery: (text: string) => void;
   sheetRef: RefObject<BottomSheetModalMethods | null>;
+  openMap: () => void;
 }
 
 const LocationPickerRendererItem = memo(
-  ({ item, setQuery, sheetRef }: RenderItemProps) => {
+  ({ item, setQuery, sheetRef, openMap }: RenderItemProps) => {
     const Colors = useThemeColors();
     const clearLocationsState = useSetAtom(clearLocationPickerAtom);
     const setLocations = useSetAtom(getOrderLocationsAtom);
@@ -61,7 +62,7 @@ const LocationPickerRendererItem = memo(
       setQuery("");
       clearLocationsState();
       sheetRef.current?.close();
-
+      openMap();
       // router.push(AppRoutes.customer.getOrder.locations.map);
 
       const newLocation = {

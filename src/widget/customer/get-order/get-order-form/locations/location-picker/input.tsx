@@ -6,112 +6,128 @@ import {
   Pressable,
   TextInput,
 } from "react-native";
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { Fonts, Radius, Spacing } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { themeAtom } from "@/theme/theme";
 import { useAtomValue } from "jotai";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import CloseIcon from "@/assets/icon/close";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import MapIcon from "@/assets/icon/map";
+import CloseIcon from "@/assets/icon/close";
+import { Fonts, Radius, Spacing } from "@/shared/token";
 
-const LocationPickerInput = forwardRef<any, TextInputProps>((props, ref) => {
-  const Colors = useThemeColors();
-  const theme = useAtomValue(themeAtom);
-  const [focused, setFocused] = useState(false);
-  const translateXClearButton = useSharedValue(40);
-  const [text, setText] = useState(""); // input qiymati
+const LocationPickerInput = forwardRef<any, TextInputProps | any>(
+  ({ openMap, ...props }, ref) => {
+    const Colors = useThemeColors();
+    const theme = useAtomValue(themeAtom);
+    const [text, setText] = useState("");
 
-  useEffect(() => {
-    if (text) {
-      translateXClearButton.value = withTiming(-5, { duration: 300 });
-    } else {
-      translateXClearButton.value = withTiming(40, { duration: 300 });
-    }
-  }, [text]);
+    const clearX = useSharedValue(40);
 
-  const clearAnimation = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateXClearButton.value }],
-  }));
+    useEffect(() => {
+      clearX.value = withTiming(text ? 0 : 41, { duration: 300 });
+    }, [text]);
 
-  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+    const animatedClearBtn = useAnimatedStyle(() => ({
+      transform: [{ translateX: clearX.value }],
+    }));
 
-  return (
-    <View
-      style={[
-        styles.inputBox,
-        {
-          backgroundColor: Colors.Boxbackground,
-          elevation: theme === "light" ? 2 : 0,
-          borderTopWidth: 0,
-          borderColor: "silver",
-          gap: 15,
-        },
-      ]}
-    >
-      <Pressable onPress={() => ref?.current?.focus()}>
-        <Ionicons name="search" size={20} color={Colors.textPrimary06} />
-      </Pressable>
-      <TextInput
-        ref={ref}
-        style={[styles.input, { color: Colors.textPrimary }]}
-        placeholderTextColor={Colors.textPrimary06}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        {...props}
-        onChangeText={(t) => {
-          setText(t); // qiymatni saqlab qo‘yamiz
-          props.onChangeText?.(t); // tashqariga ham yuboramiz
-        }}
-      />
-      <AnimatedPressable
-        hitSlop={10} // bosish maydonini kengaytiradi
-        pointerEvents="box-none" // gesturelarni bloklamaydi
-        onPress={() => {
-          setText(""); // input ichini bo‘shatamiz
-          props.onChangeText?.(""); // tashqariga ham yuboramiz
-        }}
+    const AnimatedBox = Animated.createAnimatedComponent(View);
+
+    return (
+      <View
         style={[
+          styles.container,
           {
-            width: 40,
-            height: 40,
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            right: 0,
+            backgroundColor: Colors.Boxbackground,
+            elevation: theme === "light" ? 2 : 0,
+            borderColor: Colors.textSecondary,
           },
-          clearAnimation,
         ]}
       >
-        <CloseIcon color={Colors.textPrimary06} size={20} />
-      </AnimatedPressable>
-    </View>
-  );
-});
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Pressable onPress={() => ref?.current?.focus()}>
+            <Ionicons name="search" size={20} color={Colors.textPrimary06} />
+          </Pressable>
+
+          <TextInput
+            ref={ref}
+            style={[styles.input, { color: Colors.textPrimary }]}
+            placeholderTextColor={Colors.textPrimary06}
+            {...props}
+            onChangeText={(t) => {
+              setText(t);
+              props.onChangeText?.(t);
+            }}
+          />
+        </View>
+
+        {/* Clear + Map Buttons */}
+        <AnimatedBox
+          style={[styles.clearWrapper, animatedClearBtn]}
+          pointerEvents="box-none"
+        >
+          <Pressable onPress={openMap} style={styles.iconBtn}>
+            <MapIcon color={Colors.textPrimary06} size={20} />
+          </Pressable>
+
+          <View
+            style={[styles.divider, { backgroundColor: Colors.textSecondary }]}
+          />
+
+          <Pressable
+            onPress={() => {
+              setText("");
+              props.onChangeText?.("");
+            }}
+            style={styles.iconBtn}
+          >
+            <CloseIcon color={Colors.textPrimary06} size={20} />
+          </Pressable>
+        </AnimatedBox>
+      </View>
+    );
+  }
+);
 
 export default LocationPickerInput;
 
 const styles = StyleSheet.create({
-  inputBox: {
-    elevation: 2,
-    borderRadius: Radius.input,
+  container: {
     height: 60,
+    borderRadius: 18,
     paddingHorizontal: Spacing.horizontal,
-    alignItems: "center",
-    margin: 4,
     flexDirection: "row",
+    alignItems: "center",
     overflow: "hidden",
-    paddingRight: 50,
+    margin: 4,
+    position: "relative",
   },
   input: {
-    fontSize: 16,
-    borderColor: "silver",
-    height: "100%",
     flex: 1,
+    height: "100%",
+    fontSize: 16,
     fontFamily: Fonts.regular,
+  },
+  clearWrapper: {
+    position: "absolute",
+    right: 0,
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  divider: {
+    width: 1,
+    height: 20,
   },
 });

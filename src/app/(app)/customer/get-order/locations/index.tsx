@@ -39,7 +39,10 @@ const LocationForm = () => {
           <PickUpLocation locationType="pickup" />
           <PickUpLocation locationType="dropoff" />
           <View
-            style={{ justifyContent: "space-between", flexDirection: "row" }}
+            style={{
+              justifyContent: "space-between",
+              flexDirection: "row",
+            }}
           >
             <GetOrderBackButton
               title={t("cargo")}
@@ -71,13 +74,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: Spacing.horizontal,
-    paddingVertical: 20,
+    // paddingHorizontal: Spacing.horizontal / 2,
+    paddingVertical: Spacing.horizontal,
     paddingBottom: 200,
   },
   innerContainer: {
     flex: 1,
     minHeight: "100%", // scroll bo‘lishi uchun kerak
-    gap: 20,
+    gap: Spacing.horizontal * 2,
   },
 });

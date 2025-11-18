@@ -29,7 +29,7 @@ const ActiveOrder = () => {
 
   const fetchOrders = useFetchCustomerOrders();
   const { order, requestedDrivers, isLoading, error, refetch } =
-    useFetchSingleOrder(`order/customer-order/${orderId}/`, "get");
+    useFetchSingleOrder(orderId);
 
   /* 🔁 Yangilash */
   const onRefresh = useCallback(async () => {

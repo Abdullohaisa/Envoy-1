@@ -46,8 +46,8 @@ const GetOrderBackButton = ({
         style={styles.button}
         {...props}
       >
-        <ArrowIcon size={12} direction="left" color={Colors.primary} />
-        <AppText style={[styles.text, { color: Colors.primary }]}>
+        <ArrowIcon size={12} direction="left" color={Colors.textSecondary} />
+        <AppText style={[styles.text, { color: Colors.textSecondary }]}>
           {title}
         </AppText>
       </Pressable>

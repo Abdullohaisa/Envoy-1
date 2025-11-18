@@ -53,8 +53,8 @@ export const orderButtons: TOrderButton[] = [
     icon: "calendar",
     route: AppRoutes.customer.getOrder.time,
     getValue: (order) =>
-      order?.time?.deadline?.day
-        ? `${order.time.deadline.day}.${order.time.deadline.month}.${order.time.deadline.year}`
+      order?.time?.expected_arrival_time?.day
+        ? `${order.time.expected_arrival_time.day}.${order.time.expected_arrival_time.month}.${order.time.expected_arrival_time.year}`
         : null,
   },
   {

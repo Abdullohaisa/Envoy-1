@@ -19,6 +19,7 @@ interface Props {
   locations: LocationSuggestion[];
   setQuery: (location: string) => void;
   sheetRef: RefObject<BottomSheetModalMethods<any> | null>;
+  openMap: () => void;
 }
 
 const LocationPickerList = ({
@@ -26,6 +27,7 @@ const LocationPickerList = ({
   locations,
   setQuery,
   sheetRef,
+  openMap,
 }: Props) => {
   const theme = useAtomValue(themeAtom);
   const Colors = useThemeColors();
@@ -48,6 +50,7 @@ const LocationPickerList = ({
         item={item}
         setQuery={setQuery}
         sheetRef={sheetRef}
+        openMap={openMap}
       />
     );
   };

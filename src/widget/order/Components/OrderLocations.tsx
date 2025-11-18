@@ -21,7 +21,9 @@ export const OrderItemLocations = ({ order }: { order: any }) => {
           variant="semiBold"
           style={[styles.locationItemText, { color: Colors.textPrimary }]}
         >
-          {order?.locations?.pickup[0]?.short_title}
+          {order?.locations?.pickup[0]?.short_title > 18
+            ? `${order.locations.pickup[0].short_title.slice(0, 18)}...`
+            : order.locations.pickup[0].short_title}
         </AppText>
       </View>
 
@@ -45,7 +47,9 @@ export const OrderItemLocations = ({ order }: { order: any }) => {
           variant="semiBold"
           style={[styles.locationItemText, { color: Colors.textPrimary }]}
         >
-          {order?.locations?.dropoff[0]?.short_title}
+          {order?.locations?.dropoff[0]?.short_title > 18
+            ? `${order.locations.dropoff[0].short_title.slice(0, 18)}...`
+            : order.locations.dropoff[0].short_title}
         </AppText>
         <Octicons name={"dot"} size={12} color={"#e74c3c"} />
       </View>

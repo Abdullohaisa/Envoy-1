@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    gap: 5,
+    gap: 2,
   },
 });
 

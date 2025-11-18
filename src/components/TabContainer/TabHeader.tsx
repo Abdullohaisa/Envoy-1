@@ -6,7 +6,6 @@ import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius, Shadow } from "@/shared/token";
-import AppText from "../Texts/Text";
 
 const TabHeader = ({ pages, handlePress, scrollX }: any) => {
   const insetTop = useSafeAreaInsets().top;
@@ -19,7 +18,7 @@ const TabHeader = ({ pages, handlePress, scrollX }: any) => {
         {
           height: 55 + insetTop,
           backgroundColor:
-            theme === "light" ? Colors.primary08 : Colors.Boxbackground,
+            theme === "light" ? Colors.primary : Colors.Boxbackground,
         },
         Shadow.medium,
       ]}

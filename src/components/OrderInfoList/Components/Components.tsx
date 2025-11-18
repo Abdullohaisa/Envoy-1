@@ -5,7 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AppText from "../../Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { callPhone } from "@/utils/call-phone";
-import { Spacing } from "@/shared/token";
+import { Shadow, Spacing } from "@/shared/token";
 import Feather from "@expo/vector-icons/Feather";
 import { formatDate } from "@/utils/date-formater";
 import { useState } from "react";
@@ -14,6 +14,8 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import SheetModal from "@/components/Modal/SheetModal";
 import AppButton from "@/components/Buttons/Button";
 import RatingStars from "@/components/RatingStars";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export const openMap = async (lat?: number, lng?: number) => {
   if (!lat || !lng) {
@@ -38,7 +40,6 @@ export const openMap = async (lat?: number, lng?: number) => {
   }
 };
 
-// 🧱 Yuk ma’lumotlari
 export const OrderListCargo = ({ order }: any) => {
   const Colors = useThemeColors();
 
@@ -77,6 +78,7 @@ export const OrderListCargo = ({ order }: any) => {
       )}
       {order?.truck && (
         <OrderListInfo
+          isLocation
           Colors={Colors}
           label="Yuk mashina"
           value={order.truck.toString()}
@@ -89,6 +91,8 @@ export const OrderListCargo = ({ order }: any) => {
 export const OrderListOther = ({ order }: any) => {
   const Colors = useThemeColors();
 
+  console.log(order);
+
   return (
     <OrderListSection title="Qo'shimcha" Colors={Colors}>
       {order?.time.created && (
@@ -98,11 +102,11 @@ export const OrderListOther = ({ order }: any) => {
           value={formatDate(order?.time.created)}
         />
       )}
-      {order?.time.deadline && (
+      {order?.time.expected_arrival_time && (
         <OrderListInfo
           Colors={Colors}
-          label="Yukni olish vaqti"
-          value={formatDate(order?.time.deadline)}
+          label="Yetib borish vaqti"
+          value={formatDate(order?.time.expected_arrival_time)}
         />
       )}
       {order?.comment && (
@@ -125,20 +129,19 @@ export const OrderListDriver = ({ order, title }: any) => {
       {order?.driver?.name && (
         <OrderListInfo label="Ismi" value={order?.driver?.name} />
       )}
-      {order?.driver?.phone_number && (
-        <Pressable onPress={() => callPhone(order?.driver?.phone_number)}>
-          <OrderListInfo
-            label="Telefon raqami"
-            value={order?.driver?.phone_number}
-          />
+      {order?.driver?.phone && (
+        <Pressable onPress={() => callPhone(order?.driver?.phone)}>
+          <OrderListInfo label="Telefon raqami" value={order?.driver?.phone} />
         </Pressable>
       )}
-      {order?.driver?.rating.score && (
-        <OrderListInfo label="Reyting" value={order?.driver?.rating.score} />
-      )}
-      {order?.driver?.comment_count && (
-        <OrderListInfo label="Izohlar" value={order?.driver?.comment_count} />
-      )}
+      <OrderListInfo label="Reyting" value={order?.driver?.rating?.score} />
+
+      <OrderListInfo
+        isLocation
+        label="Izohlar"
+        value={order?.driver?.comment_count}
+      />
+
       {order.driver?.driver_coordinates?.latitude &&
         order.driver?.driver_coordinates?.longitude && (
           <Pressable
@@ -178,17 +181,16 @@ export const OrderListCustomer = ({ order, title }: any) => {
           <OrderListInfo label="Telefon raqami" value={order?.owner?.phone} />
         </Pressable>
       )}
-      {/* {order?.owner?.rating.score && ( */}
-      <OrderListInfo label="Reyting" value={order?.owner?.rating.score} />
-      {/* )} */}
-      {/* {order?.owner?.comment_count && ( */}
-      <OrderListInfo label="Izohlar" value={order?.owner?.comment_count} />
-      {/* )} */}
+      <OrderListInfo label="Reyting" value={order?.owner?.rating?.score} />
+      <OrderListInfo
+        isLocation9
+        label="Izohlar"
+        value={order?.owner?.comment_count}
+      />
     </OrderListSection>
   );
 };
 
-// 🚗 Haydovchilar ro‘yxati
 export const OrderListRequestDriver = ({
   drivers = [],
   handleDriverPress,
@@ -218,7 +220,6 @@ export const OrderListRequestDriver = ({
   );
 };
 
-// 📍 Manzillar
 export const OrderListAddress = ({ locations }: any) => {
   const Colors = useThemeColors();
   const pickups = locations?.pickup ?? [];
@@ -241,7 +242,7 @@ export const OrderListAddress = ({ locations }: any) => {
       {pickups.map((item: any) => (
         <View
           key={`pickup-${item?.id ?? Math.random()}`}
-          style={[styles.subBox, { backgroundColor: Colors.borderColor }]}
+          style={[styles.subBox, { backgroundColor: Colors.pageBackground }]}
         >
           {item?.short_title && (
             <OrderListInfo
@@ -304,7 +305,7 @@ export const OrderListAddress = ({ locations }: any) => {
       {dropoffs.map((item: any) => (
         <View
           key={`dropoff-${item?.id ?? Math.random()}`}
-          style={[styles.subBox, { backgroundColor: Colors.borderColor }]}
+          style={[styles.subBox, { backgroundColor: Colors.pageBackground }]}
         >
           {item?.short_title && (
             <OrderListInfo
@@ -356,7 +357,6 @@ export const OrderListAddress = ({ locations }: any) => {
   );
 };
 
-// 👤 Haydovchi kartasi
 const OrderListDriverCard = ({ driver, handleDriverPress, onCall }: any) => {
   const Colors = useThemeColors();
   return (
@@ -380,22 +380,26 @@ const OrderListDriverCard = ({ driver, handleDriverPress, onCall }: any) => {
             color={Colors.textSecondary}
           />
         )}
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingRight: Spacing.horizontal / 2,
+          }}
+        >
           <AppText style={[styles.driverName, { color: Colors.textPrimary }]}>
             {driver?.name ?? "Noma'lum haydovchi"}
           </AppText>
+          <AppText style={[styles.driverName, { color: Colors.textSecondary }]}>
+            {driver?.phone ?? "Telefon raqam topilmadi"}
+          </AppText>
         </View>
-        {driver?.phoneNumber && (
-          <Pressable onPress={onCall}>
-            <MaterialIcons name="call" size={22} color={Colors.primary} />
-          </Pressable>
-        )}
       </View>
     </Pressable>
   );
 };
 
-// 🔹 Info satri
 export const OrderListInfo = ({ label, value, icon, isLocation }: any) => {
   const Colors = useThemeColors();
   if (!value && value !== 0) return null;
@@ -422,7 +426,6 @@ export const OrderListInfo = ({ label, value, icon, isLocation }: any) => {
   );
 };
 
-// 🔹 Sektsiya
 const OrderListSection = ({ title, children }: any) => {
   const Colors = useThemeColors();
   return (
@@ -432,6 +435,7 @@ const OrderListSection = ({ title, children }: any) => {
         {
           backgroundColor: Colors.Boxbackground,
         },
+        Shadow.medium,
       ]}
     >
       <AppText
@@ -444,9 +448,6 @@ const OrderListSection = ({ title, children }: any) => {
     </View>
   );
 };
-
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
   const Colors = useThemeColors();
@@ -497,7 +498,7 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
                     { color: Colors.textSecondary },
                   ]}
                 >
-                  {driver.phone_number}
+                  {driver.phone}
                 </AppText>
               </View>
             </View>
@@ -546,6 +547,7 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
             />
 
             <Pressable
+              onPress={() => callPhone(driver.phone)}
               style={[
                 driverChooseModalStyles.phoneButton,
                 { backgroundColor: Colors.borderColor },
@@ -567,7 +569,6 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
     </CustomBottomSheetModal>
   );
 };
-
 export default DriverChooseModal;
 
 const driverChooseModalStyles = StyleSheet.create({

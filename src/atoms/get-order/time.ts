@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 
 export interface IDate {
-  deadline: {
+  expected_arrival_time: {
     day: null | number;
     month: null | number;
     year: null | number;
@@ -9,5 +9,5 @@ export interface IDate {
 }
 
 export const getOrderTime = atom<IDate>({
-  deadline: { day: null, month: null, year: null },
+  expected_arrival_time: { day: null, month: null, year: null },
 });

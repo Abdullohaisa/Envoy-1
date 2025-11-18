@@ -53,9 +53,11 @@ export const darkColors: IThemeColors = {
 };
 
 export const lightColors: IThemeColors = {
-  primary: "#007FFF",
-  pageBackground: "#FFFFFF",
-  Boxbackground: "#F3F4F6",
+  primary: "#3BAEDA",
+  // pageBackground: "#EFEFF3",
+  // pageBackground: "#E9E9ED",
+  pageBackground: "#ECECEC",
+  Boxbackground: "#FFF",
   textPrimary: "#1F2937",
   textSecondary: "#6B7280",
   green: "#22C55E",

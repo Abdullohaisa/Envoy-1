@@ -72,9 +72,9 @@
   "liter": "升",
   "m3": "立方米",
   "cubic_meter": "立方米",
-  "uzs": "乌兹别克斯坦索姆",
-  "usd": "美元",
-  "rub": "卢布",
+  "uzs": "UZS",
+  "usd": "USD",
+  "rub": "RUB",
 
   "cargo_type": "货物类型",
   "weight": "重量",

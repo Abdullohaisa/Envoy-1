@@ -74,7 +74,7 @@ const Orders = () => {
       title: "Berilgan",
       component: () => (
         <CustomerOrderList
-          orders={[]}
+          orders={attached}
           state={customerOrdersState}
           setOrders={fetchOrders}
           type="attached"
@@ -86,7 +86,7 @@ const Orders = () => {
       title: "Tugatilgan",
       component: () => (
         <CustomerOrderList
-          orders={[]}
+          orders={active}
           state={customerOrdersState}
           setOrders={fetchOrders}
           type="finished"
@@ -96,7 +96,7 @@ const Orders = () => {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.pageBackground }}>
+    <View style={{ flex: 1 }}>
       {/* 🔝 Tab Header (Faol, Berilgan, Tugatilgan) */}
       <TabHeader pages={pages} handlePress={handlePress} scrollX={scrollX} />
 

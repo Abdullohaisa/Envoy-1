@@ -3,6 +3,8 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { TextStyle, View } from "react-native";
 import { MaskedText } from "react-native-mask-text";
 import { orderItemStyle as styles } from "@/styles/order-item-style";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
 
 export const OrderItemInfo = ({ order }: { order: any }) => {
   const Colors = useThemeColors();
@@ -68,10 +70,17 @@ export const OrderItemInfo = ({ order }: { order: any }) => {
 
 // 🔹 InfoRow (ichki komponent o‘z holida)
 const InfoRow = ({ text }: { text: any }) => {
+  const theme = useAtomValue(themeAtom);
   const Colors = useThemeColors();
   return (
     <View
-      style={[styles.orderTypeBox, { backgroundColor: Colors.borderColor }]}
+      style={[
+        styles.orderTypeBox,
+        {
+          backgroundColor:
+            theme == "dark" ? Colors.borderColor : Colors.pageBackground,
+        },
+      ]}
     >
       <AppText style={[styles.orderType, { color: Colors.textPrimary }]}>
         {text}

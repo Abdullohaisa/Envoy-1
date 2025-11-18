@@ -32,9 +32,8 @@ const DriverActiveOrder = () => {
     isLoading: loading,
     error,
     refetch,
-  } = useFetchSingleOrder(`/order/all-active-orders/${orderId}/`, "post");
+  } = useFetchSingleOrder(orderId);
   const { access } = useAtomValue(authAtom);
-  console.log(access);
 
   const handleRequestOrder = async () => {
     setIsLoading(true);

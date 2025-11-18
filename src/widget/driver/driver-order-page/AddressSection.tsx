@@ -3,12 +3,11 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { StyleSheet, View } from "react-native";
 import DriverOrderAddressItem from "./AddressItem";
 import { Spacing } from "@/shared/token";
-import { DRIVER_ORDER } from "@/app/(app)/driver/driver-order";
 
 const DriverOrderAddressSection = ({
   title,
   data,
-  type, // "pickup" yoki "dropoff"
+  type,
 }: {
   title: string;
   data: any[];

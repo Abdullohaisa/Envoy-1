@@ -72,9 +72,9 @@
   "liter": "Литр",
   "m3": "м³",
   "cubic_meter": "Метри куб",
-  "uzs": "Сом",
-  "usd": "Доллар",
-  "rub": "Рубл",
+  "uzs": "UZS",
+  "usd": "USD",
+  "rub": "RUB",
 
   "cargo_type": "Навъи мол",
   "weight": "Вазн",

@@ -8,6 +8,10 @@ export interface ILocation {
     latitude: number; // kenglik → latitude
     longitude: number; // uzunlik → longitude
   };
+  contact: {
+    name: string;
+    phone: string;
+  };
 }
 
 export interface ILocations {
@@ -27,6 +31,10 @@ export const getOrderLocationsAtom = atom<ILocations>({
       full_title: "",
       short_title: "",
       coordinates: { latitude: 0, longitude: 0 },
+      contact: {
+        name: "",
+        phone: "",
+      },
     },
   ],
   dropoff: [
@@ -35,6 +43,10 @@ export const getOrderLocationsAtom = atom<ILocations>({
       full_title: "",
       short_title: "",
       coordinates: { latitude: 0, longitude: 0 },
+      contact: {
+        name: "",
+        phone: "",
+      },
     },
   ],
 });

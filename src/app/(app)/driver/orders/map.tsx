@@ -5,7 +5,7 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import BottomSheet from "@gorhom/bottom-sheet";
 import {
   useRef,
@@ -36,7 +36,6 @@ import { router } from "expo-router";
 import ArrowIcon from "@/assets/icon/arrow";
 import { MaterialIcons } from "@expo/vector-icons";
 import Entypo from "@expo/vector-icons/Entypo";
-import { APIKEY } from "@/constants/locations";
 
 export default function DriverOrdersMapScreen() {
   const Colors = useThemeColors();
@@ -52,9 +51,7 @@ export default function DriverOrdersMapScreen() {
   );
   const snapPoints = useMemo(() => ["35%"], []);
   const inset = useSafeAreaInsets();
-
   const [markerReady, setMarkerReady] = useState(true);
-  const [hereRouteCoords, setHereRouteCoords] = useState<any[]>([]);
 
   // 🔹 Lokatsiyani olish va xaritani boshlang‘ich joylashtirish
   useEffect(() => {
@@ -87,67 +84,6 @@ export default function DriverOrdersMapScreen() {
     sheetRef.current?.close();
   }, []);
 
-  // 🔹 Here API bilan pickup → dropoff yo‘lini olish
-  useEffect(() => {
-    const fetchHereRoute = async () => {
-      if (!selectedOrder) return;
-
-      try {
-        const apiKey = process.env.EXPO_PUBLIC_HERE_API_KEY; // shu yerga API key
-        const pickup = selectedOrder.locations.pickup[0]?.coordinates;
-        const dropoff = selectedOrder.locations.dropoff[0]?.coordinates;
-
-        if (!pickup || !dropoff) return;
-
-        const url = `https://router.hereapi.com/v8/routes?transportMode=car&origin=${pickup.latitude},${pickup.longitude}&destination=${dropoff.latitude},${dropoff.longitude}&return=polyline&apikey=${apiKey}`;
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data?.routes?.length) {
-          const polyline = data.routes[0].sections[0].polyline;
-          const coords = decodeHerePolyline(polyline);
-          setHereRouteCoords(coords);
-        }
-      } catch (error) {}
-    };
-
-    fetchHereRoute();
-  }, [selectedOrder]);
-
-  // 🔹 Here API polyline decode funksiyasi
-  const decodeHerePolyline = (encoded: string) => {
-    let index = 0,
-      lat = 0,
-      lng = 0,
-      coordinates: { latitude: number; longitude: number }[] = [];
-
-    while (index < encoded.length) {
-      let result = 1,
-        shift = 0,
-        b;
-      do {
-        b = encoded.charCodeAt(index++) - 63 - 1;
-        result += b << shift;
-        shift += 5;
-      } while (b >= 0x1f);
-      lat += result & 1 ? ~(result >> 1) : result >> 1;
-
-      result = 1;
-      shift = 0;
-      do {
-        b = encoded.charCodeAt(index++) - 63 - 1;
-        result += b << shift;
-        shift += 5;
-      } while (b >= 0x1f);
-      lng += result & 1 ? ~(result >> 1) : result >> 1;
-
-      coordinates.push({ latitude: lat * 1e-5, longitude: lng * 1e-5 });
-    }
-
-    return coordinates;
-  };
-
   return (
     <View style={styles.container}>
       {/* 🔹 Xarita */}
@@ -167,70 +103,86 @@ export default function DriverOrdersMapScreen() {
       >
         {/* Combine order markerlari */}
         {!selectedOrder &&
-          combineOrder.map((order) => (
+          combineOrder.map((order) => {
+            let latitude = order?.locations?.pickup[0]?.coordinates?.latitude
+              ? order?.locations?.pickup[0]?.coordinates?.latitude
+              : order?.locations?.pickup[0]?.coordinates?.lat;
+            let longitude = order?.locations?.dropoff[0]?.coordinates?.longitude
+              ? order?.locations?.dropoff[0]?.coordinates?.longitude
+              : order?.locations?.dropoff[0]?.coordinates?.lng;
+            return (
+              <Marker
+                key={order.id}
+                coordinate={{
+                  latitude: 0,
+                  longitude: 0,
+                }}
+                onPress={() => handleMarkerPress(order)}
+                tracksViewChanges={!markerReady}
+              >
+                <View
+                  style={[
+                    styles.dot,
+                    { backgroundColor: "#fff", borderColor: Colors.primary },
+                  ]}
+                />
+              </Marker>
+            );
+          })}
+
+        {/* Selected order pickup markerlari */}
+        {selectedOrder?.locations?.pickup.map((order: any, index: number) => {
+          let latitude = order?.locations?.pickup[0]?.coordinates?.latitude
+            ? order?.locations?.pickup[0]?.coordinates?.latitude
+            : order?.locations?.pickup[0]?.coordinates?.lat;
+          let longitude = order?.locations?.dropoff[0]?.coordinates?.longitude
+            ? order?.locations?.dropoff[0]?.coordinates?.longitude
+            : order?.locations?.dropoff[0]?.coordinates?.lng;
+
+          return (
             <Marker
-              key={order.id}
+              key={index}
               coordinate={{
-                latitude: order?.locations?.pickup[0]?.coordinates?.latitude,
-                longitude: order?.locations?.dropoff[0]?.coordinates?.longitude,
+                latitude: latitude,
+                longitude: longitude,
               }}
-              onPress={() => handleMarkerPress(order)}
               tracksViewChanges={!markerReady}
             >
               <View
                 style={[
                   styles.dot,
-                  { backgroundColor: "#fff", borderColor: Colors.primary },
+                  { backgroundColor: "#fff", borderColor: Colors.red },
                 ]}
               />
             </Marker>
-          ))}
-
-        {/* Selected order pickup markerlari */}
-        {selectedOrder?.locations?.pickup.map((item: any, index: number) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: item.coordinates?.latitude,
-              longitude: item.coordinates?.longitude,
-            }}
-            tracksViewChanges={!markerReady}
-          >
-            <View
-              style={[
-                styles.dot,
-                { backgroundColor: "#fff", borderColor: Colors.red },
-              ]}
-            />
-          </Marker>
-        ))}
+          );
+        })}
         {/* Selected order dropoff markerlari */}
-        {selectedOrder?.locations?.dropoff.map((item: any, index: number) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: item.coordinates?.latitude,
-              longitude: item.coordinates?.longitude,
-            }}
-            tracksViewChanges={!markerReady}
-          >
-            <View
-              style={[
-                styles.dot,
-                { backgroundColor: "#fff", borderColor: Colors.green },
-              ]}
-            />
-          </Marker>
-        ))}
-
-        {/* 🔹 Here API yo‘lini chizish */}
-        {hereRouteCoords.length > 0 && (
-          <Polyline
-            coordinates={hereRouteCoords}
-            strokeColor={Colors.primary}
-            strokeWidth={4}
-          />
-        )}
+        {selectedOrder?.locations?.dropoff.map((order: any, index: number) => {
+          let latitude = order?.locations?.pickup[0]?.coordinates?.latitude
+            ? order?.locations?.pickup[0]?.coordinates?.latitude
+            : order?.locations?.pickup[0]?.coordinates?.lat;
+          let longitude = order?.locations?.dropoff[0]?.coordinates?.longitude
+            ? order?.locations?.dropoff[0]?.coordinates?.longitude
+            : order?.locations?.dropoff[0]?.coordinates?.lng;
+          return (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: latitude,
+                longitude: longitude,
+              }}
+              tracksViewChanges={!markerReady}
+            >
+              <View
+                style={[
+                  styles.dot,
+                  { backgroundColor: "#fff", borderColor: Colors.green },
+                ]}
+              />
+            </Marker>
+          );
+        })}
       </MapView>
 
       {/* 🔹 Back tugmasi */}

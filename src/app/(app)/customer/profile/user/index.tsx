@@ -187,9 +187,6 @@ const EditCustomerProfilePage = () => {
     return { marginTop };
   });
 
-  // =====================================================
-  //                       RENDER
-  // =====================================================
   return (
     <View style={{ flex: 1, backgroundColor: Colors.pageBackground }}>
       {/* 🔸 Yuqori header */}
