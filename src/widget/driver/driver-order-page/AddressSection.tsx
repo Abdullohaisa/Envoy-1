@@ -2,16 +2,18 @@ import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { StyleSheet, View } from "react-native";
 import DriverOrderAddressItem from "./AddressItem";
-import { Spacing } from "@/shared/token";
+import { Shadow, Spacing } from "@/shared/token";
 
 const DriverOrderAddressSection = ({
   title,
-  data,
+  locations,
   type,
+  times,
 }: {
   title: string;
-  data: any[];
+  locations: any[];
   type: "pickup" | "dropoff";
+  times: any;
 }) => {
   const Colors = useThemeColors();
 
@@ -20,6 +22,7 @@ const DriverOrderAddressSection = ({
       style={[
         styles.addressContainer,
         { backgroundColor: Colors.Boxbackground },
+        Shadow.dark,
       ]}
     >
       <AppText
@@ -29,12 +32,14 @@ const DriverOrderAddressSection = ({
         {title}
       </AppText>
 
-      {data.map((loc: any, i: number) => (
+      {locations.map((loc: any, i: number) => (
         <DriverOrderAddressItem
           key={loc.id + i}
           loc={loc}
           index={i}
           type={type}
+          lastIndex={locations.length - 1} // 🔥 oxirgi index
+          times={times}
         />
       ))}
     </View>
@@ -47,8 +52,11 @@ const styles = StyleSheet.create({
   addressContainer: {
     marginTop: 10,
     borderRadius: 20,
-    padding: Spacing.horizontal,
-    gap: 5,
+    overflow: "hidden",
   },
-  sectionTitle: { fontSize: 15, textAlign: "center", marginBottom: 10 },
+  sectionTitle: {
+    fontSize: 15,
+    textAlign: "center",
+    marginVertical: Spacing.horizontal,
+  },
 });

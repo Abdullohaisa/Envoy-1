@@ -5,9 +5,11 @@ import { AxiosError } from "axios";
 import { atom } from "jotai";
 import { useAtomCallback } from "jotai/utils";
 
+// Buyurtmalar to‘plami
 export interface ICustomerOrders {
-  nearby: IOrder[];
-  other: IOrder[];
+  requested: IOrder[];
+  finished: IOrder[];
+  accepted: IOrder;
 }
 
 // Yuklanish holati
@@ -20,38 +22,41 @@ export interface ICustomerOrdersStateAtom {
 // 🔹 ATOMLAR
 // ====================================================
 
-export const allActiveOrdersAtom = atom<ICustomerOrders>({
-  nearby: [],
-  other: [],
+export const driverOrdersAtom = atom<ICustomerOrders>({
+  requested: [],
+  finished: [],
+  accepted: {} as IOrder,
 });
 
-export const allActiveOrdersStateAtom = atom<ICustomerOrdersStateAtom>({
+export const driverOrdersStateAtom = atom<ICustomerOrdersStateAtom>({
   isLoading: false,
   error: null,
 });
 
-export const useFetchAllActiveOrders = () =>
+export const useFetchDriverOrders = () =>
   useAtomCallback(async (_get, set) => {
-    set(allActiveOrdersStateAtom, { isLoading: true, error: null });
+    set(driverOrdersStateAtom, { isLoading: true, error: null });
 
     try {
-      const { data } = await api.post<ICustomerOrders>(
-        "/order/all-active-orders/"
-      );
-      set(allActiveOrdersAtom, { nearby: data.nearby, other: data.other });
+      const { data } = await api.get<ICustomerOrders>("/driver/orders/");
+      set(driverOrdersAtom, {
+        requested: data.requested,
+        finished: data.finished,
+        accepted: data.accepted,
+      });
     } catch (error: any) {
       if (error instanceof AxiosError) {
-        set(allActiveOrdersStateAtom, (prev) => ({
+        set(driverOrdersStateAtom, (prev) => ({
           ...prev,
           error: error.response?.data?.message || "Tarmoq xatosi",
         }));
       } else {
-        set(allActiveOrdersStateAtom, (prev) => ({
+        set(driverOrdersStateAtom, (prev) => ({
           ...prev,
           error: "Noma'lum xatolik",
         }));
       }
     } finally {
-      set(allActiveOrdersStateAtom, (prev) => ({ ...prev, isLoading: false }));
+      set(driverOrdersStateAtom, (prev) => ({ ...prev, isLoading: false }));
     }
   });

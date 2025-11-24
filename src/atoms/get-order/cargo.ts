@@ -1,28 +1,12 @@
 import { atom } from "jotai";
 
-// Har bir field uchun type
-type TCargoField<T> = {
-  unit: string | null;
-  value: T | null;
-};
-
-// Cargo tipi
-export type TCargo = {
-  type: TCargoField<string>; // faqat string bo‘ladi
-  weight?: TCargoField<number>;
-  volume?: TCargoField<number>;
-  quantity?: TCargoField<number>;
-  length?: TCargoField<number>;
-  height?: TCargoField<number>;
-  width?: TCargoField<number>;
-};
-
 // Cargo uchun atom
 export const getOrderCargoAtom = atom<TCargo>({
   type: { value: "", unit: null },
 });
 
 import { CargoType } from "@/shared/validation/get-order/cargo-schema";
+import { TCargo } from "@/types/order";
 
 export const normalizeCargoData = (data: CargoType) => {
   // Bo'sh qiymatlarni olib tashlash

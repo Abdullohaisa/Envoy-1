@@ -11,43 +11,10 @@ import { Radius } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { MaterialIcons } from "@expo/vector-icons";
 import AppText from "../Texts/Text";
+import { openMap } from "@/utils/open-map";
 
 const OrderInfoList = ({ order }: any) => {
   const Colors = useThemeColors();
-
-  const openMap = async (latitude: number, longitude: number) => {
-    if (!latitude || !longitude) {
-      return Alert.alert("❗ Xatolik", "Koordinatalar topilmadi");
-    }
-
-    const yandexMaps = `yandexmaps://maps/?ll=${longitude},${latitude}&z=15&pt=${longitude},${latitude},pm2rdl`;
-    const yandexNavi = `yandexnavi://build_route_on_map?lat_to=${latitude}&lon_to=${longitude}`;
-    const googleApp = `comgooglemaps://?q=${latitude},${longitude}&zoom=15`;
-    const webMap = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-
-    try {
-      const canOpenYandexMaps = await Linking.canOpenURL("yandexmaps://");
-      const canOpenYandexNavi = await Linking.canOpenURL("yandexnavi://");
-      const canOpenGoogle = await Linking.canOpenURL("comgooglemaps://");
-
-      if (canOpenYandexMaps) {
-        return Linking.openURL(yandexMaps);
-      }
-      if (canOpenYandexNavi) {
-        return Linking.openURL(yandexNavi);
-      }
-      if (canOpenGoogle) {
-        return Linking.openURL(googleApp);
-      }
-
-      return Linking.openURL(webMap);
-    } catch (error) {
-      Alert.alert(
-        "❗ Xarita ochilmadi",
-        "Iltimos, Yandex yoki Google Maps ilovalaridan birini o‘rnating."
-      );
-    }
-  };
 
   const callNumber = (number: string) => {
     Linking.openURL(`tel:${number}`).catch(() =>

@@ -1,26 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   runOnJS,
-  useDerivedValue,
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { useThemeColors } from "@/theme/useThemeColors";
 import ArrowIcon from "@/assets/icon/arrow";
+import CustomSpinner from "../Spinner/Spinner";
 
 const { width } = Dimensions.get("window");
 
-const SwipeButton = ({ onConfirm }: { onConfirm: () => void }) => {
+const SwipeButton = ({
+  onConfirm,
+  isLoading,
+  disabled = false,
+  title,
+}: {
+  onConfirm: () => void;
+  isLoading?: boolean;
+  disabled?: boolean;
+  title: string;
+}) => {
   const Colors = useThemeColors();
   const translateX = useSharedValue(0);
   const confirmed = useSharedValue(false);
   const maxSwipe = width * 0.77;
 
+  // Agar isLoading false bo'lsa, tugmani tiklaymiz
+  useEffect(() => {
+    if (!isLoading && confirmed.value) {
+      confirmed.value = false;
+      translateX.value = withSpring(0, { damping: 80 });
+    }
+  }, [isLoading]);
+
   const pan = Gesture.Pan()
     .onUpdate((e) => {
+      if (disabled) return;
       if (
         !confirmed.value &&
         e.translationX >= 0 &&
@@ -30,18 +49,12 @@ const SwipeButton = ({ onConfirm }: { onConfirm: () => void }) => {
       }
     })
     .onEnd(() => {
+      if (disabled) return;
       if (translateX.value > maxSwipe * 0.8) {
         confirmed.value = true;
         translateX.value = withSpring(maxSwipe, { damping: 40 });
 
-        // OnConfirm chaqiramiz
         runOnJS(onConfirm)();
-
-        // 1.2 sekunddan keyin qayta tiklaymiz
-        setTimeout(() => {
-          confirmed.value = false;
-          translateX.value = withSpring(0, { damping: 80 });
-        }, 1200);
       } else {
         translateX.value = withSpring(0);
       }
@@ -52,12 +65,8 @@ const SwipeButton = ({ onConfirm }: { onConfirm: () => void }) => {
   }));
 
   const animatedTextStyle = useAnimatedStyle(() => ({
-    opacity: confirmed.value ? 0.5 : 1,
+    opacity: disabled ? 0.4 : 1,
   }));
-
-  const displayText = useDerivedValue(() => {
-    return confirmed.value ? "Yo‘lga chiqdingiz" : "Yo‘lga chiqish";
-  });
 
   return (
     <View
@@ -67,11 +76,15 @@ const SwipeButton = ({ onConfirm }: { onConfirm: () => void }) => {
         <Animated.View
           style={[
             styles.swipeCircle,
-            { backgroundColor: Colors.primary },
+            { backgroundColor: Colors.primary, zIndex: 10 },
             animatedCircleStyle,
           ]}
         >
-          <ArrowIcon direction="right" />
+          {isLoading ? (
+            <CustomSpinner />
+          ) : (
+            <ArrowIcon direction="right" color="#fff" />
+          )}
         </Animated.View>
       </GestureDetector>
 
@@ -79,7 +92,7 @@ const SwipeButton = ({ onConfirm }: { onConfirm: () => void }) => {
         style={[styles.text, { color: Colors.primary }, animatedTextStyle]}
         numberOfLines={1}
       >
-        {displayText.value}
+        {title}
       </Animated.Text>
     </View>
   );

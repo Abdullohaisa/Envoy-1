@@ -24,6 +24,7 @@ import { useAtomValue } from "jotai";
 import AppImage from "@/components/Image/Image";
 import CustomSpinner from "@/components/Spinner/Spinner";
 import { themeAtom } from "@/theme/theme";
+import { authAtom } from "@/service/user/register-login/controller";
 
 const AvatarSection = ({
   image,
@@ -37,9 +38,9 @@ const AvatarSection = ({
   const ref = useRef<BottomSheetModalMethods>(null);
   const { t } = useTranslation();
   const userData = useAtomValue(userDataAtom);
-  const { isLoading } = useAtomValue(userDataStateAtom);
   const [blur, setBlur] = useState(0);
   const theme = useAtomValue(themeAtom);
+  const { access } = useAtomValue(authAtom);
 
   useEffect(() => {
     if (editMode) {
@@ -60,7 +61,7 @@ const AvatarSection = ({
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 0.8,
+        quality: 0.9,
       });
 
       if (!result.canceled && result.assets?.length > 0) {
@@ -120,24 +121,6 @@ const AvatarSection = ({
           { backgroundColor: Colors.Boxbackground },
         ]}
       >
-        {/* {isLoading ||
-          (loading && (
-            <View
-              style={[
-                {
-                  backgroundColor: "rgb(0, 0, 0, .4)",
-                  position: "absolute",
-                  zIndex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-                StyleSheet.absoluteFill,
-              ]}
-            >
-              <CustomSpinner color={Colors.primary} />
-            </View>
-          ))} */}
-
         {image.uri || userData.image ? (
           <AppImage
             source={thisImage}

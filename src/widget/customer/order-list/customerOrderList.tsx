@@ -15,6 +15,8 @@ import GivenCustomerOrderItem from "@/widget/order/customer/given-order.tsx/Give
 import FinishedCustomerOrderItem from "@/widget/order/customer/finished-order/FinishedCustomerOrderItem";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import PalletIcon from "@/assets/icon/pallet";
+import ListEmptyComponent from "@/components/ListEmptyComponent/ListEmptyComponent";
 
 // ==============================
 // 🔹 INTERFACE LAR
@@ -132,6 +134,7 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({
             progressBackgroundColor={Colors.primary}
           />
         }
+        ListEmptyComponent={<ListEmptyComponent />}
       />
     </View>
   );

@@ -81,7 +81,6 @@ const DriverLayout = () => {
   const Colors = useThemeColors();
   const pathname = usePathname();
   const { access } = useAtomValue(authAtom);
-  console.log(access);
 
   const visibleRouters = useMemo(
     () => [

@@ -8,11 +8,15 @@ import { StatusBar } from "expo-status-bar";
 import { I18nextProvider } from "react-i18next";
 import i18n, { initLanguage } from "@/locales/_i18n";
 import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import { authAtom } from "@/service/user/register-login/controller";
 
 const Layout = () => {
   // const queryClient = new QueryClient();
   const Colors = useThemeColors();
   const [ready, setReady] = useState(false);
+  const { access, role } = useAtomValue(authAtom);
+  console.log(role, access);
 
   useEffect(() => {
     const prepare = async () => {
@@ -23,8 +27,6 @@ const Layout = () => {
     prepare();
   }, []);
 
-  // App.js yoki index.js ga birinchi satrlarda qo'ying
-  // App.js yoki index.js boshida qo'ying
   const originalConsoleWarn = console.warn;
   console.warn = (...args) => {
     // Expo AV warninglarini filtrlash

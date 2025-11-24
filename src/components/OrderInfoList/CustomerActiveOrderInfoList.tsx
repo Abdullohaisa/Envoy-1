@@ -1,6 +1,6 @@
 import { Alert, StyleSheet } from "react-native";
 import { useRef, useState } from "react";
-import DriverChooseModal, {
+import {
   OrderListAddress,
   OrderListCargo,
   OrderListOther,
@@ -9,6 +9,7 @@ import DriverChooseModal, {
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { Spacing } from "@/shared/token";
 import api from "@/axios/axios.config";
+import DriverChooseModal from "@/widget/customer/active-order/driver-choose-modal";
 
 const CustomerActiveOrderInfoList = ({ order }: any) => {
   const modalRef = useRef<any>(null);

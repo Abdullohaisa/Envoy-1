@@ -1,25 +1,24 @@
-import * as Linking from "expo-linking";
-import { Alert } from "react-native";
+import { Alert, Linking } from "react-native";
 
-export const openMapApp = async (lat: number, lng: number, label?: string) => {
-  const yandex = `yandexmaps://maps.yandex.ru/?pt=${lng},${lat}&z=14&text=${encodeURIComponent(label || "")}`;
-  const google = `googlemaps://?q=${lat},${lng}`;
-  const universal = `https://maps.google.com/?q=${lat},${lng}`;
+export const openMap = async (lat?: number, lng?: number) => {
+  if (!lat || !lng) {
+    return Alert.alert("❗ Xatolik", "Manzil koordinatalari topilmadi");
+  }
 
+  const yandexUrl = `yandexmaps://maps.yandex.ru/?pt=${lng},${lat}&z=16`;
+  // z=16 → zoom darajasi, kerak bo‘lsa o‘zgartiring
+
+  // Platformga qarab ochish
   try {
-    const supported = await Linking.canOpenURL("yandexmaps://");
+    const supported = await Linking.canOpenURL(yandexUrl);
     if (supported) {
-      await Linking.openURL(yandex);
-    } else if (await Linking.canOpenURL("googlemaps://")) {
-      await Linking.openURL(google);
+      await Linking.openURL(yandexUrl);
     } else {
-      await Linking.openURL(universal);
-      Alert.alert(
-        "Diqqat",
-        "Xarita ilovasi topilmadi. Iltimos, Yandex yoki Google Maps o‘rnating."
-      );
+      // Agar Yandex Maps ilovasi o‘rnatilmagan bo‘lsa, web orqali ochiladi
+      const webUrl = `https://yandex.ru/maps/?pt=${lng},${lat}&z=16`;
+      await Linking.openURL(webUrl);
     }
   } catch (error) {
-    Alert.alert("Xatolik", "Xaritani ochishda muammo bo‘ldi.");
+    Alert.alert("❗ Xatolik", "Xaritani ochishda muammo yuz berdi");
   }
 };

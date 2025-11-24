@@ -1,18 +1,13 @@
 import UserIcon from "@/assets/icon/user";
 import AppText from "@/components/Texts/Text";
 import { IThemeColors } from "@/theme/colors.interface";
-import { RefObject, memo, useEffect, useRef, useState } from "react";
+import { RefObject, memo } from "react";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity, View } from "react-native";
+import { Pressable, TouchableOpacity, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { locationStyles as styles } from "../location-picker/style";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
-import { Shadow, Spacing } from "@/shared/token";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import ContactSheetContent from "./contact-sheet";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Spacing } from "@/shared/token";
 
 const PickLocationItem = memo(
   ({
@@ -22,8 +17,8 @@ const PickLocationItem = memo(
     Colors,
     openSheet,
     removePickup,
-    openMap,
-    // contactSheetRef,
+    contactSheetRef,
+    openContact,
   }: {
     location: any;
     index: number;
@@ -31,27 +26,39 @@ const PickLocationItem = memo(
     Colors: IThemeColors;
     openSheet: any;
     removePickup: any;
-    openMap: any;
     contactSheetRef: RefObject<BottomSheetModalMethods | null>;
+    openContact: (index: number) => void;
   }) => {
     const { t } = useTranslation();
-    const contactSheetRef = useRef<BottomSheetModalMethods>(null);
-    const insets = useSafeAreaInsets();
 
     return (
-      <TouchableOpacity
-        onPress={() => openSheet(index)}
+      <View
         key={index}
         style={[
           styles.locationItem,
           {
             borderTopWidth: 1,
             borderColor: Colors.borderColor,
-            borderRadius: 10,
+            backgroundColor:
+              index % 2 !== 0 ? Colors.borderColor : Colors.Boxbackground,
           },
         ]}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Pressable
+          android_ripple={{
+            color: Colors.primary08,
+            borderless: false,
+            radius: -0.5,
+            foreground: true,
+          }}
+          onPress={() => openSheet(index)}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: Spacing.horizontal,
+            paddingVertical: Spacing.horizontal,
+          }}
+        >
           <View style={styles.locationButton}>
             <View
               style={{
@@ -96,69 +103,62 @@ const PickLocationItem = memo(
                 <AntDesign name="close" size={18} color="red" />
               </TouchableOpacity>
             )}
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={() => contactSheetRef.current?.present()}
-            >
-              <UserIcon size={18} color={Colors.textSecondary} />
-            </TouchableOpacity>
           </View>
-        </View>
+        </Pressable>
 
-        {/* <TouchableOpacity
+        <View
           style={{
-            marginTop: 5,
-            backgroundColor: Colors.borderColor,
-            padding: 8,
-            borderRadius: 10,
-            borderWidth: 1,
-            borderColor: Colors.borderColor,
+            height: 1,
+            width: "100%",
+            backgroundColor:
+              index % 2 === 0 ? Colors.borderColor : Colors.Boxbackground,
           }}
-          onPress={() => openSheet(index)} // bosganda sheet ochiladi
+        />
+
+        <Pressable
+          android_ripple={{
+            color: Colors.primary,
+            borderless: false,
+            radius: -0.5,
+            foreground: true,
+          }}
+          onPress={() => openContact(index)}
+          style={{
+            paddingVertical: Spacing.horizontal,
+            paddingHorizontal: Spacing.horizontal,
+            flexDirection: "row",
+            gap: 5,
+            borderRadius: 10,
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
         >
-          <AppText style={{ color: Colors.textSecondary }}>
-            Kim kutib oladi ?
+          <AppText style={{ color: Colors.primary }}>
+            {!location?.contact?.name ? "Kim kutib oladi" : "Kutib oluvchi:"}
           </AppText>
 
-          {location?.contact?.name && (
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-            >
-              <Ionicons
-                name="person-circle"
-                size={20}
-                color={Colors.textSecondary}
-              />
-              <AppText style={{ color: Colors.textPrimary, fontSize: 14 }}>
+          <View
+            style={{ flexDirection: "column", alignItems: "flex-end", gap: 5 }}
+          >
+            {location?.contact?.name && (
+              <AppText
+                style={{
+                  color: Colors.textSecondary,
+                  fontSize: 14,
+                }}
+              >
                 {location?.contact?.name || "Ism"}
               </AppText>
-            </View>
-          )}
+            )}
 
-          {location?.contact?.phone && (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 8,
-                marginTop: 4,
-              }}
-            >
-              <Ionicons name="call" size={18} color={Colors.textSecondary} />
-              <AppText style={{ color: Colors.textPrimary, fontSize: 13 }}>
+            {location?.contact?.phone && (
+              <AppText style={{ color: Colors.textSecondary, fontSize: 12 }}>
                 {location?.contact?.phone || "Telefon raqam"}
               </AppText>
-            </View>
-          )}
-        </TouchableOpacity> */}
-
-        <ContactSheetContent
-          location={location}
-          locationType={locationType}
-          index={index}
-          contactSheetRef={contactSheetRef}
-        />
-      </TouchableOpacity>
+            )}
+          </View>
+        </Pressable>
+      </View>
     );
   }
 );

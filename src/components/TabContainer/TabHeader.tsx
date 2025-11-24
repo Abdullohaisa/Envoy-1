@@ -17,6 +17,7 @@ const TabHeader = ({ pages, handlePress, scrollX }: any) => {
         styles.header,
         {
           height: 55 + insetTop,
+          zIndex: 1,
           backgroundColor:
             theme === "light" ? Colors.primary : Colors.Boxbackground,
         },

@@ -8,8 +8,9 @@ import { OrderItemLocations } from "../../Components/OrderLocations";
 import { OrderItemInfo } from "../../Components/OrderInfo";
 import { safeNavigate } from "@/utils/safe-navigation";
 import OrderItemRequests from "../../Components/OrderRequests";
+import AppText from "@/components/Texts/Text";
 
-function ActiveDriverOrderItem({
+function ActiveDriverRequestOrderItem({
   order,
   path,
   index,
@@ -58,9 +59,21 @@ function ActiveDriverOrderItem({
 
         <OrderItemLocations order={order} />
 
-        <OrderItemRequests requested_drivers_length={order.requested} />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <OrderItemRequests
+            requested_drivers_length={order.requested_drivers.length}
+          />
 
-        {/* <View style={[styles.line, { backgroundColor: Colors.borderColor }]} /> */}
+          <AppText style={{ color: Colors.yellow, marginTop: 7 }}>
+            Siz so'rov jo'natgansiz
+          </AppText>
+        </View>
 
         <OrderItemInfo order={order} />
       </Pressable>
@@ -68,4 +81,4 @@ function ActiveDriverOrderItem({
   );
 }
 
-export default memo(ActiveDriverOrderItem);
+export default memo(ActiveDriverRequestOrderItem);

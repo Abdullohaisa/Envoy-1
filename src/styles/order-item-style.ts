@@ -6,17 +6,14 @@ export const orderItemStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: screens.width,
-    paddingHorizontal: 2.5,
   },
   item: {
     width: "100%",
     justifyContent: "flex-start",
     overflow: "hidden",
     paddingVertical: Spacing.horizontal,
-    paddingTop: Spacing.horizontal,
     paddingHorizontal: screens.width * 0.03,
     paddingBottom: 10,
-    borderRadius: 5,
     gap: 10,
   },
 

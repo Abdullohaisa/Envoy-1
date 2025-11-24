@@ -7,8 +7,6 @@ export const locationStyles = StyleSheet.create({
   },
   locationItem: {
     flexDirection: "column",
-    alignItems: "center",
-    padding: Spacing.horizontal,
   },
   locationButton: {
     flex: 1,
@@ -35,6 +33,7 @@ export const locationStyles = StyleSheet.create({
   addButton: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 8,
+    width: 40,
+    height: 40,
   },
 });

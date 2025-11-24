@@ -20,9 +20,6 @@ import { useAtomValue } from "jotai";
 import { authAtom } from "@/service/user/register-login/controller";
 
 const Orders = () => {
-  const Colors = useThemeColors();
-  const { access } = useAtomValue(authAtom);
-
   // 📦 Orders ma'lumotlarini olish uchun hook
   const fetchOrders = useFetchCustomerOrders();
   const { active, attached, finished } = useAtomValue(customerOrdersAtom);
@@ -86,7 +83,7 @@ const Orders = () => {
       title: "Tugatilgan",
       component: () => (
         <CustomerOrderList
-          orders={active}
+          orders={finished}
           state={customerOrdersState}
           setOrders={fetchOrders}
           type="finished"

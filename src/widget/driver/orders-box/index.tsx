@@ -12,9 +12,12 @@ import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
 
 const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
   const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
 
   // Tugma qutisi animatsiyasi
   const animatedButtonBox = useAnimatedStyle(() => {
@@ -45,7 +48,8 @@ const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
           position: "absolute",
           bottom: screens.height * 0.15,
           right: Spacing.horizontal,
-          backgroundColor: Colors.pageBackground,
+          backgroundColor:
+            theme === "dark" ? Colors.pageBackground : Colors.primary,
           padding: 5,
           borderRadius: 100,
           justifyContent: "center",
@@ -57,7 +61,7 @@ const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.25,
           shadowRadius: 6,
-          elevation: 8,
+          // elevation: 8,
         },
         animatedButtonBox,
       ]}
@@ -70,7 +74,8 @@ const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
         style={{
           padding: 5,
           borderRadius: 100,
-          backgroundColor: Colors.borderColor,
+          backgroundColor:
+            theme === "dark" ? Colors.borderColor : Colors.Boxbackground,
           width: 40,
           height: 40,
           justifyContent: "center",
@@ -79,7 +84,7 @@ const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.2,
           shadowRadius: 3,
-          elevation: 5,
+          // elevation: 5,
         }}
       >
         <FontAwesome name="map" size={20} color={Colors.primary} />
@@ -93,7 +98,8 @@ const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
         style={{
           padding: 5,
           borderRadius: 100,
-          backgroundColor: Colors.borderColor,
+          backgroundColor:
+            theme === "dark" ? Colors.borderColor : Colors.Boxbackground,
           width: 40,
           height: 40,
           justifyContent: "center",
@@ -102,7 +108,7 @@ const DriverOrdersButtonBox = ({ scrollX }: { scrollX: any }) => {
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.2,
           shadowRadius: 3,
-          elevation: 5,
+          // elevation: 5,
         }}
       >
         <Ionicons name="color-filter" size={23} color={Colors.primary} />

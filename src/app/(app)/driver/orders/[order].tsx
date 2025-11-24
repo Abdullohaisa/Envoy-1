@@ -1,9 +1,8 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
 import DriverActiveOrderInfoList from "@/components/OrderInfoList/DriverActiveOrderInfoList";
-import AppText from "@/components/Texts/Text";
-import { ORDERS, screens } from "@/shared/token";
+import { screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import { useCallback, useEffect, useState } from "react";
 import SheetModal from "@/components/Modal/SheetModal";
@@ -12,7 +11,9 @@ import { useLocalSearchParams } from "expo-router";
 import { useFetchSingleOrder } from "@/service/order/fetch-single-order/controller";
 import OrderLoading from "@/components/OrderLoading/OrderLoading";
 import { useAtomValue } from "jotai";
-import { authAtom } from "@/service/user/register-login/controller";
+import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { themeAtom } from "@/theme/theme";
 
 const requestURL = "/driver/request-order/";
 
@@ -33,7 +34,9 @@ const DriverActiveOrder = () => {
     error,
     refetch,
   } = useFetchSingleOrder(orderId);
-  const { access } = useAtomValue(authAtom);
+  const { accepted } = useAtomValue(driverOrdersAtom);
+  const insets = useSafeAreaInsets();
+  const theme = useAtomValue(themeAtom);
 
   const handleRequestOrder = async () => {
     setIsLoading(true);
@@ -74,43 +77,56 @@ const DriverActiveOrder = () => {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: Colors.pageBackground }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            theme === "dark" ? Colors.pageBackground : Colors.Boxbackground,
+        },
+      ]}
     >
       <PageHeader title="Yuk ma'lumotlari" enableBack />
       {(isLoading || loading) && !refreshing && (
         <OrderLoading Colors={Colors} />
       )}
       {(!isLoading || !loading) && !error && order && (
-        <DriverActiveOrderInfoList
-          order={order}
-          isRequested={isRequested}
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-        />
+        <View>
+          <DriverActiveOrderInfoList
+            order={order}
+            isRequested={isRequested}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        </View>
       )}
 
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          height: screens.height * 0.1,
-          backgroundColor: Colors.Boxbackground,
-          width: screens.width,
-          padding: 12,
-          paddingTop: 7,
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
-          borderColor: Colors.pageBackground,
-        }}
-      >
-        <AppButton
-          title={isRequested ? "So'rovni bekor qilish" : "So'rov yuborish"}
-          variant="secondary"
-          onPress={() => setRequestVisible(true)}
-          isLoading={isLoading || loading}
-          titleStyle={{ color: isRequested ? Colors.red : Colors.textPrimary }}
-        />
-      </View>
+      {!accepted.id && (
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            backgroundColor: Colors.Boxbackground,
+            width: screens.width,
+            padding: 10,
+            paddingBottom: insets.bottom,
+            borderTopLeftRadius: 5,
+            borderTopRightRadius: 5,
+            borderColor: Colors.pageBackground,
+          }}
+        >
+          <AppButton
+            title={isRequested ? "So'rovni bekor qilish" : "So'rov yuborish"}
+            variant="secondary"
+            onPress={() => setRequestVisible(true)}
+            isLoading={isLoading || loading}
+            titleStyle={{
+              color: isRequested ? Colors.red : Colors.textPrimary,
+            }}
+            disabled={true}
+          />
+        </View>
+      )}
+
       <SheetModal
         open={requestVisible}
         onDismiss={() => setRequestVisible(false)}

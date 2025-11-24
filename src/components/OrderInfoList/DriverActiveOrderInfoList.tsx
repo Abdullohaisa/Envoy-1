@@ -1,24 +1,22 @@
 import { RefreshControl, StyleSheet, View } from "react-native";
-import { useEffect, useRef, useState } from "react";
+
 import {
   OrderListAddress,
   OrderListCargo,
   OrderListCustomer,
 } from "./Components/Components";
 import Animated, {
-  FadeIn,
   FadeInDown,
-  FadeInUp,
-  FadeOut,
-  FadeOutDown,
   FadeOutUp,
   Layout,
 } from "react-native-reanimated";
-import { Spacing, screens } from "@/shared/token";
+import { Spacing } from "@/shared/token";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import AppText from "../Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
+import Feather from "@expo/vector-icons/Feather";
 
 const DriverActiveOrderInfoList = ({
   order,
@@ -29,6 +27,7 @@ const DriverActiveOrderInfoList = ({
   const theme = useAtomValue(themeAtom);
   const indicatorStyle = theme === "dark" ? "white" : "black";
   const Colors = useThemeColors();
+  const { accepted } = useAtomValue(driverOrdersAtom);
 
   return (
     <Animated.ScrollView
@@ -51,6 +50,8 @@ const DriverActiveOrderInfoList = ({
         layout={Layout.springify().duration(400)}
         style={styles.scrollContent}
       >
+        {accepted.id && <WarningBox />}
+
         {isRequested && (
           <Animated.View
             entering={FadeInDown.duration(600)}
@@ -73,7 +74,10 @@ const DriverActiveOrderInfoList = ({
         )}
         <OrderListCustomer order={order} title="Buyurtmachi" />
         <OrderListCargo order={order} />
-        <OrderListAddress locations={order?.locations} />
+        <OrderListAddress
+          locations={order?.locations}
+          isVisibleContact={false}
+        />
       </Animated.View>
     </Animated.ScrollView>
   );
@@ -81,11 +85,45 @@ const DriverActiveOrderInfoList = ({
 
 export default DriverActiveOrderInfoList;
 
+const WarningBox = () => {
+  const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
+  return (
+    <View style={{ padding: 10, alignItems: "center" }}>
+      <Feather
+        name="alert-circle"
+        size={24}
+        color={theme === "dark" ? Colors.yellow : Colors.textPrimary}
+      />
+      <AppText
+        variant="semiBold"
+        style={{
+          marginTop: 5,
+          textAlign: "center",
+          color: theme === "dark" ? Colors.yellow : Colors.textPrimary,
+          fontSize: 18,
+        }}
+      >
+        Yangi so‘rov yubora olmaysiz
+      </AppText>
+      <AppText
+        style={{
+          textAlign: "center",
+          color: Colors.textSecondary,
+          fontSize: 14,
+        }}
+      >
+        Siz hozirda faol yukni bajarish jarayonidasiz. Yangi so‘rov yuborish
+        uchun avval mavjud yukni to‘liq yakunlab oling.
+      </AppText>
+    </View>
+  );
+};
+
 /* ====================== STYLES ====================== */
 const styles = StyleSheet.create({
   scrollView: {
     overflow: "hidden",
-    marginBottom: screens.height * 0.1 + 0,
   },
   scrollContent: {
     gap: 10,

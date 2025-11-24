@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { errorAtom } from "./errorAtom";
-import AppModal from "Components/AppModal/AppModal";
+import SheetModal from "@/components/Modal/SheetModal";
 
 export default function AppErrorModal() {
   const [error, setError] = useAtom(errorAtom);
@@ -8,7 +8,7 @@ export default function AppErrorModal() {
   const handleDismiss = () => setError(null);
 
   return (
-    <AppModal
+    <SheetModal
       open={!!error}
       onDismiss={handleDismiss}
       type="ok"

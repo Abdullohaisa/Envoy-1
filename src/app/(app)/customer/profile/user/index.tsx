@@ -121,6 +121,7 @@ const EditCustomerProfilePage = () => {
       setIsLoading(false);
     }
   };
+
   const handleSaveImage = async () => {
     if (!image || !image.uri) return;
 
@@ -135,7 +136,7 @@ const EditCustomerProfilePage = () => {
     formData.append("image", { uri, name, type });
     setIsLoading(true);
     try {
-      const { data } = await api.post("/user/update/", formData, {
+      await api.post("/user/update/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

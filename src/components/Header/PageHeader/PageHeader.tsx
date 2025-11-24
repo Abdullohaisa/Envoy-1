@@ -95,10 +95,8 @@ const PageHeader = ({
           backgroundColor:
             theme === "light" ? Colors.primary : Colors.Boxbackground,
           borderColor: Colors.borderColor,
-          borderBottomLeftRadius:
-            Platform.OS === "ios" ? Radius.primary : Radius.primary,
-          borderBottomRightRadius:
-            Platform.OS === "ios" ? Radius.primary : Radius.primary,
+          borderBottomLeftRadius: 5,
+          borderBottomRightRadius: 5,
         },
         animated && headerStyle,
       ]}

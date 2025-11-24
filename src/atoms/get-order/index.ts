@@ -1,21 +1,13 @@
 import { atom } from "jotai";
-import { TCargo, getOrderCargoAtom } from "./cargo";
-import { ILocations, getOrderLocationsAtom } from "./locations";
-import { TTruck, getOrderTruckAtom } from "./truck";
-import { IPrice, getOrderPriceAtom } from "./price";
-import { TComment, getOrderComment } from "./comment";
-import { IDate, getOrderTime } from "./time";
+import { getOrderCargoAtom } from "./cargo";
+import { getOrderLocationsAtom } from "./locations";
+import { getOrderTruckAtom } from "./truck";
+import { getOrderPriceAtom } from "./price";
+import { getOrderComment } from "./comment";
+import { getOrderTime } from "./time";
+import { TCreateOrder } from "@/types/order";
 
-export type TGetOrderState = {
-  cargo: TCargo;
-  truck: TTruck;
-  locations: ILocations;
-  price: IPrice;
-  comment: TComment;
-  time: IDate;
-};
-
-export const getOrderAtom = atom<TGetOrderState>((get) => ({
+export const getOrderAtom = atom<TCreateOrder>((get) => ({
   cargo: get(getOrderCargoAtom),
   truck: get(getOrderTruckAtom),
   locations: get(getOrderLocationsAtom),

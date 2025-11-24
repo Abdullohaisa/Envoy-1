@@ -1,5 +1,5 @@
 export interface TruckItem {
-  id: string;
+  id: string | number;
   title: string;
   image: any;
 }

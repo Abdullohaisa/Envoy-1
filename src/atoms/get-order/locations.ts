@@ -1,23 +1,5 @@
+import { ILocations } from "@/types/order";
 import { atom } from "jotai";
-
-export interface ILocation {
-  id: string;
-  full_title: string;
-  short_title: string;
-  coordinates: {
-    latitude: number; // kenglik → latitude
-    longitude: number; // uzunlik → longitude
-  };
-  contact: {
-    name: string;
-    phone: string;
-  };
-}
-
-export interface ILocations {
-  pickup: ILocation[]; // olish → pickup
-  dropoff: ILocation[]; // tushirish → dropoff
-}
 
 interface IGetOrderLocationStatus {
   locationType: "pickup" | "dropoff";

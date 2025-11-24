@@ -8,24 +8,31 @@ import Animated, {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import { useAtomValue } from "jotai";
-import { authAtom } from "@/service/user/register-login/controller";
 import DriverOrdersButtonBox from "@/widget/driver/orders-box";
 import {
   allActiveOrdersAtom,
-  allActiveOrdersStateAtom,
   useFetchAllActiveOrders,
 } from "@/service/driver/fetch-all-active-orders/controller";
+import { useThemeColors } from "@/theme/useThemeColors";
+import { themeAtom } from "@/theme/theme";
+import {
+  driverOrdersAtom,
+  useFetchDriverOrders,
+} from "@/service/driver/driver-orders/controller";
 
 const DriverGetOrders = () => {
   const scrollX = useSharedValue(0);
   const flatRef = useRef<FlatList>(null);
-  const { access } = useAtomValue(authAtom);
   const fetchAllOrders = useFetchAllActiveOrders();
+  const fetchDriverOrders = useFetchDriverOrders();
   const allActiveOrders = useAtomValue(allActiveOrdersAtom);
-  const allActiveOrdersState = useAtomValue(allActiveOrdersStateAtom);
+  const { requested } = useAtomValue(driverOrdersAtom);
+  const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
 
   useEffect(() => {
     fetchAllOrders();
+    fetchDriverOrders();
   }, []);
 
   const onScroll = useAnimatedScrollHandler({
@@ -44,27 +51,40 @@ const DriverGetOrders = () => {
   const combineOrder = [...allActiveOrders.nearby, ...allActiveOrders.other];
 
   const Page = memo(({ item }: any) => <>{item.component()}</>);
-  const renderActiveOrders = () => (
-    <DriverActiveOrderLIst orders={combineOrder} fetchOrders={fetchAllOrders} />
-  );
 
   const pages = [
     {
       key: "active",
       title: "Yuklar",
-      orders: combineOrder,
-      component: renderActiveOrders,
+      component: () => (
+        <DriverActiveOrderLIst
+          orders={combineOrder}
+          fetchOrders={fetchAllOrders}
+          type={"all-order"}
+        />
+      ),
     },
     {
-      key: "so'ralgan",
+      key: "requested",
       title: "So'ralgan",
-      orders: combineOrder,
-      component: renderActiveOrders,
+      component: () => (
+        <DriverActiveOrderLIst
+          orders={requested}
+          fetchOrders={fetchDriverOrders}
+          type={"request-order"}
+        />
+      ),
     },
   ];
 
   return (
-    <View style={{ flex: 1, gap: 5 }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor:
+          theme === "light" ? Colors.Boxbackground : Colors.pageBackground,
+      }}
+    >
       <TabHeader pages={pages} handlePress={handlePress} scrollX={scrollX} />
 
       <Animated.FlatList
@@ -81,7 +101,6 @@ const DriverGetOrders = () => {
           paddingBottom: screens.height * 0.09 + 5,
         }}
       />
-
       <DriverOrdersButtonBox scrollX={scrollX} />
     </View>
   );
