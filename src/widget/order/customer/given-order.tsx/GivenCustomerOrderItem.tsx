@@ -8,6 +8,9 @@ import { OrderItemLocations } from "../../Components/OrderLocations";
 import { OrderItemInfo } from "../../Components/OrderInfo";
 import { DriverTimeline } from "../../Components/OrderDriverStatus";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
+import { AndroidRipple } from "@/shared/token";
 
 function GivenCustomerOrderItem({
   order,
@@ -19,6 +22,7 @@ function GivenCustomerOrderItem({
   path: string;
 }) {
   const Colors = useThemeColors();
+  const theme = useAtomValue(themeAtom);
 
   const inOrder = () => {
     safeNavigate(() =>
@@ -33,15 +37,12 @@ function GivenCustomerOrderItem({
     <View style={[styles.box]}>
       <Pressable
         onPress={inOrder}
-        android_ripple={{
-          color: Colors.borderColor,
-          borderless: false,
-          radius: 200,
-        }}
+        android_ripple={AndroidRipple}
         style={[
           styles.item,
           {
-            backgroundColor: Colors.pageBackground,
+            backgroundColor:
+              theme === "dark" ? Colors.pageBackground : Colors.Boxbackground,
             borderTopWidth: index === 0 ? 0 : 1,
             borderColor: Colors.borderColor,
           },
@@ -49,7 +50,6 @@ function GivenCustomerOrderItem({
       >
         <OrderItemHeader order={order} />
         <OrderItemLocations order={order} />
-        {/* <View style={[styles.line, { backgroundColor: Colors.borderColor }]} /> */}
         <OrderItemInfo order={order} />
         <DriverTimeline status={order?.status?.driver} />
       </Pressable>

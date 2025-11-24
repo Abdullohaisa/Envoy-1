@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ViewProps, ViewStyle } from "react-native";
 import React from "react";
 import PalletIcon from "@/assets/icon/pallet";
 import { useThemeColors } from "@/theme/useThemeColors";
 
-const ListEmptyComponent = () => {
+const ListEmptyComponent = (props: ViewProps) => {
   const Colors = useThemeColors();
   return (
     <View
@@ -11,6 +11,7 @@ const ListEmptyComponent = () => {
         justifyContent: "center",
         alignItems: "center",
       }}
+      {...props}
     >
       <PalletIcon size={200} color={Colors.borderColor} />
     </View>

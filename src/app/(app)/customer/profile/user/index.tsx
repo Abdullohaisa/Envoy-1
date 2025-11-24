@@ -102,7 +102,6 @@ const EditCustomerProfilePage = () => {
     }
   };
 
-  // 🔹 Telefon raqamini SMS orqali tasdiqlab saqlash
   const handleSaveNumber = async () => {
     const newData: any = {};
 

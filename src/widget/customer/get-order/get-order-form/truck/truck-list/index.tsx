@@ -44,7 +44,6 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
   const AnimatedButton = Animated.createAnimatedComponent(TouchableOpacity);
   const { t } = useTranslation();
 
-  // ✅ Truck tanlash faqat raqam sifatida saqlanadi
   const selectTruck = (truckId: string) => {
     const numericId = Number(truckId);
     if (truck === numericId) {
@@ -86,7 +85,7 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
 
         <View style={{ marginTop: 10, width: "100%", alignItems: "center" }}>
           <AnimatedButton
-            onPress={() => selectTruck(item.id)}
+            onPress={() => selectTruck(item.id.toString())}
             entering={FadeIn.duration(100)}
             exiting={FadeOut.duration(100)}
             style={[
@@ -150,7 +149,7 @@ const CustomerGetOrderTruckList = ({ flatListRef }: Props) => {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item: TruckItem) => item.id}
+        keyExtractor={(item: TruckItem) => item.id.toString()}
         renderItem={renderItem}
         getItemLayout={(_, index) => ({
           length: screens.width,

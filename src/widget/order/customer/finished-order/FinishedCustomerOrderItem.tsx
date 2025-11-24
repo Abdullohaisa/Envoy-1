@@ -7,6 +7,7 @@ import { OrderItemHeader } from "../../Components/OrderHeader";
 import { OrderItemLocations } from "../../Components/OrderLocations";
 import { OrderItemInfo } from "../../Components/OrderInfo";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { AndroidRipple } from "@/shared/token";
 
 function FinishedCustomerOrderItem({
   order,
@@ -32,11 +33,7 @@ function FinishedCustomerOrderItem({
     <View style={[styles.box, {}]}>
       <Pressable
         onPress={inOrder}
-        android_ripple={{
-          color: Colors.borderColor,
-          borderless: false,
-          radius: 200,
-        }}
+        android_ripple={AndroidRipple}
         style={[
           styles.item,
           {

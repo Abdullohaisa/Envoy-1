@@ -17,6 +17,7 @@ import AppText from "../Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
 import Feather from "@expo/vector-icons/Feather";
+import { useTranslation } from "react-i18next";
 
 const DriverActiveOrderInfoList = ({
   order,
@@ -28,6 +29,7 @@ const DriverActiveOrderInfoList = ({
   const indicatorStyle = theme === "dark" ? "white" : "black";
   const Colors = useThemeColors();
   const { accepted } = useAtomValue(driverOrdersAtom);
+  const { t } = useTranslation();
 
   return (
     <Animated.ScrollView
@@ -65,14 +67,14 @@ const DriverActiveOrderInfoList = ({
             <AppText
               style={[styles.statusTitle, { color: Colors.textSecondary }]}
             >
-              So'rov holati
+              {t("request_status")}
             </AppText>
             <AppText style={[styles.statusText, { color: Colors.primary }]}>
-              Siz so'rov yuborgansiz
+              {t("you_sent_request")}
             </AppText>
           </Animated.View>
         )}
-        <OrderListCustomer order={order} title="Buyurtmachi" />
+        <OrderListCustomer order={order} title={t("cargo_owner")} />
         <OrderListCargo order={order} />
         <OrderListAddress
           locations={order?.locations}
@@ -88,6 +90,7 @@ export default DriverActiveOrderInfoList;
 const WarningBox = () => {
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
+  const { t } = useTranslation();
   return (
     <View style={{ padding: 10, alignItems: "center" }}>
       <Feather
@@ -104,7 +107,7 @@ const WarningBox = () => {
           fontSize: 18,
         }}
       >
-        Yangi so‘rov yubora olmaysiz
+        {t("cannot_send_new_request")}
       </AppText>
       <AppText
         style={{
@@ -113,8 +116,7 @@ const WarningBox = () => {
           fontSize: 14,
         }}
       >
-        Siz hozirda faol yukni bajarish jarayonidasiz. Yangi so‘rov yuborish
-        uchun avval mavjud yukni to‘liq yakunlab oling.
+        {t("complete_current_cargo_first")}
       </AppText>
     </View>
   );

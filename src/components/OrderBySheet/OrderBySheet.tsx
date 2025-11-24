@@ -14,6 +14,7 @@ import { IOrder } from "@/types/order";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import { useTranslation } from "react-i18next";
 
 const OrderBySheet = ({
   sheetRef,
@@ -29,6 +30,7 @@ const OrderBySheet = ({
   const topInset = useSafeAreaInsets().top;
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
+  const { t } = useTranslation();
   return (
     <CustomBottomSheetModal
       backdropOpacity={1}
@@ -53,7 +55,11 @@ const OrderBySheet = ({
         }}
         contentContainerStyle={styles.contentContainer}
       >
-        <OrderListCustomer order={order} title="Buyurtmachi" isVisiblePhone />
+        <OrderListCustomer
+          order={order}
+          title={t("cargo_owner")}
+          isVisiblePhone
+        />
         <OrderListCargo order={order} />
         <OrderListAddress locations={order?.locations} isVisibleContact />
       </BottomSheetScrollView>

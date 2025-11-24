@@ -97,60 +97,6 @@ export const PickLocationItem = memo(
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* <TouchableOpacity
-              style={{
-                marginTop: 5,
-                backgroundColor: Colors.borderColor,
-                padding: 8,
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: Colors.borderColor,
-              }}
-              onPress={() => openSheet(index)} // bosganda sheet ochiladi
-            >
-              <AppText style={{ color: Colors.textSecondary }}>
-                Kim kutib oladi ?
-              </AppText>
-    
-              {location?.contact?.name && (
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-                >
-                  <Ionicons
-                    name="person-circle"
-                    size={20}
-                    color={Colors.textSecondary}
-                  />
-                  <AppText style={{ color: Colors.textPrimary, fontSize: 14 }}>
-                    {location?.contact?.name || "Ism"}
-                  </AppText>
-                </View>
-              )}
-    
-              {location?.contact?.phone && (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 8,
-                    marginTop: 4,
-                  }}
-                >
-                  <Ionicons name="call" size={18} color={Colors.textSecondary} />
-                  <AppText style={{ color: Colors.textPrimary, fontSize: 13 }}>
-                    {location?.contact?.phone || "Telefon raqam"}
-                  </AppText>
-                </View>
-              )}
-            </TouchableOpacity> */}
-
-        {/* <ContactSheetContent
-              location={location}
-              locationType={locationType}
-              index={index}
-              contactSheetRef={sheetRef}
-            /> */}
       </TouchableOpacity>
     );
   }

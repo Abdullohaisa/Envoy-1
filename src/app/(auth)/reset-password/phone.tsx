@@ -21,6 +21,7 @@ import { smsAtom } from "@/service/user/sms/controller";
 import { router } from "expo-router";
 import { AppRoutes } from "@/constants/routes";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 export const phoneForSmsAtom = atom("");
 
@@ -29,6 +30,7 @@ const ResetPasswordPhonePage = () => {
   const setPhone = useSetAtom(phoneForSmsAtom);
   const { checkPhone, cancel, state } = useCheckRegister();
   const setSms = useSetAtom(smsAtom);
+  const { t } = useTranslation();
 
   const {
     control,
@@ -60,7 +62,7 @@ const ResetPasswordPhonePage = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1 }}>
-        <PageHeader title="Parolni tiklash" />
+        <PageHeader title={t("reset_password")} />
         <View style={{ flex: 1, paddingHorizontal: Spacing.horizontal }}>
           <View style={{ marginTop: 20, flex: 1 }}>
             <Controller
@@ -68,7 +70,7 @@ const ResetPasswordPhonePage = () => {
               name="phone"
               render={({ field: { onChange, value } }) => (
                 <AppPhoneInput
-                  label={"Telefon raqam"}
+                  label={t("phone-number")}
                   value={value}
                   onChangeText={onChange}
                   onFocus={() => setPhoneFocused(true)}
@@ -82,11 +84,7 @@ const ResetPasswordPhonePage = () => {
             />
             <AnimatedErrorText
               style={{ textAlign: "center", fontSize: 16 }}
-              error={
-                state.status === false
-                  ? "Bu telefon raqam ro'yxatdan o'tmagan"
-                  : ""
-              }
+              error={state.status === false ? t("phone_not_registered") : ""}
             />
           </View>
           <KeyboardResponsiveView
@@ -106,5 +104,3 @@ const ResetPasswordPhonePage = () => {
 };
 
 export default ResetPasswordPhonePage;
-
-const styles = StyleSheet.create({});

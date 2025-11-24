@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { Spacing, screens } from "@/shared/token";
 import AppPhoneInput from "@/components/Input/PhoneInput";
 import { useForm, Controller } from "react-hook-form";
@@ -15,6 +15,7 @@ import useCheckRegister from "@/service/user/check-register/controller";
 import { smsAtom } from "@/service/user/sms/controller";
 import { isValidRegAtom } from "@/atoms/reg.login.valid";
 import { safeNavigate } from "@/utils/safe-navigation";
+import { useTranslation } from "react-i18next";
 
 export const checkRegLoading = atom<boolean>(false);
 
@@ -29,6 +30,7 @@ const RegisterPhone = ({
   const { checkPhone, cancel, state } = useCheckRegister();
   const setSms = useSetAtom(smsAtom);
   const setLoading = useSetAtom(checkRegLoading);
+  const { t } = useTranslation();
 
   const {
     control,
@@ -82,7 +84,7 @@ const RegisterPhone = ({
         name="phone"
         render={({ field: { onChange, value } }) => (
           <AppPhoneInput
-            label={"Telefon raqam"}
+            label={t("phone_number")}
             value={value}
             onChangeText={onChange}
             onFocus={() => setPhoneFocused(true)}
@@ -99,7 +101,7 @@ const RegisterPhone = ({
         style={{ textAlign: "center", fontSize: 16 }}
         error={
           state.status === true
-            ? "Bu telefon raqam oldin ro'yxatdan o'tgan"
+            ? t("phone_already_registered")
             : (state.error ?? "")
         }
       />

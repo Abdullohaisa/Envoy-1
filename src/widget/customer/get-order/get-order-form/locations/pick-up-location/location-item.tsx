@@ -1,4 +1,3 @@
-import UserIcon from "@/assets/icon/user";
 import AppText from "@/components/Texts/Text";
 import { IThemeColors } from "@/theme/colors.interface";
 import { RefObject, memo } from "react";
@@ -7,7 +6,7 @@ import { Pressable, TouchableOpacity, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { locationStyles as styles } from "../location-picker/style";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { Spacing } from "@/shared/token";
+import { AndroidRipple, Spacing } from "@/shared/token";
 
 const PickLocationItem = memo(
   ({
@@ -17,7 +16,6 @@ const PickLocationItem = memo(
     Colors,
     openSheet,
     removePickup,
-    contactSheetRef,
     openContact,
   }: {
     location: any;
@@ -45,12 +43,7 @@ const PickLocationItem = memo(
         ]}
       >
         <Pressable
-          android_ripple={{
-            color: Colors.primary08,
-            borderless: false,
-            radius: -0.5,
-            foreground: true,
-          }}
+          android_ripple={AndroidRipple}
           onPress={() => openSheet(index)}
           style={{
             flexDirection: "row",
@@ -116,12 +109,7 @@ const PickLocationItem = memo(
         />
 
         <Pressable
-          android_ripple={{
-            color: Colors.primary,
-            borderless: false,
-            radius: -0.5,
-            foreground: true,
-          }}
+          android_ripple={AndroidRipple}
           onPress={() => openContact(index)}
           style={{
             paddingVertical: Spacing.horizontal,
@@ -134,7 +122,9 @@ const PickLocationItem = memo(
           }}
         >
           <AppText style={{ color: Colors.primary }}>
-            {!location?.contact?.name ? "Kim kutib oladi" : "Kutib oluvchi:"}
+            {!location?.contact?.name
+              ? t("who_will_receive")
+              : `${t("receiver")}:`}
           </AppText>
 
           <View
@@ -153,7 +143,7 @@ const PickLocationItem = memo(
 
             {location?.contact?.phone && (
               <AppText style={{ color: Colors.textSecondary, fontSize: 12 }}>
-                {location?.contact?.phone || "Telefon raqam"}
+                {location?.contact?.phone || t("phone_number")}
               </AppText>
             )}
           </View>

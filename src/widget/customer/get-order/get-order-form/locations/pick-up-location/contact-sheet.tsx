@@ -23,6 +23,7 @@ import { useAtomValue } from "jotai";
 import { locationPickerState } from "@/service/customer/get-order/controller";
 import { getOrderLocationStatusAtom } from "@/atoms/get-order/locations";
 import { performAndroidHapticsAsync } from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 // ------------------------- TYPES -------------------------
 interface ContactItem {
@@ -84,6 +85,7 @@ const PageZero: FC<{
   save: () => void;
 }> = ({ name, phone, setName, setPhone, onNextPage, save }) => {
   const Colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <Pressable style={{ flex: 1, gap: 10 }} onPress={() => Keyboard.dismiss()}>
       <TextInput
@@ -99,7 +101,7 @@ const PageZero: FC<{
       <View style={styles.phoneContainer}>
         <TextInput
           placeholderTextColor={Colors.textSecondary}
-          placeholder="Telefon raqam kiriting"
+          placeholder={t("enter_phone_number")}
           value={phone}
           onChangeText={setPhone}
           keyboardType="phone-pad"

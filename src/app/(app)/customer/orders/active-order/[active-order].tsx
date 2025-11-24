@@ -12,6 +12,8 @@ import { useFetchSingleOrder } from "@/service/order/fetch-single-order/controll
 import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
 import api from "@/axios/axios.config";
 import OrderLoading from "@/components/OrderLoading/OrderLoading";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
 
 /* ===============================
    🔹 Asosiy sahifa komponenti
@@ -26,6 +28,7 @@ const ActiveOrder = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const theme = useAtomValue(themeAtom);
 
   const fetchOrders = useFetchCustomerOrders();
   const { order, requestedDrivers, isLoading, error, refetch } =
@@ -55,7 +58,13 @@ const ActiveOrder = () => {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: Colors.pageBackground }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            theme === "dark" ? Colors.pageBackground : Colors.Boxbackground,
+        },
+      ]}
     >
       <HeaderSection Colors={Colors} onDelete={() => setOpen(true)} />
 
@@ -94,27 +103,26 @@ const ActiveOrder = () => {
   );
 };
 
-/* ===============================
-   🔹 Header bo‘limi
-=============================== */
-const HeaderSection = memo(({ Colors, onDelete }: any) => (
-  <PageHeader
-    title="Yuk ma'lumotlari"
-    enableBack
-    rightIcon={
-      <MaterialIcons
-        name="delete-outline"
-        size={24}
-        color={Colors.textSecondary}
-      />
-    }
-    onRightPress={onDelete}
-  />
-));
+const HeaderSection = memo(({ Colors, onDelete }: any) => {
+  const theme = useAtomValue(themeAtom);
+  return (
+    <PageHeader
+      title="Yuk ma'lumotlari"
+      enableBack
+      rightIcon={
+        <MaterialIcons
+          name="delete-outline"
+          size={24}
+          color={
+            theme === "light" ? Colors.Boxbackground : Colors.textSecondary
+          }
+        />
+      }
+      onRightPress={onDelete}
+    />
+  );
+});
 
-/* ===============================
-   🔹 Xatolik holati
-=============================== */
 const ErrorView = memo(({ error, Colors, refreshing, onRefresh }: any) => (
   <ScrollView
     contentContainerStyle={styles.centerBox}
@@ -145,9 +153,6 @@ const ErrorView = memo(({ error, Colors, refreshing, onRefresh }: any) => (
   </ScrollView>
 ));
 
-/* ===============================
-   🔹 Asosiy ma’lumotlar qismi
-=============================== */
 const OrderContent = memo(
   ({
     order,
@@ -186,9 +191,6 @@ const OrderContent = memo(
 
 export default ActiveOrder;
 
-/* ===============================
-   🔹 Styles
-=============================== */
 const styles = StyleSheet.create({
   container: { flex: 1 },
   centerBox: {

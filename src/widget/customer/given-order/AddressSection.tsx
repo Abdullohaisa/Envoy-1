@@ -1,17 +1,19 @@
 import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { StyleSheet, View } from "react-native";
-import DriverOrderAddressItem from "./AddressItem";
 import { Shadow, Spacing } from "@/shared/token";
-import { useTranslation } from "react-i18next";
+import GivenOrderAddressItem from "./AddressItem";
+import { IOrder } from "@/types/order";
 
-const DriverOrderAddressSection = ({
+const GivenOrderAddressSection = ({
   title,
   locations,
   type,
   times,
+  order,
   allDeparted,
 }: {
+  order: IOrder;
   title: string;
   locations: any[];
   type: "pickup" | "dropoff";
@@ -36,13 +38,14 @@ const DriverOrderAddressSection = ({
       </AppText>
 
       {locations.map((loc: any, i: number) => (
-        <DriverOrderAddressItem
+        <GivenOrderAddressItem
           key={loc.id + i}
           loc={loc}
           index={i}
           type={type}
           lastIndex={locations.length - 1} // 🔥 oxirgi index
           times={times}
+          order={order}
           allDeparted={allDeparted}
         />
       ))}
@@ -50,7 +53,7 @@ const DriverOrderAddressSection = ({
   );
 };
 
-export default DriverOrderAddressSection;
+export default GivenOrderAddressSection;
 
 const styles = StyleSheet.create({
   addressContainer: {

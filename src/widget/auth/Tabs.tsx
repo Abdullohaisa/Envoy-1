@@ -67,7 +67,6 @@ const AuthTabs = ({ ref, scrollX }: any) => {
 
             return {
               color,
-              // fontWeight: fontWeight.toString(), // fontWeight raqamli bo‘lsa, stringga o‘gir
             };
           });
 

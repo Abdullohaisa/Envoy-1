@@ -10,6 +10,7 @@ import OrderItemRequests from "../../Components/OrderRequests";
 import { safeNavigate } from "@/utils/safe-navigation";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import { AndroidRipple } from "@/shared/token";
 
 function ActiveCustomerOrderItem({
   order,
@@ -35,6 +36,7 @@ function ActiveCustomerOrderItem({
   return (
     <View style={[styles.box, {}]}>
       <Pressable
+        android_ripple={AndroidRipple}
         onPress={inOrder}
         style={[
           styles.item,

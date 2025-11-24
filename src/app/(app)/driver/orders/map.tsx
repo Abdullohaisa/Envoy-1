@@ -39,7 +39,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 
 export default function DriverOrdersMapScreen() {
   const Colors = useThemeColors();
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<MapView | null>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -103,22 +103,22 @@ export default function DriverOrdersMapScreen() {
       >
         {/* Combine order markerlari */}
         {!selectedOrder &&
-          combineOrder.map((order) => {
-            let latitude = order?.locations?.pickup[0]?.coordinates?.latitude
-              ? order?.locations?.pickup[0]?.coordinates?.latitude
-              : order?.locations?.pickup[0]?.coordinates?.lat;
-            let longitude = order?.locations?.dropoff[0]?.coordinates?.longitude
-              ? order?.locations?.dropoff[0]?.coordinates?.longitude
-              : order?.locations?.dropoff[0]?.coordinates?.lng;
+          combineOrder.map((order, index) => {
+            console.log("order ==>", order);
+            let latitude =
+              order?.locations?.pickup[index]?.coordinates?.latitude;
+            let longitude =
+              order?.locations?.dropoff[index]?.coordinates?.longitude;
             return (
               <Marker
                 key={order.id}
                 coordinate={{
-                  latitude: 0,
-                  longitude: 0,
+                  latitude: latitude,
+                  longitude: longitude,
                 }}
                 onPress={() => handleMarkerPress(order)}
                 tracksViewChanges={!markerReady}
+                anchor={{ x: 0.5, y: 0.5 }}
               >
                 <View
                   style={[
@@ -132,12 +132,9 @@ export default function DriverOrdersMapScreen() {
 
         {/* Selected order pickup markerlari */}
         {selectedOrder?.locations?.pickup.map((order: any, index: number) => {
-          let latitude = order?.locations?.pickup[0]?.coordinates?.latitude
-            ? order?.locations?.pickup[0]?.coordinates?.latitude
-            : order?.locations?.pickup[0]?.coordinates?.lat;
-          let longitude = order?.locations?.dropoff[0]?.coordinates?.longitude
-            ? order?.locations?.dropoff[0]?.coordinates?.longitude
-            : order?.locations?.dropoff[0]?.coordinates?.lng;
+          let latitude = order?.locations?.pickup[index]?.coordinates?.latitude;
+          let longitude =
+            order?.locations?.dropoff[index]?.coordinates?.longitude;
 
           return (
             <Marker
@@ -159,12 +156,9 @@ export default function DriverOrdersMapScreen() {
         })}
         {/* Selected order dropoff markerlari */}
         {selectedOrder?.locations?.dropoff.map((order: any, index: number) => {
-          let latitude = order?.locations?.pickup[0]?.coordinates?.latitude
-            ? order?.locations?.pickup[0]?.coordinates?.latitude
-            : order?.locations?.pickup[0]?.coordinates?.lat;
-          let longitude = order?.locations?.dropoff[0]?.coordinates?.longitude
-            ? order?.locations?.dropoff[0]?.coordinates?.longitude
-            : order?.locations?.dropoff[0]?.coordinates?.lng;
+          let latitude = order?.locations?.pickup[index]?.coordinates?.latitude;
+          let longitude =
+            order?.locations?.dropoff[index]?.coordinates?.longitude;
           return (
             <Marker
               key={index}
@@ -380,7 +374,7 @@ const ActionButtons = ({
 };
 
 interface Props {
-  mapRef: RefObject<MapView>;
+  mapRef: RefObject<MapView | null>;
 }
 
 const UserLocationButtonComponent = ({ mapRef }: Props) => {

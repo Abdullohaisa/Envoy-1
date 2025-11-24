@@ -14,6 +14,7 @@ import { useAtomValue } from "jotai";
 import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { themeAtom } from "@/theme/theme";
+import { useTranslation } from "react-i18next";
 
 const requestURL = "/driver/request-order/";
 
@@ -37,6 +38,7 @@ const DriverActiveOrder = () => {
   const { accepted } = useAtomValue(driverOrdersAtom);
   const insets = useSafeAreaInsets();
   const theme = useAtomValue(themeAtom);
+  const { t } = useTranslation();
 
   const handleRequestOrder = async () => {
     setIsLoading(true);
@@ -85,7 +87,7 @@ const DriverActiveOrder = () => {
         },
       ]}
     >
-      <PageHeader title="Yuk ma'lumotlari" enableBack />
+      <PageHeader title={t("cargo_information")} enableBack />
       {(isLoading || loading) && !refreshing && (
         <OrderLoading Colors={Colors} />
       )}
@@ -115,7 +117,7 @@ const DriverActiveOrder = () => {
           }}
         >
           <AppButton
-            title={isRequested ? "So'rovni bekor qilish" : "So'rov yuborish"}
+            title={isRequested ? t("cancel_request") : t("send_request")}
             variant="secondary"
             onPress={() => setRequestVisible(true)}
             isLoading={isLoading || loading}
@@ -131,7 +133,7 @@ const DriverActiveOrder = () => {
         open={requestVisible}
         onDismiss={() => setRequestVisible(false)}
         type="yesno"
-        message="Siz so'rov yubormoqchimisiz ?"
+        message={t("confirm_send_request")}
         onYes={handleRequestOrder}
       />
       <SheetModal

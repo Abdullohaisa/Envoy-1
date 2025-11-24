@@ -83,7 +83,15 @@ const DriverActiveOrderList = ({ orders, fetchOrders, type }: any) => {
         }
         nestedScrollEnabled={true}
         scrollEnabled={true}
-        ListEmptyComponent={<ListEmptyComponent />}
+        ListEmptyComponent={
+          <ListEmptyComponent
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          />
+        }
       />
     </View>
   );

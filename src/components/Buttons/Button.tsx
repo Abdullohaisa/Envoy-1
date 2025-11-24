@@ -70,7 +70,7 @@ export default function AppButton({
       style={[styles.button, { backgroundColor }, animatedStyle, buttonStyle]}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      disabled={disabled}
+      // disabled={disabled}
       {...props}
     >
       {isLoading ? (

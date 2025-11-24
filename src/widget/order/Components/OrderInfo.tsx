@@ -7,8 +7,6 @@ import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 
 export const OrderItemInfo = ({ order }: { order: any }) => {
-  const Colors = useThemeColors();
-
   // 🔹 Yuk mashina turlari
   const truckTypes = [
     "Tentli fura",
@@ -23,7 +21,6 @@ export const OrderItemInfo = ({ order }: { order: any }) => {
     "Yopiq kuzovli fura",
   ];
 
-  // 🔹 Raqam asosida yuk mashina turi olish
   const getTruckType = (truckNumber: number) => {
     if (truckNumber >= 1 && truckNumber <= 10) {
       return truckTypes[truckNumber - 1];

@@ -8,14 +8,15 @@ import ListEmptyComponent from "@/components/ListEmptyComponent/ListEmptyCompone
 import { AndroidRipple, Shadow, Spacing, screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { formatDate } from "@/utils/date-formater";
-import DriverOrderAddressSection from "./AddressSection";
 import { IOrder } from "@/types/order";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import GivenOrderAddressSection from "./AddressSection";
+import AppButton from "@/components/Buttons/Button";
+import api from "@/axios/axios.config";
 import { useTranslation } from "react-i18next";
-import i18n from "@/locales/_i18n";
 
-const DriverOrderScrollContent = ({
+const GivenOrderScrollContent = ({
   refreshing,
   handleRefresh,
   scrollHandler,
@@ -60,26 +61,28 @@ const DriverOrderScrollContent = ({
     >
       {order.id ? (
         <>
-          {!warningVisible && (
+          {warningVisible && (
             <WarningView order={order} setWarningVisible={setWarningVisible} />
           )}
-          {allDeparted && <SuccesView />}
+          {allDeparted && <SuccesView id={order.id} />}
           <View
             pointerEvents={warningVisible ? "none" : "auto"}
             style={{ opacity: warningVisible ? 0.1 : 1 }}
           >
-            <DriverOrderAddressSection
+            <GivenOrderAddressSection
               title={t("pickup_addresses")}
               locations={order?.locations?.pickup}
               times={order?.time?.location_times?.pickup}
               type="pickup"
+              order={order}
               allDeparted={allDeparted}
             />
-            <DriverOrderAddressSection
+            <GivenOrderAddressSection
               title={t("dropoff_addresses")}
               locations={order?.locations?.dropoff}
               times={order?.time?.location_times?.dropoff}
               type="dropoff"
+              order={order}
               allDeparted={allDeparted}
             />
             <Button sheetRef={sheetRef} />
@@ -89,7 +92,7 @@ const DriverOrderScrollContent = ({
         <View style={styles.emptyContainer}>
           <ListEmptyComponent />
           <AppText style={{ color: Colors.textSecondary }}>
-            {refreshing ? `${t("loading")}...` : t("no_data_found")}
+            {refreshing ? t("loading") : t("no_data_found")}
           </AppText>
         </View>
       )}
@@ -97,7 +100,7 @@ const DriverOrderScrollContent = ({
   );
 };
 
-export default DriverOrderScrollContent;
+export default GivenOrderScrollContent;
 
 const Button = ({
   sheetRef,
@@ -105,7 +108,6 @@ const Button = ({
   sheetRef: React.RefObject<BottomSheetModalMethods | null>;
 }) => {
   const Colors = useThemeColors();
-  const { t } = useTranslation();
   return (
     <Pressable
       onPress={() => sheetRef.current?.present()}
@@ -113,7 +115,7 @@ const Button = ({
       style={styles.buttonContainer}
     >
       <AppText variant="regular" style={{ color: Colors.textSecondary }}>
-        {t("cargo_information")}
+        Yuk ma'lumotlari
       </AppText>
     </Pressable>
   );
@@ -127,11 +129,6 @@ const WarningView = ({
   order: IOrder;
 }) => {
   const Colors = useThemeColors();
-  const { t } = useTranslation();
-  const expectedTime = formatDate(order.time.expected_arrival_time);
-  const textParts = i18n
-    .t("first_pickup_must_arrive_by", { expected_time: "%%TIME%%" }) // placeholder qo'yamiz
-    .split("%%TIME%%");
   return (
     <View
       style={[
@@ -141,9 +138,10 @@ const WarningView = ({
       ]}
     >
       <AppText style={{ textAlign: "center", color: Colors.textSecondary }}>
-        {textParts[0]}
-        <AppText style={{ color: Colors.primary }}>{expectedTime}</AppText>
-        {textParts[1]}
+        Siz birinchi yuk olinadigan manzilga{" "}
+        <AppText>{formatDate(order.time.expected_arrival_time)}</AppText> da
+        yetib borishingiz kerak. Agar ushbu vaqtda bora olmasangiz, yuk egasi
+        bilan oldindan kelishib oling.
       </AppText>
       <Pressable
         onPress={() => setWarningVisible(false)}
@@ -151,17 +149,22 @@ const WarningView = ({
         style={[styles.buttonContainer, { marginTop: Spacing.horizontal }]}
       >
         <AppText variant="regular" style={{ color: Colors.primary }}>
-          {t("understood")}
+          Tushundim
         </AppText>
       </Pressable>
     </View>
   );
 };
 
-const SuccesView = () => {
+const SuccesView = ({ id }: { id: number }) => {
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
-  const { t } = useTranslation();
+
+  const finishedOrder = async () => {
+    try {
+      const { data } = await api.post(`/customer/finish-order/${id}/`);
+    } catch (error) {}
+  };
   return (
     <View
       style={[
@@ -180,31 +183,34 @@ const SuccesView = () => {
           },
         ]}
       >
-        {t("you_delivered_successfully")}
+        Haydovchi yukni yetkazib bo'ldi
       </AppText>
 
       <AppText
         style={{
           color: theme === "dark" ? Colors.textSecondary : Colors.textSecondary,
           fontSize: 14,
-          textAlign: "left",
+          textAlign: "center",
           marginTop: 5,
           letterSpacing: 0.8,
         }}
       >
-        {t("order_must_be_confirmed")}
+        Iltimos, buyurtmaning tugaganini tasdiqlang
       </AppText>
-      <AppText
-        style={{
-          color: theme === "dark" ? Colors.textSecondary : Colors.textSecondary,
-          fontSize: 14,
-          textAlign: "left",
-          marginTop: 5,
-          letterSpacing: 0.8,
+      <AppButton
+        title="Tasdiqlash"
+        onPress={finishedOrder}
+        buttonStyle={{
+          backgroundColor: Colors.borderColor,
+          marginTop: Spacing.horizontal,
+          paddingVertical: 15,
+          paddingHorizontal: 12,
+          borderRadius: 15,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
         }}
-      >
-        {t("contact_operator_if_not_confirmed")}
-      </AppText>
+      />
     </View>
   );
 };

@@ -6,6 +6,7 @@ import AppText from "@/components/Texts/Text";
 import SmsCodeBox from "../SmsCodeBox/SmsCodeBox";
 import NumberKeyboard from "../Keyboard/Keyboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 const SmsVerificationModal = ({
   onClose,
@@ -24,6 +25,8 @@ const SmsVerificationModal = ({
   const [canResend, setCanResend] = useState(false);
 
   const animValues = [0, 1, 2, 3].map(() => useSharedValue(1));
+
+  const { t } = useTranslation();
 
   // 🔹 Kod animatsiyasi
   useEffect(() => {
@@ -85,10 +88,10 @@ const SmsVerificationModal = ({
     <View style={{ flex: 1, justifyContent: "space-between" }}>
       <View style={{ alignItems: "center", gap: 10 }}>
         <AppText style={{ fontSize: 22, fontWeight: "bold" }}>
-          SMS kodni kiriting
+          {t("enter_sms_code")}
         </AppText>
         <AppText style={{ color: Colors.textSecondary, fontSize: 15 }}>
-          Sizning yangi telefon raqamingizga SMS yuborildi
+          {t("sms_sent_to_new_number")}
         </AppText>
       </View>
 

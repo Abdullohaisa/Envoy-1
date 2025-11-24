@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Spacing, screens } from "@/shared/token";
+import { AndroidRipple, Spacing, screens } from "@/shared/token";
 import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 
@@ -80,7 +80,7 @@ const MonthItem: React.FC<MonthItemProps> = ({
 
               return (
                 <Pressable
-                  android_ripple={{ color: Colors.primary06 }}
+                  android_ripple={AndroidRipple}
                   style={[styles.dayCell]}
                   key={di}
                   disabled={

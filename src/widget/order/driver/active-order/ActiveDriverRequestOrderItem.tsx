@@ -9,6 +9,7 @@ import { OrderItemInfo } from "../../Components/OrderInfo";
 import { safeNavigate } from "@/utils/safe-navigation";
 import OrderItemRequests from "../../Components/OrderRequests";
 import AppText from "@/components/Texts/Text";
+import { AndroidRipple } from "@/shared/token";
 
 function ActiveDriverRequestOrderItem({
   order,
@@ -42,12 +43,7 @@ function ActiveDriverRequestOrderItem({
     >
       <Pressable
         onPress={inOrder}
-        android_ripple={{
-          color: Colors.primary,
-          borderless: false,
-          radius: -0.5,
-          foreground: true,
-        }}
+        android_ripple={AndroidRipple}
         style={[
           styles.item,
           {

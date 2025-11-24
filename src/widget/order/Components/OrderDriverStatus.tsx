@@ -45,7 +45,6 @@ export function DriverTimeline({ status }: any) {
           flexDirection: "row",
           alignItems: "center",
           gap: 10,
-          elevation: 10,
         }}
       >
         <Clock color={Colors.textSecondary} size={18} />
@@ -69,7 +68,7 @@ export function DriverTimeline({ status }: any) {
         padding: 10,
         borderRadius: 16,
         gap: 10,
-        elevation: 10,
+        // elevation: 10,
       }}
     >
       <Step

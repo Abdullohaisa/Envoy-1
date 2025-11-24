@@ -1,8 +1,9 @@
+import { t } from "i18next";
 import { Alert, Linking } from "react-native";
 
 export const callPhone = async (phone: string) => {
   if (!phone) {
-    Alert.alert("Xatolik", "Telefon raqam topilmadi");
+    Alert.alert(t("error"), t("phone_not_found"));
   }
 
   const url = `tel:${phone}`;
@@ -13,9 +14,9 @@ export const callPhone = async (phone: string) => {
     if (supported) {
       Linking.openURL(url);
     } else {
-      Alert.alert("Xatolik", "Qo‘ng‘iroqni amalga oshirib bo‘lmadi.");
+      Alert.alert(t("error"), t("call_failed"));
     }
   } catch (error) {
-    Alert.alert("Xatolik", "Qo‘ng‘iroq vaqtida xato yuz berdi.");
+    Alert.alert(t("error"), t("call_error"));
   }
 };

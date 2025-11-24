@@ -1,4 +1,4 @@
-import { Alert, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useRef, useState } from "react";
 import {
   OrderListAddress,
@@ -10,6 +10,8 @@ import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { Spacing } from "@/shared/token";
 import api from "@/axios/axios.config";
 import DriverChooseModal from "@/widget/customer/active-order/driver-choose-modal";
+import { useAtomValue } from "jotai";
+import { themeAtom } from "@/theme/theme";
 
 const CustomerActiveOrderInfoList = ({ order }: any) => {
   const modalRef = useRef<any>(null);
@@ -48,7 +50,7 @@ const CustomerActiveOrderInfoList = ({ order }: any) => {
         handleDriverPress={handleDriverPress}
       />
       <OrderListCargo order={order} />
-      <OrderListAddress locations={order?.locations} />
+      <OrderListAddress locations={order?.locations} isVisibleContact />
       <OrderListOther order={order} />
 
       <DriverChooseModal

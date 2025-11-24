@@ -29,6 +29,7 @@ import DriverOrderScrollContent from "@/widget/driver/driver-order-page/DriverOr
 import OrderBySheet from "@/components/OrderBySheet/OrderBySheet";
 import DriverOrderButton from "@/widget/driver/driver-order-page/DriverOrderButton";
 import { themeAtom } from "@/theme/theme";
+import { useTranslation } from "react-i18next";
 
 const DriverOrder = () => {
   const Colors = useThemeColors();
@@ -36,6 +37,7 @@ const DriverOrder = () => {
 
   // Reanimated scroll shared value (AnimationHeader bilan ishlaydi)
   const scrollY = useSharedValue(0);
+  const { t } = useTranslation();
 
   // Driver order state
   const { accepted: order } = useAtomValue(driverOrdersAtom);
@@ -52,10 +54,10 @@ const DriverOrder = () => {
   const handleCheckAllDeparted = () => {
     if (!order?.status?.driver_status) return false;
     const pickupStatuses =
-      order.status.driver_status.pickup.map((item) => item.departed === true) ||
+      order.status.driver_status.pickup.map((item) => item.arrived === true) ||
       [];
     const dropoffStatuses =
-      order.status.driver_status.pickup.map((item) => item.departed === true) ||
+      order.status.driver_status.dropoff.map((item) => item.arrived === true) ||
       [];
 
     return [...pickupStatuses, ...dropoffStatuses].every(Boolean);
@@ -122,7 +124,7 @@ const DriverOrder = () => {
       }}
     >
       {/* Header animation */}
-      <AnimationHeader scrollY={scrollY} />
+      <AnimationHeader scrollY={scrollY} title={t("your_cargo")} />
 
       {/* Scroll content */}
       <DriverOrderScrollContent
@@ -133,7 +135,7 @@ const DriverOrder = () => {
         warningVisible={warningVisible}
         sheetRef={sheetRef}
         setWarningVisible={setWarningVisible}
-        allDeparted
+        allDeparted={allDeparted}
       />
 
       {/* Bottom Sheet */}

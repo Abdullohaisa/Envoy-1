@@ -13,7 +13,7 @@ const CustomerFinishedOrderInfoList = ({ order }: any) => {
       contentContainerStyle={styles.scrollContent}
     >
       <OrderListCargo order={order} />
-      <OrderListAddress locations={order.locations} />
+      <OrderListAddress locations={order.locations} isVisibleContact />
     </Animated.ScrollView>
   );
 };

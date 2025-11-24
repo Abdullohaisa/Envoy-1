@@ -37,7 +37,7 @@ export interface CustomerOrderListProps {
   orders: IOrder[];
   state: IOrderState;
   setOrders: () => Promise<void>;
-  type: "active" | "attached" | "finished";
+  type: "active" | "attached" | "delivered";
 }
 
 // ==============================
@@ -88,7 +88,7 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({
               path="(app)/customer/orders/given-order/"
             />
           );
-        case "finished":
+        case "delivered":
           return (
             <FinishedCustomerOrderItem
               index={index}
@@ -134,7 +134,11 @@ const CustomerOrderList: React.FC<CustomerOrderListProps> = ({
             progressBackgroundColor={Colors.primary}
           />
         }
-        ListEmptyComponent={<ListEmptyComponent />}
+        ListEmptyComponent={
+          <ListEmptyComponent
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          />
+        }
       />
     </View>
   );
@@ -158,7 +162,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    gap: 2,
   },
 });
 

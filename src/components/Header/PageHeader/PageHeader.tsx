@@ -116,6 +116,7 @@ const PageHeader = ({
             }}
           >
             <ArrowIcon
+              type={Platform.OS === "ios" ? "chevron" : "arrow"}
               color={
                 theme === "light" ? Colors.Boxbackground : Colors.textSecondary
               }

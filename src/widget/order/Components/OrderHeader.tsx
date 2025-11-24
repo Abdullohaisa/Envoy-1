@@ -2,35 +2,22 @@ import AppText from "@/components/Texts/Text";
 import { View } from "react-native";
 import { orderItemStyle as styles } from "@/styles/order-item-style";
 import { useThemeColors } from "@/theme/useThemeColors";
+import { useTranslation } from "react-i18next";
+import { formatDate } from "@/utils/date-formater";
 
 export const OrderItemHeader = ({ order }: { order: any }) => {
-  const months = [
-    "yanvar",
-    "fevral",
-    "mart",
-    "aprel",
-    "may",
-    "iyun",
-    "iyul",
-    "avgust",
-    "sentyabr",
-    "oktyabr",
-    "noyabr",
-    "dekabr",
-  ];
-  const date = new Date(order?.time?.created);
-  const formattedDate = `${date.getDate()}-${months[date.getMonth()]} ${date.getFullYear()}`;
   const Colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <View style={styles.topSection}>
       <View style={styles.itemLengthBox}>
         <AppText style={[styles.itemLength, { color: Colors.textSecondary }]}>
-          Raqam - {order.id}
+          {t("number")} - {order.id}
         </AppText>
       </View>
       <AppText style={[styles.itemLength, { color: Colors.textSecondary }]}>
-        {formattedDate}
+        {formatDate(order?.time?.created)}
       </AppText>
     </View>
   );

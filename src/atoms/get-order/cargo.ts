@@ -19,7 +19,6 @@ export const normalizeCargoData = (data: CargoType) => {
     })
   );
 
-  // Raqamlashtirish
   const normalizedData = Object.fromEntries(
     Object.entries(filteredData).map(([key, field]) => {
       if (key === "type") {

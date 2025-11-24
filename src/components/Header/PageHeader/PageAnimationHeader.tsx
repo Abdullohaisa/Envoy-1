@@ -7,7 +7,15 @@ import Animated, {
 import PageHeader from "./PageHeader";
 import { StyleSheet } from "react-native";
 
-const AnimationHeader = ({ scrollY }: { scrollY: SharedValue<number> }) => {
+const AnimationHeader = ({
+  scrollY,
+  enableBack,
+  title = "header",
+}: {
+  scrollY: SharedValue<number>;
+  title: string;
+  enableBack?: boolean;
+}) => {
   const headerAnimatedStyle = useAnimatedStyle(() => {
     const translateY = interpolate(
       scrollY.value,
@@ -28,7 +36,7 @@ const AnimationHeader = ({ scrollY }: { scrollY: SharedValue<number> }) => {
   });
   return (
     <Animated.View style={[styles.headerWrapper, headerAnimatedStyle]}>
-      <PageHeader title="Yukingiz" />
+      <PageHeader enableBack={enableBack} title={title} />
     </Animated.View>
   );
 };

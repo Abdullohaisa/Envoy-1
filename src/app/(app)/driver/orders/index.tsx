@@ -19,6 +19,7 @@ import {
   driverOrdersAtom,
   useFetchDriverOrders,
 } from "@/service/driver/driver-orders/controller";
+import { useTranslation } from "react-i18next";
 
 const DriverGetOrders = () => {
   const scrollX = useSharedValue(0);
@@ -29,6 +30,7 @@ const DriverGetOrders = () => {
   const { requested } = useAtomValue(driverOrdersAtom);
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchAllOrders();
@@ -55,7 +57,7 @@ const DriverGetOrders = () => {
   const pages = [
     {
       key: "active",
-      title: "Yuklar",
+      title: t("cargos"),
       component: () => (
         <DriverActiveOrderLIst
           orders={combineOrder}
@@ -66,7 +68,7 @@ const DriverGetOrders = () => {
     },
     {
       key: "requested",
-      title: "So'ralgan",
+      title: t("requested"),
       component: () => (
         <DriverActiveOrderLIst
           orders={requested}

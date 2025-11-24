@@ -78,7 +78,6 @@ const NumberKeyboard = ({
     </View>
   );
 
-  // 🔹 Har bir raqam tugmasi komponenti
   const KeyButton = ({ btn }: { btn: string }) => {
     const isZero = btn === "0";
     const isDel = btn === "del";

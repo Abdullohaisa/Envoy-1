@@ -102,7 +102,6 @@ const EditDriverProfilePage = () => {
     }
   };
 
-  // 🔹 Telefon raqamini SMS orqali tasdiqlab saqlash
   const handleSaveNumber = async () => {
     const newData: any = {};
 

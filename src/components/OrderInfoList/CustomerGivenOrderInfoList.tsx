@@ -50,7 +50,7 @@ const CustomerGivenOrderInfoList = ({ order }: any) => {
       </View>
       <OrderListDriver order={order} title={"Haydovchi"} />
       <OrderListCargo order={order} />
-      <OrderListAddress locations={order.locations} />
+      <OrderListAddress locations={order.locations} isVisibleContact />
       <OrderListOther order={order} />
     </Animated.ScrollView>
   );

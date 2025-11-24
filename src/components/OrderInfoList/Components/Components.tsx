@@ -7,14 +7,14 @@ import { useThemeColors } from "@/theme/useThemeColors";
 import { IOrder, ILocations } from "@/types/order";
 import { callPhone } from "@/utils/call-phone";
 import { openMap } from "@/utils/open-map";
-import { formatDate } from "@/utils/date-formater";
-import { Shadow, Spacing } from "@/shared/token";
+import { AndroidRipple, Shadow, Spacing } from "@/shared/token";
 import { StyleOrderInfoList as styles } from "../style";
 import { truckData } from "@/data/truck-data";
 import { t } from "i18next";
 import MapIcon from "@/assets/icon/map";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import { useTranslation } from "react-i18next";
 
 // ========================
 // 🔹 OrderListInfo
@@ -36,24 +36,23 @@ export const OrderListInfo = React.memo(
     isBorderBottomVisible?: boolean;
   }) => {
     const Colors = useThemeColors();
+    const theme = useAtomValue(themeAtom);
     if (!value && value !== 0) return null;
 
     const content = (
       <Pressable
         onPress={onPress}
-        android_ripple={{
-          color: Colors.primary08,
-          borderless: false,
-          radius: -0.5,
-          foreground: true,
-        }}
+        android_ripple={AndroidRipple}
         style={[
           styles.infoRow,
           {
-            borderColor: isLocation ? Colors.Boxbackground : Colors.borderColor,
+            borderColor: isLocation
+              ? theme === "dark"
+                ? Colors.Boxbackground
+                : "#d6d6d6"
+              : Colors.borderColor,
             borderBottomWidth: isBorderBottomVisible ? 1 : 0,
             paddingHorizontal: 4,
-            borderRadius: 2,
             overflow: "hidden",
           },
         ]}
@@ -110,38 +109,39 @@ const OrderListSection = React.memo(
 
 // ========================
 // 🔹 OrderListCargo
-// ========================
+// ======================== til tayyor
 export const OrderListCargo = React.memo(({ order }: { order: IOrder }) => {
   const { id, cargo, price, truck } = order;
+  const { t } = useTranslation();
   return (
-    <OrderListSection title="Yuk">
-      {id && <OrderListInfo label="Raqam" value={id} />}
-      {cargo.type.value && (
-        <OrderListInfo label="Yuk" value={cargo.type.value} />
+    <OrderListSection title={t("cargo")}>
+      {id && <OrderListInfo label={t("number")} value={id} />}
+      {cargo?.type?.value && (
+        <OrderListInfo label={t("cargo")} value={cargo.type.value} />
       )}
-      {cargo.weight?.value && (
+      {cargo?.weight?.value && (
         <OrderListInfo
-          label="Og‘irligi"
+          label={t("weight")}
           value={`${cargo.weight.value} ${cargo.weight.unit ?? ""}`}
         />
       )}
-      {cargo.quantity?.value && (
+      {cargo?.quantity?.value && (
         <OrderListInfo
-          label="Miqdori"
+          label={t("quantity")}
           value={`${cargo.quantity.value} ${cargo.quantity.unit ?? ""}`}
         />
       )}
-      {price.value && (
+      {price?.value && (
         <OrderListInfo
-          label="Narx"
+          label={t("price")}
           value={`${price.value.toLocaleString()} ${price.currency ?? ""}`}
         />
       )}
       {truck && (
         <OrderListInfo
-          label="Yuk mashina"
+          label={t("cargo_truck")}
           value={t(truckData[truck].title)}
-          isLocation
+          isBorderBottomVisible={false}
         />
       )}
     </OrderListSection>
@@ -153,21 +153,27 @@ export const OrderListCargo = React.memo(({ order }: { order: IOrder }) => {
 // ========================
 export const OrderListOther = React.memo(
   ({ order }: { order: IOrder }) => {
-    const { created, expected_arrival_time } = order.time;
-    const comment = order.comment;
+    // const { created, expected_arrival_time } = order.time;
+    // const comment = order.comment;
 
     return (
       <OrderListSection title="Qo'shimcha">
-        {created && (
+        {/* {created && (
           <OrderListInfo label="Yaratilgan vaqt" value={formatDate(created)} />
-        )}
-        {expected_arrival_time && (
+        )} */}
+        {/* {expected_arrival_time && (
           <OrderListInfo
             label="Yetib borish vaqti"
             value={formatDate(expected_arrival_time)}
           />
-        )}
-        {comment && <OrderListInfo label="Izoh" value={comment} isLocation />}
+        )} */}
+        {/* {comment && (
+          <OrderListInfo
+            label="Izoh"
+            value={comment}
+            isBorderBottomVisible={false}
+          />
+        )} */}
       </OrderListSection>
     );
   },
@@ -192,18 +198,23 @@ export const OrderListCustomer = React.memo(
     isVisiblePhone?: boolean;
   }) => {
     const owner = order.owner;
+    const { t } = useTranslation();
     return (
       <OrderListSection title={title}>
-        {owner.name && <OrderListInfo label="Ismi" value={owner.name} />}
-        {owner.phone && isVisiblePhone && (
+        {owner?.name && <OrderListInfo label={t("name")} value={owner?.name} />}
+        {owner?.phone && isVisiblePhone && (
           <OrderListInfo
-            label="Telefon raqami"
+            label={t("phone_number")}
             value={owner.phone}
-            onPress={() => callPhone(owner.phone)}
+            onPress={() => callPhone(owner?.phone)}
           />
         )}
-        <OrderListInfo label="Reyting" value={owner.rating.score} />
-        <OrderListInfo label="Izohlar" value={owner.comment_count} isLocation />
+        <OrderListInfo label={t("rating")} value={owner?.rating.score} />
+        <OrderListInfo
+          label={t("comments")}
+          value={owner?.comment_count}
+          isLocation
+        />
       </OrderListSection>
     );
   }
@@ -215,28 +226,31 @@ export const OrderListCustomer = React.memo(
 export const OrderListDriver = React.memo(
   ({ order, title }: { order: IOrder; title: string }) => {
     const driver = order.driver;
+    const { t } = useTranslation();
     return (
       <OrderListSection title={title}>
-        {driver.name && <OrderListInfo label="Ismi" value={driver.name} />}
+        {driver.name && <OrderListInfo label={t("name")} value={driver.name} />}
         {driver.phone && (
           <OrderListInfo
-            label="Telefon raqami"
+            label={t("phone_number")}
             value={driver.phone}
             onPress={() => callPhone(driver.phone)}
           />
         )}
-        <OrderListInfo label="Reyting" value={driver.rating.score} />
+        <OrderListInfo label={t("rating")} value={driver.rating.score} />
         <OrderListInfo
-          label="Izohlar"
+          label={t("comments")}
           value={driver.comment_count}
-          isLocation
+          isBorderBottomVisible={
+            driver.driver_coordinates?.latitude ? true : false
+          }
         />
         {driver.driver_coordinates?.latitude &&
           driver.driver_coordinates?.longitude && (
             <OrderListInfo
-              label="Haydovchi joylashuvi"
-              value="Xaritada ochish"
-              isLocation
+              label={t("driver_location_label")}
+              value={t("open_in_map")}
+              isBorderBottomVisible={false}
               onPress={() =>
                 openMap(
                   driver.driver_coordinates.latitude,
@@ -302,12 +316,13 @@ const OrderListDriverCard = React.memo(
 // ========================
 export const OrderListRequestDriver = React.memo(
   ({ drivers = [], handleDriverPress }: any) => {
+    const { t } = useTranslation();
     return (
       <OrderListSection
         title={
           drivers?.length > 0
-            ? "So‘rov yuborgan haydovchilar"
-            : "So‘rov yuborgan haydovchilar yo'q"
+            ? t("drivers_requested")
+            : t("no_drivers_requested")
         }
       >
         {drivers?.length > 0 &&
@@ -338,6 +353,7 @@ export const OrderListAddress = React.memo(
     const Colors = useThemeColors();
     const pickups = locations?.pickup ?? [];
     const dropoffs = locations?.dropoff ?? [];
+    const { t } = useTranslation();
 
     const renderLocation = (item: any, type: "pickup" | "dropoff") => (
       <View
@@ -345,14 +361,22 @@ export const OrderListAddress = React.memo(
         style={[styles.subBox, { backgroundColor: Colors.pageBackground }]}
       >
         {item?.full_title && (
-          <OrderListInfo label="Manzil" value={item.full_title} isLocation />
+          <OrderListInfo
+            label={t("location")}
+            value={item.full_title}
+            isLocation
+          />
         )}
         {item?.contact?.name && isVisibleContact && (
-          <OrderListInfo label="Kontakt" value={item.contact.name} isLocation />
+          <OrderListInfo
+            label={t("receiver")}
+            value={item.contact.name}
+            isLocation
+          />
         )}
         {item?.contact?.phone && isVisibleContact && (
           <OrderListInfo
-            label="Telefon"
+            label={t("phone_number")}
             value={item.contact.phone}
             isLocation
             onPress={() => callPhone(item.contact.phone)}
@@ -360,7 +384,7 @@ export const OrderListAddress = React.memo(
         )}
         {item?.coordinates?.latitude && item?.coordinates?.longitude && (
           <OrderListInfo
-            label="Xaritada ochish"
+            label={t("open_in_map")}
             value={<MapIcon color={Colors.primary} size={22} />}
             isLocation
             isBorderBottomVisible={false}
@@ -373,7 +397,7 @@ export const OrderListAddress = React.memo(
     );
 
     return (
-      <OrderListSection title="Manzillar">
+      <OrderListSection title={t("locations")}>
         {pickups.map((p) => renderLocation(p, "pickup"))}
         {dropoffs.map((d) => renderLocation(d, "dropoff"))}
       </OrderListSection>

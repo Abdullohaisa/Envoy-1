@@ -18,6 +18,7 @@ import AnimatedErrorText from "@/components/Texts/AnimatedErrorText";
 import { isValidLoginAtom } from "@/atoms/reg.login.valid";
 import { safeNavigate } from "@/utils/safe-navigation";
 import { authStateAtom } from "@/service/user/register-login/controller";
+import { useTranslation } from "react-i18next";
 
 interface LoginProps {
   onSubmitRef: React.MutableRefObject<() => void>;
@@ -28,6 +29,7 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loginState, setLogin] = useAtom(authStateAtom);
   const setIsValidAtom = useSetAtom(isValidLoginAtom);
+  const { t } = useTranslation();
 
   const {
     control,
@@ -68,7 +70,7 @@ const Login: React.FC<LoginProps> = ({ onSubmitRef }) => {
             }}
           >
             <AppPhoneInput
-              label="Telefon raqam"
+              label={t("phone_number")}
               value={value}
               onChangeText={onChange}
               onClear={() => onChange("")}

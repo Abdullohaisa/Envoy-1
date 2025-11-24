@@ -12,18 +12,17 @@ import { AndroidRipple, Spacing } from "@/shared/token";
 import FlagsIcon from "@/assets/icon/flags";
 import OilIcon from "@/assets/icon/oil";
 import NavigationIcon from "@/assets/icon/navigation";
-import { useAtomValue } from "jotai";
-import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
 import { formatDate, formatTimeDiff } from "@/utils/date-formater";
 import { openMap } from "@/utils/open-map";
-import { useTranslation } from "react-i18next";
+import { IOrder } from "@/types/order";
 
-const DriverOrderAddressItem = ({
+const GivenOrderAddressItem = ({
   loc,
   index,
   type, // "pickup" yoki "dropoff"
   lastIndex,
   times,
+  order,
   allDeparted,
 }: {
   loc: any;
@@ -31,31 +30,30 @@ const DriverOrderAddressItem = ({
   type: "pickup" | "dropoff";
   lastIndex: number;
   times: any;
+  order: IOrder;
   allDeparted: boolean;
 }) => {
   const Colors = useThemeColors();
   const sheetRef = useRef<BottomSheetModalMethods>(null);
-  const { accepted: order } = useAtomValue(driverOrdersAtom);
+
   // Manzil holatini olish
-  const driverStatus = order.status.driver_status[type][index];
+  const driverStatus = order?.status?.driver_status[type][index];
   let statusText = "";
   let statusColor = Colors.Boxbackground; // default fon
   let iconColor = Colors.textSecondary,
     iconBack = Colors.borderColor;
-  const departed = driverStatus.departed && !driverStatus.arrived;
-  const arrived = driverStatus.arrived;
+  const departed = driverStatus?.departed && !driverStatus?.arrived;
+  const arrived = driverStatus?.arrived;
   const [isSheetOpen, setIssheetOpen] = useState(false);
-  const { t } = useTranslation();
 
   if (allDeparted) {
     statusText = "";
   } else if (departed) {
-    statusText = t("started_journey");
-
+    statusText = "Haydovchi yo'lga chiqdi";
     statusColor = Colors.borderColor;
     iconBack = Colors.Boxbackground;
   } else if (arrived) {
-    statusText = t("arrived");
+    statusText = "Haydovchi yetib bordi";
     iconColor = Colors.textSecondary;
     iconBack = Colors.borderColor;
   }
@@ -114,9 +112,9 @@ const DriverOrderAddressItem = ({
             marginTop: 6,
             fontSize: 13,
             color:
-              statusText === t("started_journey")
+              statusText === "Haydovchi yo'lga chiqdi"
                 ? Colors.yellow
-                : statusText === t("arrived")
+                : statusText === "Haydovchi yetib bordi"
                   ? Colors.green
                   : Colors.textSecondary,
           }}
@@ -247,7 +245,7 @@ const DriverOrderAddressItem = ({
                 }}
               >
                 <AppText style={{ color: Colors.textSecondary }}>
-                  {t("departure_time")}:{" "}
+                  Yo'lga chiqish vaqti:{" "}
                 </AppText>
                 <AppText style={{ color: Colors.textPrimary }}>
                   {formatDate(times[index]?.departed || "")}
@@ -260,7 +258,7 @@ const DriverOrderAddressItem = ({
                 }}
               >
                 <AppText style={{ color: Colors.textSecondary }}>
-                  {t("arrival_time")}:{" "}
+                  Yetib borish vaqt:{" "}
                 </AppText>
                 <AppText style={{ color: Colors.textPrimary }}>
                   {formatDate(times[index]?.arrived || "")}
@@ -273,7 +271,7 @@ const DriverOrderAddressItem = ({
                 }}
               >
                 <AppText style={{ color: Colors.textSecondary }}>
-                  {t("time_traveled")}:{" "}
+                  Yurilgan vaqt:{" "}
                 </AppText>
                 <AppText style={{ color: Colors.textPrimary }}>
                   {yurilgan_vaqt}
@@ -303,7 +301,7 @@ const DriverOrderAddressItem = ({
                     letterSpacing: 0.2,
                   }}
                 >
-                  {t("receiver")}:
+                  Kutib oluvchi:
                 </AppText>
 
                 <AppText
@@ -365,7 +363,7 @@ const DriverOrderAddressItem = ({
   );
 };
 
-export default DriverOrderAddressItem;
+export default GivenOrderAddressItem;
 
 const LocationTitle = ({
   type,

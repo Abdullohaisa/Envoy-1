@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 import api from "@/axios/axios.config";
 import { AxiosError } from "axios";
+import { IOrder } from "@/types/order";
 
 export const fetchSingleOrder = async (id: string) => {
   const { data } = await api.get(`/order/${id}/`);
@@ -9,7 +10,7 @@ export const fetchSingleOrder = async (id: string) => {
 };
 
 export const useFetchSingleOrder = (id: string) => {
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<IOrder>({} as IOrder);
   const [requestedDrivers, setRequestedDrivers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

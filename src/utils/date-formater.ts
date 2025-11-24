@@ -1,5 +1,6 @@
 import { IExpectedArrivalTime } from "@/types/order";
 import DateNames from "@/widget/customer/get-order/get-order-form/date/date-names";
+import { useTranslation } from "react-i18next";
 
 export const formatDate = (input?: string | IExpectedArrivalTime | null) => {
   if (!input) return; // null yoki undefined bo'lsa, hech narsa qaytarmaydi
@@ -32,6 +33,7 @@ export const formatDate = (input?: string | IExpectedArrivalTime | null) => {
 export function formatTimeDiff(start: string, end: string) {
   const date1 = new Date(start);
   const date2 = new Date(end);
+  const { t } = useTranslation();
 
   const diffMs = Math.abs(date2.getTime() - date1.getTime()); // millisekund
 
@@ -40,8 +42,8 @@ export function formatTimeDiff(start: string, end: string) {
   const minutes = diffMinutes % 60; // qolgan daqiqa
 
   if (hours > 0) {
-    return `${hours} soat ${minutes} daqiqa`;
+    return `${hours} ${t("hour")} ${minutes} ${t("minute")}`;
   } else {
-    return `${minutes} daqiqa`;
+    return `${minutes} ${t("minute")}`;
   }
 }

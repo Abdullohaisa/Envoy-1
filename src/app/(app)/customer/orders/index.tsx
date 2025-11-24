@@ -79,14 +79,14 @@ const Orders = () => {
       ),
     },
     {
-      key: "finished",
+      key: "delivered",
       title: "Tugatilgan",
       component: () => (
         <CustomerOrderList
           orders={finished}
           state={customerOrdersState}
           setOrders={fetchOrders}
-          type="finished"
+          type="delivered"
         />
       ),
     },

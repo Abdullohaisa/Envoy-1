@@ -12,9 +12,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { Radius, screens } from "@/shared/token";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useAtomValue } from "jotai";
-import { authAtom } from "@/service/user/register-login/controller";
 import AppText from "@/components/Texts/Text";
+import { useTranslation } from "react-i18next";
 
 const AnimatedIcon = React.memo(({ name, focused, color }: any) => {
   return <Ionicons name={name} size={26} color={color} />;
@@ -36,9 +35,6 @@ const AnimatedLabel = React.memo(({ label, focused, color }: any) => {
   );
 });
 
-// ------------------------
-// 🔹 Mini komponent: TabBarWrapper
-// ------------------------
 const TabBarWrapper = React.memo(({ showTabBar, children }: any) => {
   const offset = useSharedValue(showTabBar ? 0 : 80);
 
@@ -74,13 +70,10 @@ const TabBarWrapper = React.memo(({ showTabBar, children }: any) => {
   );
 });
 
-// ------------------------
-// 🔹 CustomerLayout
-// ------------------------
 const DriverLayout = () => {
   const Colors = useThemeColors();
   const pathname = usePathname();
-  const { access } = useAtomValue(authAtom);
+  const { t } = useTranslation();
 
   const visibleRouters = useMemo(
     () => [
@@ -134,19 +127,23 @@ const DriverLayout = () => {
       <Tabs.Screen
         name="orders"
         options={{
-          title: "Yuklar",
+          title: t("cargos"),
           tabBarIcon: ({ focused, color }) => (
             <AnimatedIcon name="cube-outline" focused={focused} color={color} />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Yuklar" focused={focused} color={color} />
+            <AnimatedLabel
+              label={t("cargos")}
+              focused={focused}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="driver-order"
         options={{
-          title: "Yukingiz",
+          title: t("your_cargo"),
           tabBarStyle: {
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
@@ -164,7 +161,11 @@ const DriverLayout = () => {
             />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Yukingiz" focused={focused} color={color} />
+            <AnimatedLabel
+              label={t("your_cargo")}
+              focused={focused}
+              color={color}
+            />
           ),
         }}
       />
@@ -180,7 +181,11 @@ const DriverLayout = () => {
             />
           ),
           tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel label="Profil" focused={focused} color={color} />
+            <AnimatedLabel
+              label={t("profile")}
+              focused={focused}
+              color={color}
+            />
           ),
         }}
       />
