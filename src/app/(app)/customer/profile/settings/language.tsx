@@ -2,7 +2,7 @@ import { StyleSheet, View, FlatList, Pressable, TextInput } from "react-native";
 import React, { useEffect, useState } from "react";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
-import { Fonts } from "@/shared/token";
+import { Fonts, Spacing } from "@/shared/token";
 import AppText from "@/components/Texts/Text";
 import { useTranslation } from "react-i18next";
 import { setLanguage } from "@/locales/_i18n";
@@ -25,61 +25,31 @@ const languages = [
 
 const LanguagePage = () => {
   const Colors = useThemeColors();
-  const [search, setSearch] = useState("");
   const { t } = useTranslation();
 
-  // currentLang yordamida rerenderni majbur qilamiz
-  const [currentLang, setCurrentLang] = useState(i18n.language || "uzbekistan");
-
   useEffect(() => {
-    const handler = (lng: any) => setCurrentLang(lng);
+    const handler = () => {}; // endi faqat listener kerak bo‘lsa ishlaydi
     i18n.on("languageChanged", handler);
-    return () => {
-      i18n.off("languageChanged", handler);
-    };
+    return () => i18n.off("languageChanged", handler);
   }, []);
 
-  // Qidiruv filter (nativeName ga qaraydi)
-  const filteredLanguages = languages.filter((lang) =>
-    lang.nativeName.toLowerCase().includes(search.toLowerCase())
-  );
-
   const handleSelectLanguage = async (langCode: string) => {
-    // changeLanguage ni chaqiramiz va state i18n.on orqali yangilanadi
     await setLanguage(langCode);
-    // agar kerak bo'lsa, darhol ham update qilamiz
-    setCurrentLang(langCode);
+    // setCurrentLang endi kerak emas
   };
 
   return (
     <View
       style={[styles.container, { backgroundColor: Colors.pageBackground }]}
     >
-      {/* agar PageHeader ichida useTranslation ishlamasa, uni key orqali rerender qilyapmiz */}
-      <PageHeader title={t("choose_language")} enableBack key={currentLang} />
-
-      <TextInput
-        style={[
-          styles.searchInput,
-          {
-            backgroundColor: Colors.Boxbackground,
-            color: Colors.textPrimary,
-            fontFamily: Fonts.regular,
-          },
-        ]}
-        placeholder={t("search_placeholder")}
-        placeholderTextColor={Colors.textSecondary}
-        value={search}
-        onChangeText={setSearch}
-      />
+      <PageHeader title={t("choose_language")} enableBack key={i18n.language} />
 
       <FlatList
-        data={filteredLanguages}
+        data={languages}
         keyExtractor={(item) => item.code}
-        style={{ flexGrow: 1 }}
+        style={{ flexGrow: 1, marginTop: Spacing.horizontal }}
         renderItem={({ item }) => {
-          const isActive =
-            currentLang === item.code || i18n.language === item.code;
+          const isActive = i18n.language === item.code;
           return (
             <Pressable
               style={[
@@ -94,15 +64,7 @@ const LanguagePage = () => {
               ]}
               onPress={() => handleSelectLanguage(item.code)}
             >
-              <AppText
-                style={[
-                  styles.itemText,
-                  {
-                    color: Colors.textPrimary,
-                    fontFamily: Fonts.regular,
-                  },
-                ]}
-              >
+              <AppText style={[styles.itemText, { color: Colors.textPrimary }]}>
                 {item.nativeName} {isActive ? "✓" : ""}
               </AppText>
             </Pressable>

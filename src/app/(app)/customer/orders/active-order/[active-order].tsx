@@ -14,6 +14,9 @@ import api from "@/axios/axios.config";
 import OrderLoading from "@/components/OrderLoading/OrderLoading";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
+import { useTranslation } from "react-i18next";
+import { IThemeColors } from "@/theme/colors.interface";
+import { IOrder, IOrderUser } from "@/types/order";
 
 /* ===============================
    🔹 Asosiy sahifa komponenti
@@ -31,8 +34,7 @@ const ActiveOrder = () => {
   const theme = useAtomValue(themeAtom);
 
   const fetchOrders = useFetchCustomerOrders();
-  const { order, requestedDrivers, isLoading, error, refetch } =
-    useFetchSingleOrder(orderId);
+  const { order, isLoading, error, refetch } = useFetchSingleOrder(orderId);
 
   /* 🔁 Yangilash */
   const onRefresh = useCallback(async () => {
@@ -82,7 +84,6 @@ const ActiveOrder = () => {
       {!isLoading && !error && order && (
         <OrderContent
           order={order}
-          requestedDrivers={requestedDrivers}
           deleteError={deleteError}
           refreshing={refreshing}
           onRefresh={onRefresh}
@@ -103,65 +104,85 @@ const ActiveOrder = () => {
   );
 };
 
-const HeaderSection = memo(({ Colors, onDelete }: any) => {
-  const theme = useAtomValue(themeAtom);
-  return (
-    <PageHeader
-      title="Yuk ma'lumotlari"
-      enableBack
-      rightIcon={
-        <MaterialIcons
-          name="delete-outline"
-          size={24}
-          color={
-            theme === "light" ? Colors.Boxbackground : Colors.textSecondary
-          }
+const HeaderSection = memo(
+  ({ Colors, onDelete }: { Colors: IThemeColors; onDelete: () => void }) => {
+    const theme = useAtomValue(themeAtom);
+    const { t } = useTranslation();
+    return (
+      <PageHeader
+        title={t("cargo_information")}
+        enableBack
+        rightIcon={
+          <MaterialIcons
+            name="delete-outline"
+            size={24}
+            color={
+              theme === "light" ? Colors.Boxbackground : Colors.textSecondary
+            }
+          />
+        }
+        onRightPress={onDelete}
+      />
+    );
+  }
+);
+
+const ErrorView = memo(
+  ({
+    error,
+    Colors,
+    refreshing,
+    onRefresh,
+  }: {
+    error: string;
+    Colors: IThemeColors;
+    refreshing: boolean;
+    onRefresh: () => void;
+  }) => (
+    <ScrollView
+      contentContainerStyle={styles.centerBox}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={Colors.primary}
+          colors={["#fff"]}
+          progressBackgroundColor={Colors.primary}
         />
       }
-      onRightPress={onDelete}
-    />
-  );
-});
-
-const ErrorView = memo(({ error, Colors, refreshing, onRefresh }: any) => (
-  <ScrollView
-    contentContainerStyle={styles.centerBox}
-    refreshControl={
-      <RefreshControl
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        tintColor={Colors.primary}
-        colors={["#fff"]}
-        progressBackgroundColor={Colors.primary}
-      />
-    }
-  >
-    <AppText style={{ color: "red", textAlign: "center", fontSize: 16 }}>
-      {error === "Network Error"
-        ? "Tarmoq bilan bog‘lanishda muammo yuz berdi."
-        : error}
-    </AppText>
-    <AppText
-      style={{
-        color: Colors.textSecondary,
-        textAlign: "center",
-        marginTop: 6,
-      }}
     >
-      Iltimos, birozdan so‘ng qayta urinib ko‘ring.
-    </AppText>
-  </ScrollView>
-));
+      <AppText style={{ color: "red", textAlign: "center", fontSize: 16 }}>
+        {error === "Network Error"
+          ? "Tarmoq bilan bog‘lanishda muammo yuz berdi."
+          : error}
+      </AppText>
+      <AppText
+        style={{
+          color: Colors.textSecondary,
+          textAlign: "center",
+          marginTop: 6,
+        }}
+      >
+        Iltimos, birozdan so‘ng qayta urinib ko‘ring.
+      </AppText>
+    </ScrollView>
+  )
+);
 
 const OrderContent = memo(
   ({
     order,
-    requestedDrivers,
     deleteError,
     refreshing,
     onRefresh,
     Colors,
-  }: any) => (
+  }: {
+    order: IOrder;
+    deleteError: string | null;
+    refreshing: boolean;
+    onRefresh: () => void;
+    Colors: IThemeColors;
+  }) => (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 40 }}
       refreshControl={
@@ -181,10 +202,7 @@ const OrderContent = memo(
           </AppText>
         </View>
       )}
-      <CustomerActiveOrderInfoList
-        order={order}
-        requestedDrivers={requestedDrivers}
-      />
+      <CustomerActiveOrderInfoList order={order} />
     </ScrollView>
   )
 );

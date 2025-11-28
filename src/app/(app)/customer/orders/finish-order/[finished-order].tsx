@@ -6,6 +6,7 @@ import CustomerActiveOrderInfoList from "@/components/OrderInfoList/CustomerActi
 import SheetModal from "@/components/Modal/SheetModal";
 import { useState } from "react";
 import CustomerFinishedOrderInfoList from "@/components/OrderInfoList/CustomerFinishedOrderInfoList";
+import { useTranslation } from "react-i18next";
 
 const cargo = {
   cargo: {
@@ -150,13 +151,14 @@ const requestedDrivers: DriverRequest[] = [
 const FinishedOrder = () => {
   const Colors = useThemeColors();
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <View
       style={[styles.container, { backgroundColor: Colors.pageBackground }]}
     >
       <PageHeader
-        title="Yuk ma'lumotlari"
+        title={t("cargo_information")}
         enableBack
         onRightPress={() => setOpen(true)}
       />

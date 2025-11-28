@@ -4,7 +4,6 @@ import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/typ
 import { useEffect, useRef, useState } from "react";
 import { BackHandler, Pressable, StyleSheet, View } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { mask } from "react-native-mask-text";
 import { callPhone } from "@/utils/call-phone";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -15,7 +14,6 @@ import NavigationIcon from "@/assets/icon/navigation";
 import { useAtomValue } from "jotai";
 import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
 import { formatDate, formatTimeDiff } from "@/utils/date-formater";
-import { openMap } from "@/utils/open-map";
 import { useTranslation } from "react-i18next";
 
 const DriverOrderAddressItem = ({
@@ -111,14 +109,18 @@ const DriverOrderAddressItem = ({
       {statusText.length !== 0 && (
         <AppText
           style={{
-            marginTop: 6,
-            fontSize: 13,
             color:
               statusText === t("started_journey")
                 ? Colors.yellow
                 : statusText === t("arrived")
                   ? Colors.green
                   : Colors.textSecondary,
+
+            borderTopWidth: 1,
+            paddingTop: 8,
+            borderColor: Colors.borderColor,
+            marginTop: 10,
+            fontSize: 13,
           }}
         >
           {statusText}
@@ -389,6 +391,7 @@ const LocationTitle = ({
         flexDirection: "row",
         gap: Spacing.horizontal,
         alignItems: "center",
+        // backgroundColor: "red",
       }}
     >
       <View
@@ -420,7 +423,11 @@ const LocationTitle = ({
         variant="medium"
         style={[
           styles.addressTitle,
-          { color: Colors.textPrimary, width: "100%" },
+          {
+            color: Colors.textPrimary,
+            width: "85%",
+            overflow: "hidden",
+          },
         ]}
       >
         {loc.full_title}

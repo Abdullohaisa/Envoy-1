@@ -13,6 +13,7 @@ import {
 } from "react-native-reanimated";
 import GivenOrderScrollContent from "@/widget/customer/given-order/GivenOrderScrollContent";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { useTranslation } from "react-i18next";
 
 const GivenOrder = () => {
   const Colors = useThemeColors();
@@ -25,6 +26,7 @@ const GivenOrder = () => {
   const [warningVisible, setWarningVisible] = useState(false);
   const sheetRef = useRef<BottomSheetModalMethods>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const { t } = useTranslation();
 
   const { order, isLoading, error, refetch } = useFetchSingleOrder(orderId);
 
@@ -70,7 +72,7 @@ const GivenOrder = () => {
       {/* Header animation */}
       <AnimationHeader
         scrollY={scrollY}
-        title={"Yuk ma'lumotlari"}
+        title={t("cargo_information")}
         enableBack
       />
 

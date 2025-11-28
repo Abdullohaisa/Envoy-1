@@ -84,7 +84,7 @@ const GivenOrderAddressItem = ({
     <Pressable
       android_ripple={AndroidRipple}
       onPress={() => {
-        !departed && sheetRef.current?.present();
+        sheetRef.current?.present();
       }}
       style={[
         styles.addressBlock,
@@ -109,8 +109,12 @@ const GivenOrderAddressItem = ({
       {statusText.length !== 0 && (
         <AppText
           style={{
-            marginTop: 6,
+            borderTopWidth: 1,
+            paddingTop: 8,
+            borderColor: Colors.borderColor,
+            marginTop: 10,
             fontSize: 13,
+
             color:
               statusText === "Haydovchi yo'lga chiqdi"
                 ? Colors.yellow
@@ -125,7 +129,7 @@ const GivenOrderAddressItem = ({
 
       {departed && (
         <View>
-          <View
+          {/* <View
             style={{
               marginTop: 10,
               borderTopWidth: 1,
@@ -167,39 +171,7 @@ const GivenOrderAddressItem = ({
                 {mask(loc.contact.phone, "+999 99 999-99-99")}
               </AppText>
             </View>
-            <View style={{ flexDirection: "row", gap: 5 }}>
-              <Pressable
-                android_ripple={AndroidRipple}
-                onPress={() => callPhone(loc.contact.phone)}
-                style={[
-                  styles.actionButton,
-                  {
-                    backgroundColor: Colors.green02,
-                  },
-                ]}
-              >
-                <FontAwesome5 name="phone-alt" size={22} color="#fff" />
-              </Pressable>
-              <Pressable
-                onPress={() =>
-                  openMap(loc.coordinates.latitude, loc.coordinates.longitude)
-                }
-                android_ripple={AndroidRipple}
-                style={[
-                  styles.actionButton,
-                  {
-                    backgroundColor: Colors.primary02,
-                  },
-                ]}
-              >
-                <NavigationIcon
-                  size={40}
-                  color={Colors.primary}
-                  secondaryColor={Colors.primary04}
-                />
-              </Pressable>
-            </View>
-          </View>
+          </View> */}
         </View>
       )}
 
@@ -418,7 +390,7 @@ const LocationTitle = ({
         variant="medium"
         style={[
           styles.addressTitle,
-          { color: Colors.textPrimary, width: "100%" },
+          { color: Colors.textPrimary, width: "85%" },
         ]}
       >
         {loc.full_title}

@@ -25,13 +25,13 @@ export const initLanguage = async () => {
   const savedLang = (savedLangRaw || "uzbekistan").toLowerCase();
 
   const loadResource =
-    languageResources[savedLang] || languageResources["english"];
+    languageResources[savedLang] || languageResources["uzbekistan"];
   const resource = await loadResource();
 
   await i18n.use(initReactI18next).init({
     resources: { [savedLang]: { translation: resource.default } },
     lng: savedLang,
-    fallbackLng: "english",
+    fallbackLng: "uzbekistan",
     interpolation: { escapeValue: false },
     compatibilityJSON: "v4",
   });
@@ -40,7 +40,8 @@ export const initLanguage = async () => {
 // 🌀 Tilni o‘zgartirish
 export const setLanguage = async (lang: string) => {
   const key = lang.toLowerCase();
-  const loadResource = languageResources[key] || languageResources["english"];
+  const loadResource =
+    languageResources[key] || languageResources["uzbekistan"];
   const resource = await loadResource();
 
   i18n.addResources(key, "translation", resource.default);
@@ -49,3 +50,11 @@ export const setLanguage = async (lang: string) => {
 };
 
 export default i18n;
+
+// Buyurtma berish
+// Qo'shimcha
+// O‘chirilmoqda...
+// Buyurtmani o‘chirmoqchimisiz?
+// Iltimos, birozdan so‘ng qayta urinib ko‘ring.
+// Tarmoq bilan bog‘lanishda muammo yuz berdi.
+// Siz so'rov jo'natgansiz

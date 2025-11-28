@@ -11,7 +11,7 @@ export const fetchSingleOrder = async (id: string) => {
 
 export const useFetchSingleOrder = (id: string) => {
   const [order, setOrder] = useState<IOrder>({} as IOrder);
-  const [requestedDrivers, setRequestedDrivers] = useState<any[]>([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +24,6 @@ export const useFetchSingleOrder = (id: string) => {
       const data = await fetchSingleOrder(id);
 
       setOrder(data);
-      setRequestedDrivers(data.requestedDrivers || []);
     } catch (err: any) {
       if (err instanceof AxiosError)
         setError(err.response?.data || "Tarmoq xatosi");
@@ -39,7 +38,7 @@ export const useFetchSingleOrder = (id: string) => {
 
   return {
     order,
-    requestedDrivers,
+
     isLoading,
     error,
     refetch: loadOrder,

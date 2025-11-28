@@ -1,8 +1,7 @@
-import StarIcon from "@/assets/icon/star-icon";
 import { useThemeColors } from "@/theme/useThemeColors";
-import React from "react";
 import { View, StyleSheet } from "react-native";
-import AppText from "../Texts/Text";
+import StarFillIcon from "@/assets/icon/star-fill";
+import StarOutlineIcon from "@/assets/icon/star-outline";
 
 interface RatingStarsProps {
   rating: number; // masalan: 3.5
@@ -25,20 +24,20 @@ const RatingStars = ({
   max = 5,
   size = 18,
   activeColor = getRatingColor(rating),
-  inactiveColor = "#E0E0E0",
+  inactiveColor = getRatingColor(rating),
 }: RatingStarsProps) => {
   const stars = [];
 
   for (let i = 1; i <= max; i++) {
     if (i <= Math.floor(rating)) {
       // 🔹 to‘liq yulduz
-      stars.push(<StarIcon key={i} size={size} color={activeColor} />);
+      stars.push(<StarFillIcon key={i} size={size} color={activeColor} />);
     } else if (i === Math.floor(rating) + 1 && rating % 1 >= 0.5) {
       // 🔹 yarim yulduz
       stars.push(
         <View key={i} style={{ width: size, height: size }}>
           {/* Bo‘sh yulduz */}
-          <StarIcon size={size} color={inactiveColor} />
+          <StarOutlineIcon size={size} color={inactiveColor} />
           {/* Chap yarim to‘ldirilgan */}
           <View
             style={{
@@ -47,13 +46,13 @@ const RatingStars = ({
               overflow: "hidden",
             }}
           >
-            <StarIcon size={size} color={activeColor} />
+            <StarFillIcon size={size} color={activeColor} />
           </View>
         </View>
       );
     } else {
       // 🔹 bo‘sh yulduz
-      stars.push(<StarIcon key={i} size={size} color={inactiveColor} />);
+      stars.push(<StarOutlineIcon key={i} size={size} color={inactiveColor} />);
     }
   }
 

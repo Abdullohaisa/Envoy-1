@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
-import { View, Pressable } from "react-native";
+import React, { ReactNode, RefObject, useRef, useState } from "react";
+import { View, Pressable, FlatList, Linking, Alert, Modal } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import AppText from "@/components/Texts/Text";
 import AppImage from "@/components/Image/Image";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { IOrder, ILocations } from "@/types/order";
 import { callPhone } from "@/utils/call-phone";
-import { openMap } from "@/utils/open-map";
+import { IOpenMapItem, mapList, openMapApp } from "@/utils/open-map";
 import { AndroidRipple, Shadow, Spacing } from "@/shared/token";
 import { StyleOrderInfoList as styles } from "../style";
 import { truckData } from "@/data/truck-data";
@@ -15,6 +15,10 @@ import MapIcon from "@/assets/icon/map";
 import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import { useTranslation } from "react-i18next";
+import DatePicker from "@/app/(app)/customer/get-order/time";
+import { formatDate } from "@/utils/date-formater";
+import CustomBottomSheetModal from "@/components/BottomSheets/BottomSheetModal";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 // ========================
 // 🔹 OrderListInfo
@@ -153,35 +157,43 @@ export const OrderListCargo = React.memo(({ order }: { order: IOrder }) => {
 // ========================
 export const OrderListOther = React.memo(
   ({ order }: { order: IOrder }) => {
-    // const { created, expected_arrival_time } = order.time;
-    // const comment = order.comment;
+    const comment = order.comment;
+    const created = formatDate(order?.time?.created);
+    const expected_arrival_time = formatDate(
+      order?.time?.expected_arrival_time
+    );
 
     return (
       <OrderListSection title="Qo'shimcha">
-        {/* {created && (
-          <OrderListInfo label="Yaratilgan vaqt" value={formatDate(created)} />
-        )} */}
-        {/* {expected_arrival_time && (
+        {created && <OrderListInfo label="Yaratilgan vaqt" value={created} />}
+        {expected_arrival_time && (
           <OrderListInfo
-            label="Yetib borish vaqti"
-            value={formatDate(expected_arrival_time)}
+            label={t("arrival_time")}
+            value={expected_arrival_time}
           />
-        )} */}
-        {/* {comment && (
+        )}
+        {comment && (
           <OrderListInfo
-            label="Izoh"
+            label={t("comment")}
             value={comment}
             isBorderBottomVisible={false}
           />
-        )} */}
+        )}
       </OrderListSection>
     );
   },
-  (prev, next) =>
-    prev.order.time.created === next.order.time.created &&
-    prev.order.time.expected_arrival_time ===
-      next.order.time.expected_arrival_time &&
-    prev.order.comment === next.order.comment
+  (prev, next) => {
+    if (!prev || !next) return false;
+
+    const pt = prev?.order?.time;
+    const nt = next?.order?.time;
+
+    return (
+      pt?.created === nt?.created &&
+      pt?.expected_arrival_time === nt?.expected_arrival_time &&
+      prev.order?.comment === next.order?.comment
+    );
+  }
 );
 
 // ========================
@@ -251,12 +263,12 @@ export const OrderListDriver = React.memo(
               label={t("driver_location_label")}
               value={t("open_in_map")}
               isBorderBottomVisible={false}
-              onPress={() =>
-                openMap(
-                  driver.driver_coordinates.latitude,
-                  driver.driver_coordinates.longitude
-                )
-              }
+              // onPress={() =>
+              //   openMap(
+              //     driver.driver_coordinates.latitude,
+              //     driver.driver_coordinates.longitude
+              //   )
+              // }
             />
           )}
       </OrderListSection>
@@ -354,6 +366,7 @@ export const OrderListAddress = React.memo(
     const pickups = locations?.pickup ?? [];
     const dropoffs = locations?.dropoff ?? [];
     const { t } = useTranslation();
+    const mapSheetRef = useRef<BottomSheetModalMethods>(null);
 
     const renderLocation = (item: any, type: "pickup" | "dropoff") => (
       <View
@@ -388,11 +401,10 @@ export const OrderListAddress = React.memo(
             value={<MapIcon color={Colors.primary} size={22} />}
             isLocation
             isBorderBottomVisible={false}
-            onPress={() =>
-              openMap(item.coordinates.latitude, item.coordinates.longitude)
-            }
+            onPress={() => mapSheetRef.current?.present()}
           />
         )}
+        <MapSelectorSheet coordinates={item?.coordinates} ref={mapSheetRef} />
       </View>
     );
 
@@ -404,3 +416,134 @@ export const OrderListAddress = React.memo(
     );
   }
 );
+
+export const MapSelectorSheet = ({
+  coordinates,
+  ref,
+}: {
+  coordinates: { latitude: number; longitude: number };
+  ref: RefObject<BottomSheetModalMethods | null>;
+}) => {
+  const Colors = useThemeColors();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedStoreUrl, setSelectedStoreUrl] = useState<string>("");
+
+  const maps = mapList(coordinates.latitude, coordinates.longitude);
+
+  // App ochish yoki modal
+  const handleMapPress = async (map: IOpenMapItem) => {
+    try {
+      await Linking.openURL(map.appUrl); // faqat tanlangan app
+    } catch (e) {
+      // Agar ilova yo‘q bo‘lsa → store yoki web
+      // if (map.storeUrl) {
+      //   await Linking.openURL(map.storeUrl);
+      // } else {
+      //   await Linking.openURL(map.webUrl);
+      // }
+    }
+  };
+
+  // O‘rnatish tugmasi
+  const handleInstall = () => {
+    if (selectedStoreUrl) Linking.openURL(selectedStoreUrl);
+    setModalVisible(false);
+  };
+
+  return (
+    <>
+      {/* BottomSheet */}
+      <CustomBottomSheetModal ref={ref} snapPoints={["50%"]}>
+        <FlatList
+          data={maps}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => handleMapPress(item)}
+              style={{
+                paddingVertical: 16,
+                paddingHorizontal: 20,
+                borderBottomWidth: 1,
+                borderBottomColor: Colors.borderColor,
+              }}
+            >
+              <AppText style={{ color: Colors.textPrimary, fontSize: 16 }}>
+                {item.name}
+              </AppText>
+            </Pressable>
+          )}
+        />
+      </CustomBottomSheetModal>
+
+      {/* App mavjud emas modal */}
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              width: "80%",
+              backgroundColor: Colors.pageBackground,
+              borderRadius: 12,
+              padding: 20,
+            }}
+          >
+            <AppText
+              style={{
+                fontSize: 16,
+                color: Colors.textPrimary,
+                marginBottom: 20,
+                textAlign: "center",
+              }}
+            >
+              Ilova sizda mavjud emas. Iltimos o‘rnating va qayta urinib
+              ko‘ring.
+            </AppText>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Pressable
+                onPress={handleInstall}
+                style={{
+                  backgroundColor: Colors.primary,
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                }}
+              >
+                <AppText style={{ color: "#fff" }}>O‘rnatish</AppText>
+              </Pressable>
+
+              <Pressable
+                onPress={() => setModalVisible(false)}
+                style={{
+                  borderWidth: 1,
+                  borderColor: Colors.borderColor,
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 8,
+                }}
+              >
+                <AppText style={{ color: Colors.textPrimary }}>Ortga</AppText>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
+};

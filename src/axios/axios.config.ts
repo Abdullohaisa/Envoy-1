@@ -10,7 +10,7 @@ export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_PREFIX,
-  timeout: 10000,
+  timeout: 20000,
 });
 
 api.interceptors.request.use(

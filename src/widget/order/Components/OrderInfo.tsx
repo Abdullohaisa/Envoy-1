@@ -7,7 +7,6 @@ import { useAtomValue } from "jotai";
 import { themeAtom } from "@/theme/theme";
 
 export const OrderItemInfo = ({ order }: { order: any }) => {
-  // 🔹 Yuk mashina turlari
   const truckTypes = [
     "Tentli fura",
     "Refrejerator",
@@ -48,7 +47,7 @@ export const OrderItemInfo = ({ order }: { order: any }) => {
     [
       renderFormattedPrice(order?.price?.value, order?.price?.currency),
       order?.cargo?.type?.value,
-      getTruckType(order?.truck), // 🔹 endi yuk mashina turi chiqadi
+      getTruckType(order?.truck),
     ],
   ];
 

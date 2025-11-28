@@ -2,23 +2,13 @@ import api from "@/axios/axios.config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AxiosError } from "axios";
 import { atom } from "jotai";
-import {
-  atomWithStorage,
-  createJSONStorage,
-  useAtomCallback,
-} from "jotai/utils";
+import { useAtomCallback } from "jotai/utils";
 
-// ====================================================
-// 🔹 INTERFEYSLAR
-// ====================================================
-
-// Buyurtmadagi qiymat va birlik (masalan, uzunlik, vazn)
 export interface IValueUnit<T = number | string | null> {
   value: T;
   unit: string | null;
 }
 
-// Yuk ma’lumotlari
 export interface ICargo {
   height: IValueUnit;
   length: IValueUnit;
@@ -29,7 +19,6 @@ export interface ICargo {
   width: IValueUnit;
 }
 
-// Har bir manzil nuqtasi
 export interface ILocationPoint {
   id: string;
   full_title: string;

@@ -60,7 +60,7 @@ const DriverOrderScrollContent = ({
     >
       {order.id ? (
         <>
-          {!warningVisible && (
+          {warningVisible && (
             <WarningView order={order} setWarningVisible={setWarningVisible} />
           )}
           {allDeparted && <SuccesView />}

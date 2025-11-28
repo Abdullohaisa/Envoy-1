@@ -7,13 +7,35 @@ import AppText from "@/components/Texts/Text";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { callPhone } from "@/utils/call-phone";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { MaterialIcons, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { IOrderUser } from "@/types/order";
+import CustomSpinner from "@/components/Spinner/Spinner";
+import AnimtaionCheckIcon from "@/assets/icon/animation-check";
+import { size } from "zod";
 
-const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
+interface Prop {
+  modalRef: RefObject<BottomSheetModalMethods>;
+  driver: IOrderUser;
+  handleSelectDriver: () => void;
+  chooseState: {
+    isChoose: boolean | null;
+    isLoading: boolean;
+    isError: string | null;
+  };
+}
+
+const DriverChooseModal = ({
+  modalRef,
+  driver,
+  handleSelectDriver,
+  chooseState,
+}: Prop) => {
   const Colors = useThemeColors();
   const [modal, setModal] = useState(false);
+  const { isChoose, isLoading } = chooseState;
 
   return (
     <CustomBottomSheetModal
@@ -22,8 +44,8 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
       backdropOpacity={0.6}
       backgroundStyle={{ backgroundColor: Colors.Boxbackground }}
     >
-      <BottomSheetScrollView style={driverChooseModalStyles.sheetScroll}>
-        {driver && (
+      {driver && !isLoading && !isChoose && (
+        <BottomSheetScrollView style={driverChooseModalStyles.sheetScroll}>
           <View style={driverChooseModalStyles.modalContent}>
             <View
               style={[
@@ -97,26 +119,34 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
             >
               <AppText>Boshqa Mijozlar fikri</AppText>
               <AppText style={driverChooseModalStyles.modalRating}>
-                {driver.comments_count}
+                {driver.comment_count}
               </AppText>
             </View>
 
             {/* === BUTTONS === */}
-            <AppButton
-              title="Tanlash"
-              onPress={() => setModal(true)}
-              variant="primary"
-            />
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <AppButton
+                title="Tanlash"
+                onPress={() => setModal(true)}
+                variant="secondary"
+                buttonStyle={{ flex: 1 }}
+                titleStyle={{ color: Colors.primary }}
+              />
+              <AppButton
+                title="Qo'ng'iroq qilish"
+                onPress={() => callPhone(driver.phone)}
+                variant="secondary"
+                buttonStyle={{ flex: 1 }}
+                titleStyle={{ color: Colors.green }}
+              />
+            </View>
 
-            <Pressable
-              onPress={() => callPhone(driver.phone)}
-              style={[
-                driverChooseModalStyles.phoneButton,
-                { backgroundColor: Colors.borderColor },
-              ]}
+            <AppText
+              style={{ textAlign: "center", color: Colors.textSecondary }}
             >
-              <FontAwesome6 name="phone" size={25} color={Colors.green} />
-            </Pressable>
+              Haydovchini tanlashdan oldin, avval unga qo‘ng‘iroq qilib, barcha
+              narsani oldindan kelishib oling.
+            </AppText>
 
             <SheetModal
               type="yesno"
@@ -126,8 +156,23 @@ const DriverChooseModal = ({ modalRef, driver, handleSelectDriver }: any) => {
               onYes={handleSelectDriver}
             />
           </View>
+        </BottomSheetScrollView>
+      )}
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "flex-start",
+          flex: 1,
+        }}
+      >
+        {isLoading && <CustomSpinner />}
+        {isChoose && (
+          <View style={{ alignItems: "center" }}>
+            <AnimtaionCheckIcon color={Colors.green} size={150} />
+            <AppText style={{ fontSize: 18 }}>Haydovchi tanlandi</AppText>
+          </View>
         )}
-      </BottomSheetScrollView>
+      </View>
     </CustomBottomSheetModal>
   );
 };

@@ -17,13 +17,18 @@ import {
   customerOrdersStateAtom,
 } from "@/service/customer/customer-orders/controller";
 import { useAtomValue } from "jotai";
-import { authAtom } from "@/service/user/register-login/controller";
+import { useTranslation } from "react-i18next";
+import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
 
 const Orders = () => {
   // 📦 Orders ma'lumotlarini olish uchun hook
   const fetchOrders = useFetchCustomerOrders();
   const { active, attached, finished } = useAtomValue(customerOrdersAtom);
   const customerOrdersState = useAtomValue(customerOrdersStateAtom);
+  const { t } = useTranslation();
+  const scrollToIndex = useAtomValue(ordersScrollToIndex);
+
+  console.log(scrollToIndex);
 
   // ⚙️ Komponent yuklanganda backenddan ma’lumot olish
   useEffect(() => {
@@ -49,14 +54,19 @@ const Orders = () => {
     });
   };
 
-  // 🔹 Har bir sahifa komponenti
   const Page = memo(({ item }: any) => <>{item.component()}</>);
 
-  // 📄 Uchta sahifa (Faol, Berilgan, Tugatilgan)
+  useEffect(() => {
+    flatRef.current?.scrollToOffset({
+      offset: scrollToIndex * screens.width,
+      animated: true,
+    });
+  }, [scrollToIndex]);
+
   const pages = [
     {
       key: "active",
-      title: "Faol",
+      title: t("active"),
       component: () => (
         <CustomerOrderList
           orders={active}
@@ -68,7 +78,7 @@ const Orders = () => {
     },
     {
       key: "attached",
-      title: "Berilgan",
+      title: t("given"),
       component: () => (
         <CustomerOrderList
           orders={attached}
@@ -80,7 +90,7 @@ const Orders = () => {
     },
     {
       key: "delivered",
-      title: "Tugatilgan",
+      title: t("completed"),
       component: () => (
         <CustomerOrderList
           orders={finished}
@@ -94,10 +104,8 @@ const Orders = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* 🔝 Tab Header (Faol, Berilgan, Tugatilgan) */}
       <TabHeader pages={pages} handlePress={handlePress} scrollX={scrollX} />
 
-      {/* 📲 Har bir sahifa uchun FlatList (swipe bilan o‘tish mumkin) */}
       <Animated.FlatList
         ref={flatRef}
         data={pages}

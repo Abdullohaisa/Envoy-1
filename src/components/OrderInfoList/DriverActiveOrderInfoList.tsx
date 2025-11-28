@@ -4,6 +4,7 @@ import {
   OrderListAddress,
   OrderListCargo,
   OrderListCustomer,
+  OrderListOther,
 } from "./Components/Components";
 import Animated, {
   FadeInDown,
@@ -38,6 +39,7 @@ const DriverActiveOrderInfoList = ({
       scrollIndicatorInsets={{ right: -4 }}
       style={styles.scrollView}
       indicatorStyle={indicatorStyle}
+      contentContainerStyle={{ paddingBottom: 1000 }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -64,13 +66,13 @@ const DriverActiveOrderInfoList = ({
               { backgroundColor: Colors.primary + "33" },
             ]}
           >
+            <AppText style={[styles.statusText, { color: Colors.primary }]}>
+              {t("you_sent_request")}
+            </AppText>
             <AppText
               style={[styles.statusTitle, { color: Colors.textSecondary }]}
             >
-              {t("request_status")}
-            </AppText>
-            <AppText style={[styles.statusText, { color: Colors.primary }]}>
-              {t("you_sent_request")}
+              Yuk egasi sizni tanlasa o'zi sizga qo'g'iroq qiladi
             </AppText>
           </Animated.View>
         )}
@@ -80,6 +82,7 @@ const DriverActiveOrderInfoList = ({
           locations={order?.locations}
           isVisibleContact={false}
         />
+        <OrderListOther order={order} />
       </Animated.View>
     </Animated.ScrollView>
   );
@@ -134,7 +137,9 @@ const styles = StyleSheet.create({
   },
   statusCard: {
     padding: 15,
+    paddingVertical: 10,
     borderRadius: 16,
+    gap: 5,
   },
   statusTitle: {
     fontSize: 14,

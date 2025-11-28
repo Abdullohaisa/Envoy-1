@@ -42,7 +42,7 @@ import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 // -------------------------
 const SettingsCustomerPage = () => {
   const Colors = useThemeColors();
-  const [theme] = useAtom(themeAtom);
+  const theme = useAtomValue(themeAtom);
   const setTheme = useSetAtom(setThemeAtom);
   const { data } = useAtomValue(authStateAtom);
   const role = data.role;
@@ -206,7 +206,7 @@ const ProfileActionBox = memo(
     const { iconColor, iconBackColor } = useMemo(() => {
       switch (title) {
         case t("theme_mode"):
-          return { iconColor: Colors.primary, iconBackColor: Colors.primary02 };
+          return { iconColor: Colors.yellow, iconBackColor: Colors.primary02 };
         case t("change_language"):
           return { iconColor: Colors.green, iconBackColor: Colors.green02 };
         case t("logout"):
@@ -232,7 +232,7 @@ const ProfileActionBox = memo(
           >
             {icon(18, iconColor)}
           </View>
-          <AppText style={cachedStyles.boxText}>{title}</AppText>
+          <AppText style={[cachedStyles.boxText]}>{title}</AppText>
         </View>
         {leftNode()}
       </TouchableOpacity>

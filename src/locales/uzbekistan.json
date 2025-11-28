@@ -182,5 +182,9 @@
   "cancel_request": "So'rovni bekor qilish",
   "send_request": "So'rov yuborish",
   "confirm_send_request": "Siz so'rov yubormoqchimisiz?",
-  "loading_data": "Ma'lumotlar yuklanmoqda..."
+  "loading_data": "Ma'lumotlar yuklanmoqda...",
+  "active": "Faol",
+  "given": "Berilgan",
+  "completed": "Tugatilgan",
+  "location": "Manzil"
 }

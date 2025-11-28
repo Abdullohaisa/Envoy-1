@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Pressable, RefreshControl } from "react-native";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,12 +9,17 @@ import { AndroidRipple, Shadow, Spacing, screens } from "@/shared/token";
 import { useThemeColors } from "@/theme/useThemeColors";
 import { formatDate } from "@/utils/date-formater";
 import { IOrder } from "@/types/order";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { themeAtom } from "@/theme/theme";
 import GivenOrderAddressSection from "./AddressSection";
 import AppButton from "@/components/Buttons/Button";
 import api from "@/axios/axios.config";
 import { useTranslation } from "react-i18next";
+import { AxiosError } from "axios";
+import SheetModal from "@/components/Modal/SheetModal";
+import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
+import { router } from "expo-router";
+import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
 
 const GivenOrderScrollContent = ({
   refreshing,
@@ -108,6 +113,7 @@ const Button = ({
   sheetRef: React.RefObject<BottomSheetModalMethods | null>;
 }) => {
   const Colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <Pressable
       onPress={() => sheetRef.current?.present()}
@@ -115,7 +121,7 @@ const Button = ({
       style={styles.buttonContainer}
     >
       <AppText variant="regular" style={{ color: Colors.textSecondary }}>
-        Yuk ma'lumotlari
+        {t("cargo_information")}
       </AppText>
     </Pressable>
   );
@@ -159,12 +165,55 @@ const WarningView = ({
 const SuccesView = ({ id }: { id: number }) => {
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
+  const { t } = useTranslation();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [finishState, setFinishState] = useState<{
+    finished: boolean | null;
+    isLoading: boolean;
+    isError: string | null;
+  }>({
+    finished: null,
+    isLoading: false,
+    isError: null,
+  });
+  const setScrollIndex = useSetAtom(ordersScrollToIndex);
+  const fetchOrders = useFetchCustomerOrders();
 
   const finishedOrder = async () => {
+    setFinishState({
+      finished: null,
+      isLoading: true,
+      isError: null,
+    });
     try {
-      const { data } = await api.post(`/customer/finish-order/${id}/`);
-    } catch (error) {}
+      await api.post(`/customer/finish-order/${id}/`);
+      setFinishState({
+        finished: true,
+        isLoading: false,
+        isError: null,
+      });
+      setModalVisible(true);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setFinishState({
+          finished: false,
+          isLoading: false,
+          isError: error.response?.data.message || "Tarmoq xatosi",
+        });
+      }
+    }
   };
+
+  const pressModal = () => {
+    setTimeout(() => {
+      router.back();
+    }, 1000);
+    setTimeout(() => {
+      setScrollIndex(2);
+      fetchOrders();
+    }, 1500);
+  };
+
   return (
     <View
       style={[
@@ -183,9 +232,8 @@ const SuccesView = ({ id }: { id: number }) => {
           },
         ]}
       >
-        Haydovchi yukni yetkazib bo'ldi
+        {t("driver_delivered_cargo")}
       </AppText>
-
       <AppText
         style={{
           color: theme === "dark" ? Colors.textSecondary : Colors.textSecondary,
@@ -195,9 +243,10 @@ const SuccesView = ({ id }: { id: number }) => {
           letterSpacing: 0.8,
         }}
       >
-        Iltimos, buyurtmaning tugaganini tasdiqlang
+        Iltimos, buyurtmani tugaganini tasdiqlang
       </AppText>
       <AppButton
+        isLoading={finishState.isLoading}
         title="Tasdiqlash"
         onPress={finishedOrder}
         buttonStyle={{
@@ -210,6 +259,14 @@ const SuccesView = ({ id }: { id: number }) => {
           justifyContent: "center",
           alignItems: "center",
         }}
+        titleStyle={{ fontSize: 16 }}
+      />
+      <SheetModal
+        type="ok"
+        message="Buyurtma tugatildi"
+        open={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+        onOk={pressModal}
       />
     </View>
   );

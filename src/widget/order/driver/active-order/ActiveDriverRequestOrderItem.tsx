@@ -63,7 +63,7 @@ function ActiveDriverRequestOrderItem({
           }}
         >
           <OrderItemRequests
-            requested_drivers_length={order.requested_drivers.length}
+            requested_drivers_length={order?.requested_drivers?.length}
           />
 
           <AppText style={{ color: Colors.yellow, marginTop: 7 }}>

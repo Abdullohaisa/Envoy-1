@@ -30,7 +30,6 @@ const DriverActiveOrder = () => {
   const [refreshing, setRefreshing] = useState(false);
   const {
     order,
-    requestedDrivers,
     isLoading: loading,
     error,
     refetch,

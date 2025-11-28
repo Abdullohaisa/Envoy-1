@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   OrderListAddress,
   OrderListCargo,
@@ -10,12 +10,29 @@ import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { Spacing } from "@/shared/token";
 import api from "@/axios/axios.config";
 import DriverChooseModal from "@/widget/customer/active-order/driver-choose-modal";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "@/theme/theme";
+import { useSetAtom } from "jotai";
+import { router } from "expo-router";
+import { IOrder } from "@/types/order";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
+import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
+import { AxiosError } from "axios";
 
-const CustomerActiveOrderInfoList = ({ order }: any) => {
+const CustomerActiveOrderInfoList = ({ order }: { order: IOrder }) => {
   const modalRef = useRef<any>(null);
   const [selectedDriver, setSelectedDriver] = useState<any>(null);
+  const seccessModalref = useRef<BottomSheetModalMethods>(null);
+  const setScrollToIndex = useSetAtom(ordersScrollToIndex);
+  const fetchOrders = useFetchCustomerOrders();
+  const [chooseState, setChooseState] = useState<{
+    isChoose: null | boolean;
+    isLoading: boolean;
+    isError: null | string;
+  }>({
+    isChoose: null,
+    isLoading: false,
+    isError: null,
+  });
 
   const handleDriverPress = (driver: any) => {
     setSelectedDriver(driver);
@@ -23,18 +40,42 @@ const CustomerActiveOrderInfoList = ({ order }: any) => {
   };
 
   const handleSelectDriver = async () => {
-    // Alert.alert(
-    //   "✅ Haydovchi tanlandi",
-    //   `${selectedDriver.name} bilan bog‘lanishingiz mumkin.`
-    // );
     const acceptIds = {
       order_id: order.id,
       driver_id: selectedDriver.id,
     };
     try {
+      setChooseState({
+        isChoose: null,
+        isLoading: true,
+        isError: null,
+      });
       const { data } = await api.post("/customer/accept-request/", acceptIds);
-      modalRef.current?.dismiss();
-    } catch (error) {}
+      setChooseState({
+        isChoose: true,
+        isLoading: false,
+        isError: null,
+      });
+      seccessModalref.current?.present();
+      await fetchOrders();
+      setTimeout(() => {
+        modalRef.current?.dismiss();
+      }, 1000);
+      setTimeout(() => {
+        router.back();
+      }, 1500);
+      setTimeout(() => {
+        setScrollToIndex(1);
+      }, 1800);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        setChooseState({
+          isChoose: null,
+          isLoading: false,
+          isError: error.response?.data.message,
+        });
+      }
+    }
   };
 
   return (
@@ -46,7 +87,7 @@ const CustomerActiveOrderInfoList = ({ order }: any) => {
       contentContainerStyle={styles.scrollContent}
     >
       <OrderListRequestDriver
-        drivers={order?.requested_driver}
+        drivers={order?.requested_drivers}
         handleDriverPress={handleDriverPress}
       />
       <OrderListCargo order={order} />
@@ -57,6 +98,7 @@ const CustomerActiveOrderInfoList = ({ order }: any) => {
         modalRef={modalRef}
         driver={selectedDriver}
         handleSelectDriver={handleSelectDriver}
+        chooseState={chooseState}
       />
     </Animated.ScrollView>
   );

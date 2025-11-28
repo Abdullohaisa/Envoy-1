@@ -86,6 +86,7 @@ export interface IOrderTime {
 export interface IOrderUser {
   name: string;
   phone: string;
+  image: string | null;
   comment_count: number | null;
   rating: {
     count: number;

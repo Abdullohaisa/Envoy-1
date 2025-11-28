@@ -14,6 +14,7 @@ import { Radius, screens } from "@/shared/token";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AppText from "@/components/Texts/Text";
 import { useTranslation } from "react-i18next";
+import { useDeviceProfile } from "@/service/user/device/controller";
 
 const AnimatedIcon = React.memo(({ name, focused, color }: any) => {
   return <Ionicons name={name} size={26} color={color} />;
@@ -74,6 +75,11 @@ const DriverLayout = () => {
   const Colors = useThemeColors();
   const pathname = usePathname();
   const { t } = useTranslation();
+  const deviceProfile = useDeviceProfile();
+
+  useEffect(() => {
+    // deviceProfile();
+  }, []);
 
   const visibleRouters = useMemo(
     () => [

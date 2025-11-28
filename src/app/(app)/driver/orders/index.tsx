@@ -11,6 +11,7 @@ import { useAtomValue } from "jotai";
 import DriverOrdersButtonBox from "@/widget/driver/orders-box";
 import {
   allActiveOrdersAtom,
+  allActiveOrdersStateAtom,
   useFetchAllActiveOrders,
 } from "@/service/driver/fetch-all-active-orders/controller";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -27,6 +28,7 @@ const DriverGetOrders = () => {
   const fetchAllOrders = useFetchAllActiveOrders();
   const fetchDriverOrders = useFetchDriverOrders();
   const allActiveOrders = useAtomValue(allActiveOrdersAtom);
+  const allActiveOrdersState = useAtomValue(allActiveOrdersStateAtom);
   const { requested } = useAtomValue(driverOrdersAtom);
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
@@ -50,6 +52,11 @@ const DriverGetOrders = () => {
     });
   };
 
+  const fetch = () => {
+    fetchAllOrders();
+    fetchDriverOrders();
+  };
+
   const combineOrder = [...allActiveOrders.nearby, ...allActiveOrders.other];
 
   const Page = memo(({ item }: any) => <>{item.component()}</>);
@@ -61,7 +68,7 @@ const DriverGetOrders = () => {
       component: () => (
         <DriverActiveOrderLIst
           orders={combineOrder}
-          fetchOrders={fetchAllOrders}
+          fetchOrders={fetch}
           type={"all-order"}
         />
       ),
@@ -72,7 +79,7 @@ const DriverGetOrders = () => {
       component: () => (
         <DriverActiveOrderLIst
           orders={requested}
-          fetchOrders={fetchDriverOrders}
+          fetchOrders={fetch}
           type={"request-order"}
         />
       ),
