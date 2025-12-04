@@ -278,7 +278,7 @@ const EditDriverProfilePage = () => {
                 commentsCount={12}
                 onPress={() =>
                   safeNavigate(() =>
-                    router.push(AppRoutes.customer.profile.user.comments)
+                    router.push(AppRoutes.driver.profile.user.comments)
                   )
                 }
               />

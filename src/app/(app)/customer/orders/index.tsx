@@ -28,8 +28,6 @@ const Orders = () => {
   const { t } = useTranslation();
   const scrollToIndex = useAtomValue(ordersScrollToIndex);
 
-  console.log(scrollToIndex);
-
   // ⚙️ Komponent yuklanganda backenddan ma’lumot olish
   useEffect(() => {
     fetchOrders();

@@ -1,20 +1,25 @@
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import PageHeader from "@/components/Header/PageHeader/PageHeader";
 import { useThemeColors } from "@/theme/useThemeColors";
 import DriverActiveOrderInfoList from "@/components/OrderInfoList/DriverActiveOrderInfoList";
-import { screens } from "@/shared/token";
+import { Spacing, screens } from "@/shared/token";
 import AppButton from "@/components/Buttons/Button";
 import { useCallback, useEffect, useState } from "react";
 import SheetModal from "@/components/Modal/SheetModal";
 import api from "@/axios/axios.config";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useFetchSingleOrder } from "@/service/order/fetch-single-order/controller";
 import OrderLoading from "@/components/OrderLoading/OrderLoading";
-import { useAtomValue } from "jotai";
-import { driverOrdersAtom } from "@/service/driver/driver-orders/controller";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  driverOrdersAtom,
+  useFetchDriverOrders,
+} from "@/service/driver/driver-orders/controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { themeAtom } from "@/theme/theme";
 import { useTranslation } from "react-i18next";
+import { LinearGradient } from "expo-linear-gradient";
+import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
 
 const requestURL = "/driver/request-order/";
 
@@ -38,6 +43,8 @@ const DriverActiveOrder = () => {
   const insets = useSafeAreaInsets();
   const theme = useAtomValue(themeAtom);
   const { t } = useTranslation();
+  const setScrollToIndex = useSetAtom(ordersScrollToIndex);
+  const fetchDriverOrders = useFetchDriverOrders();
 
   const handleRequestOrder = async () => {
     setIsLoading(true);
@@ -76,6 +83,23 @@ const DriverActiveOrder = () => {
     setRefreshing(false);
   }, [refetch]);
 
+  const handleOk = () => {
+    if (modalMessage === "So'rov yuborildi") {
+      setTimeout(() => {
+        router.back();
+      }, 750);
+      setTimeout(() => {
+        setScrollToIndex(1);
+      }, 1200);
+    } else if (modalMessage === "So'rov bekor qilindi") {
+      setScrollToIndex(0);
+      router.back();
+      setTimeout(() => {
+        fetchDriverOrders();
+      }, 700);
+    }
+  };
+
   return (
     <View
       style={[
@@ -102,17 +126,22 @@ const DriverActiveOrder = () => {
       )}
 
       {!accepted.id && (
-        <View
+        <LinearGradient
+          colors={
+            theme === "dark"
+              ? ["rgba(0,0,0,.0)", "rgba(0,0,0,1)"]
+              : ["rgba(255,255,255, .1)", "rgba(255,255,255,1)"]
+          }
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
           style={{
             position: "absolute",
             bottom: 0,
-            backgroundColor: Colors.Boxbackground,
             width: screens.width,
-            padding: 10,
+            padding: Spacing.horizontal,
             paddingBottom: insets.bottom,
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5,
-            borderColor: Colors.pageBackground,
           }}
         >
           <AppButton
@@ -120,12 +149,24 @@ const DriverActiveOrder = () => {
             variant="secondary"
             onPress={() => setRequestVisible(true)}
             isLoading={isLoading || loading}
+            buttonStyle={{
+              backgroundColor:
+                theme === "light"
+                  ? !isRequested
+                    ? Colors.primary
+                    : Colors.red04
+                  : Colors.borderColor,
+            }}
             titleStyle={{
-              color: isRequested ? Colors.red : Colors.textPrimary,
+              color: isRequested
+                ? Colors.red
+                : theme === "light"
+                  ? "#fff"
+                  : Colors.textPrimary,
             }}
             disabled={true}
           />
-        </View>
+        </LinearGradient>
       )}
 
       <SheetModal
@@ -141,6 +182,7 @@ const DriverActiveOrder = () => {
         type="ok"
         message={modalMessage}
         onYes={handleRequestOrder}
+        onOk={handleOk}
       />
     </View>
   );

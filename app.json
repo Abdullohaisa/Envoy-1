@@ -46,7 +46,8 @@
           "photosPermission": "Sizning suratlaringizni tanlash uchun ruxsat bering.",
           "cameraPermission": "Suratga olish uchun ruxsat bering."
         }
-      ]
+      ],
+      "expo-audio"
     ],
     "scheme": "envoy-1",
     "extra": {

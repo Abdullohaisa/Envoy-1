@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { Platform } from "react-native";
-import { Tabs, usePathname } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import { BottomTabBar } from "@react-navigation/bottom-tabs";
 import Animated, {
   useSharedValue,
@@ -41,6 +41,9 @@ const AnimatedLabel = React.memo(({ label, focused, color }: any) => {
 // ------------------------
 const TabBarWrapper = React.memo(({ showTabBar, children }: any) => {
   const offset = useSharedValue(showTabBar ? 0 : 80);
+  const router = usePathname();
+
+  console.log(router);
 
   useEffect(() => {
     offset.value = withTiming(showTabBar ? 0 : 80, {
@@ -77,13 +80,18 @@ const TabBarWrapper = React.memo(({ showTabBar, children }: any) => {
 // ------------------------
 // 🔹 CustomerLayout
 // ------------------------
-const CustomerLayout = () => {
+const AdminLayout = () => {
   const Colors = useThemeColors();
   const pathname = usePathname();
   const { t } = useTranslation();
 
   const visibleRouters = useMemo(
-    () => ["/customer/orders", "/customer/get-order", "/customer/profile"],
+    () => [
+      "/admin/actions",
+      "/admin/users",
+      "/admin/orders",
+      "/admin/statistics",
+    ],
     []
   );
   const showTabBar = useMemo(
@@ -118,7 +126,6 @@ const CustomerLayout = () => {
 
   return (
     <Tabs
-      initialRouteName="get-order"
       tabBar={(props) => (
         <TabBarWrapper showTabBar={showTabBar}>
           <BottomTabBar {...props} />
@@ -126,7 +133,7 @@ const CustomerLayout = () => {
       )}
       screenOptions={tabBarOptions}
     >
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="orders"
         options={{
           tabBarIcon: ({ focused, color }) => (
@@ -140,47 +147,9 @@ const CustomerLayout = () => {
             />
           ),
         }}
-      />
-      <Tabs.Screen
-        name="get-order"
-        options={{
-          tabBarIcon: ({ focused, color }) => (
-            <AnimatedIcon
-              name="add-circle-outline"
-              focused={focused}
-              color={color}
-            />
-          ),
-          tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel
-              label={t("create")}
-              focused={focused}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          tabBarIcon: ({ focused, color }) => (
-            <AnimatedIcon
-              name="person-outline"
-              focused={focused}
-              color={color}
-            />
-          ),
-          tabBarLabel: ({ focused, color }) => (
-            <AnimatedLabel
-              label={t("profile")}
-              focused={focused}
-              color={color}
-            />
-          ),
-        }}
-      />
+      /> */}
     </Tabs>
   );
 };
 
-export default React.memo(CustomerLayout);
+export default React.memo(AdminLayout);

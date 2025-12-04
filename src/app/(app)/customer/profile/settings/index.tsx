@@ -26,7 +26,6 @@ import SheetModal from "@/components/Modal/SheetModal";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { MaterialIcons } from "@expo/vector-icons";
-import ArrowIcon from "@/assets/icon/arrow";
 import { Shadow, Spacing } from "@/shared/token";
 import { IThemeColors } from "@/theme/colors.interface";
 import { useTranslation } from "react-i18next";
@@ -34,7 +33,6 @@ import {
   authStateAtom,
   logoutAtom,
 } from "@/service/user/register-login/controller";
-import i18n from "@/locales/_i18n";
 import ThemeSwitch from "@/components/ThemeSwitch/ThemeSwitch";
 
 // -------------------------

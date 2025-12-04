@@ -29,19 +29,25 @@ const Layout = () => {
 
   const originalConsoleWarn = console.warn;
   console.warn = (...args) => {
-    // Expo AV warninglarini filtrlash
-    if (
-      typeof args[0] === "string" &&
-      (args[0].includes("Expo AV has been deprecated") ||
+    if (typeof args[0] === "string") {
+      // Expo AV warninglarini yashirish
+      if (
+        args[0].includes("Expo AV has been deprecated") ||
         args[0].includes(
           "Reanimated] Reading from `value` during component render"
-        ))
-    ) {
-      return; // warningni o'chirib qo'yish
+        )
+      ) {
+        return;
+      }
+
+      // Expo Notifications warningini yashirish
+      if (args[0].includes("expo-notifications: Android Push notifications")) {
+        return;
+      }
     }
+
     originalConsoleWarn(...args);
   };
-
   if (!ready) return <View />; // yoki Splash, loading spinner
 
   return (

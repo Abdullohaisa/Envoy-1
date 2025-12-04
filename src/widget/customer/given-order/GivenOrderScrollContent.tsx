@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { StyleSheet, View, Pressable, RefreshControl } from "react-native";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,6 +20,7 @@ import SheetModal from "@/components/Modal/SheetModal";
 import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
 import { router } from "expo-router";
 import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
+import UserReviewSheet from "@/components/UserReview/UserReview";
 
 const GivenOrderScrollContent = ({
   refreshing,
@@ -66,9 +67,6 @@ const GivenOrderScrollContent = ({
     >
       {order.id ? (
         <>
-          {warningVisible && (
-            <WarningView order={order} setWarningVisible={setWarningVisible} />
-          )}
           {allDeparted && <SuccesView id={order.id} />}
           <View
             pointerEvents={warningVisible ? "none" : "auto"}
@@ -127,41 +125,6 @@ const Button = ({
   );
 };
 
-const WarningView = ({
-  setWarningVisible,
-  order,
-}: {
-  setWarningVisible: ($: boolean) => void;
-  order: IOrder;
-}) => {
-  const Colors = useThemeColors();
-  return (
-    <View
-      style={[
-        styles.warningContainer,
-        { backgroundColor: Colors.Boxbackground },
-        Shadow.dark,
-      ]}
-    >
-      <AppText style={{ textAlign: "center", color: Colors.textSecondary }}>
-        Siz birinchi yuk olinadigan manzilga{" "}
-        <AppText>{formatDate(order.time.expected_arrival_time)}</AppText> da
-        yetib borishingiz kerak. Agar ushbu vaqtda bora olmasangiz, yuk egasi
-        bilan oldindan kelishib oling.
-      </AppText>
-      <Pressable
-        onPress={() => setWarningVisible(false)}
-        android_ripple={AndroidRipple}
-        style={[styles.buttonContainer, { marginTop: Spacing.horizontal }]}
-      >
-        <AppText variant="regular" style={{ color: Colors.primary }}>
-          Tushundim
-        </AppText>
-      </Pressable>
-    </View>
-  );
-};
-
 const SuccesView = ({ id }: { id: number }) => {
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
@@ -178,6 +141,7 @@ const SuccesView = ({ id }: { id: number }) => {
   });
   const setScrollIndex = useSetAtom(ordersScrollToIndex);
   const fetchOrders = useFetchCustomerOrders();
+  const reviewSheetRef = useRef<BottomSheetModalMethods>(null);
 
   const finishedOrder = async () => {
     setFinishState({
@@ -205,6 +169,13 @@ const SuccesView = ({ id }: { id: number }) => {
   };
 
   const pressModal = () => {
+    reviewSheetRef.current?.present();
+  };
+
+  const handlePress = () => {
+    setTimeout(() => {
+      reviewSheetRef.current?.dismiss();
+    }, 500);
     setTimeout(() => {
       router.back();
     }, 1000);
@@ -267,6 +238,12 @@ const SuccesView = ({ id }: { id: number }) => {
         open={modalVisible}
         onDismiss={() => setModalVisible(false)}
         onOk={pressModal}
+      />
+      <UserReviewSheet
+        toUserId={2}
+        ref={reviewSheetRef}
+        text={"Yuk egasiga baho va izoh bering"}
+        handlePress={handlePress}
       />
     </View>
   );

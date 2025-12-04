@@ -63,7 +63,7 @@ export default function DriverOrdersMapScreen() {
 
   // 🔹 Marker render tayyorligi
   useEffect(() => {
-    const timer = setTimeout(() => setMarkerReady(false), 100);
+    const timer = setTimeout(() => setMarkerReady(false), 500);
     return () => clearTimeout(timer);
   }, []);
 

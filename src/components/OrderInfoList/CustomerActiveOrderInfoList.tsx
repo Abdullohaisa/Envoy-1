@@ -17,6 +17,7 @@ import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/typ
 import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
 import { useFetchCustomerOrders } from "@/service/customer/customer-orders/controller";
 import { AxiosError } from "axios";
+import { vibration } from "@/utils/hapticks";
 
 const CustomerActiveOrderInfoList = ({ order }: { order: IOrder }) => {
   const modalRef = useRef<any>(null);

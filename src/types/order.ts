@@ -84,6 +84,7 @@ export interface IOrderTime {
 }
 
 export interface IOrderUser {
+  id: number;
   name: string;
   phone: string;
   image: string | null;

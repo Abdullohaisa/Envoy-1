@@ -1,17 +1,16 @@
 import TabHeader from "@/components/TabContainer/TabHeader";
 import { screens } from "@/shared/token";
 import DriverActiveOrderLIst from "@/widget/driver/order-list/driverActiveOrderLIst";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef } from "react";
 import { View, FlatList } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import DriverOrdersButtonBox from "@/widget/driver/orders-box";
 import {
   allActiveOrdersAtom,
-  allActiveOrdersStateAtom,
   useFetchAllActiveOrders,
 } from "@/service/driver/fetch-all-active-orders/controller";
 import { useThemeColors } from "@/theme/useThemeColors";
@@ -21,6 +20,7 @@ import {
   useFetchDriverOrders,
 } from "@/service/driver/driver-orders/controller";
 import { useTranslation } from "react-i18next";
+import { ordersScrollToIndex } from "@/atoms/orders-scroll-to-index";
 
 const DriverGetOrders = () => {
   const scrollX = useSharedValue(0);
@@ -28,15 +28,14 @@ const DriverGetOrders = () => {
   const fetchAllOrders = useFetchAllActiveOrders();
   const fetchDriverOrders = useFetchDriverOrders();
   const allActiveOrders = useAtomValue(allActiveOrdersAtom);
-  const allActiveOrdersState = useAtomValue(allActiveOrdersStateAtom);
   const { requested } = useAtomValue(driverOrdersAtom);
   const Colors = useThemeColors();
   const theme = useAtomValue(themeAtom);
   const { t } = useTranslation();
+  const [scrollIndex, setScrollIndex] = useAtom(ordersScrollToIndex);
 
   useEffect(() => {
-    fetchAllOrders();
-    fetchDriverOrders();
+    fetch();
   }, []);
 
   const onScroll = useAnimatedScrollHandler({
@@ -58,6 +57,17 @@ const DriverGetOrders = () => {
   };
 
   const combineOrder = [...allActiveOrders.nearby, ...allActiveOrders.other];
+
+  useEffect(() => {
+    if (scrollIndex === 1) {
+      flatRef.current?.scrollToOffset({
+        offset: scrollIndex * screens.width,
+        animated: true,
+      });
+      setScrollIndex(0);
+    }
+    fetchDriverOrders();
+  }, [scrollIndex]);
 
   const Page = memo(({ item }: any) => <>{item.component()}</>);
 

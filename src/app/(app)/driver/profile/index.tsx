@@ -16,22 +16,23 @@ import { AppRoutes } from "@/constants/routes";
 import { safeNavigate } from "@/utils/safe-navigation";
 import AppText from "@/components/Texts/Text";
 import { callPhone } from "@/utils/call-phone";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { IThemeColors } from "@/theme/colors.interface";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import ArrowIcon from "@/assets/icon/arrow";
 import { useTranslation } from "react-i18next";
-import { authStateAtom } from "@/service/user/register-login/controller";
+
 import {
   useFetchUserData,
   userDataAtom,
   userDataStateAtom,
 } from "@/service/user/get-user-info/controller";
+import AppImage from "@/components/Image/Image";
 
 const Profile = () => {
   const Colors = useThemeColors();
-  const { data } = useAtomValue(authStateAtom);
+
   const { t } = useTranslation();
 
   const cachedStyles = useMemo(() => styles(Colors), [Colors]);
@@ -54,11 +55,7 @@ const Profile = () => {
         title: t("settings"), // 🧩 Sozlamalar
         handlePress: () =>
           safeNavigate(() =>
-            router.push(
-              data.role === "Customer"
-                ? AppRoutes.customer.profile.settings.index
-                : AppRoutes.driver.profile.settings.index
-            )
+            router.push(AppRoutes.driver.profile.settings.index)
           ),
       },
       {
@@ -68,11 +65,7 @@ const Profile = () => {
         title: t("statistics"), // 🧩 Ko‘rsatgichlaringiz
         handlePress: () =>
           safeNavigate(() =>
-            router.push(
-              data.role === "Customer"
-                ? AppRoutes.customer.profile.results.index
-                : AppRoutes.driver.profile.results.index
-            )
+            router.push(AppRoutes.driver.profile.results.index)
           ),
       },
       {
@@ -82,11 +75,7 @@ const Profile = () => {
         title: t("notifications"), // 🧩 Bildirishnomalar
         handlePress: () =>
           safeNavigate(() =>
-            router.push(
-              data.role === "Customer"
-                ? AppRoutes.customer.profile.settings.notification
-                : AppRoutes.driver.profile.settings.notification
-            )
+            router.push(AppRoutes.driver.profile.settings.notification)
           ),
       },
       {
@@ -97,7 +86,7 @@ const Profile = () => {
         handlePress: () => callPhone("+998903923625"),
       },
     ],
-    [data.role, t]
+    [t]
   );
 
   const onRefresh = useCallback(async () => {
@@ -130,13 +119,7 @@ const Profile = () => {
         showsVerticalScrollIndicator={false}
       >
         <Pressable
-          onPress={() =>
-            handleNavigate(
-              data.role === "Customer"
-                ? AppRoutes.customer.profile.user.index
-                : AppRoutes.driver.profile.user.index
-            )
-          }
+          onPress={() => handleNavigate(AppRoutes.driver.profile.user.index)}
           style={[cachedStyles.profileBox]}
         >
           <View
@@ -148,11 +131,21 @@ const Profile = () => {
                 alignItems: "center",
                 borderRadius: 40,
                 backgroundColor: Colors.borderColor,
+                overflow: "hidden",
               },
               Shadow.dark,
             ]}
           >
-            <AppText style={{ fontSize: 40 }}>A</AppText>
+            {userData.image ? (
+              <AppImage
+                source={userData.image}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <AppText style={{ fontSize: 40 }}>
+                {userData.username?.slice(0, 1)}
+              </AppText>
+            )}
           </View>
           <View style={cachedStyles.profileInfo}>
             <AppText style={cachedStyles.name}>{userData.username}</AppText>

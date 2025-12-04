@@ -38,10 +38,8 @@ export const useFetchAllActiveOrders = () =>
       const { data } = await api.post<ICustomerOrders>(
         "/order/all-active-orders/"
       );
-      console.log("data -->", data);
       set(allActiveOrdersAtom, { nearby: data.nearby, other: data.other });
     } catch (error: any) {
-      console.log(error);
       if (error instanceof AxiosError) {
         set(allActiveOrdersStateAtom, (prev) => ({
           ...prev,

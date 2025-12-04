@@ -2,26 +2,21 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
 import { useThemeColors } from "@/theme/useThemeColors";
-import { useAtomValue } from "jotai";
-import { themeAtom } from "@/theme/theme";
 
-const CustomerOrdersLayout = () => {
+const AdminUserSLayout = () => {
   const Colors = useThemeColors();
-  const theme = useAtomValue(themeAtom);
   return (
     <Stack
       screenOptions={{
-        animation: "ios_from_right",
         headerShown: false,
         contentStyle: {
-          backgroundColor:
-            theme === "dark" ? Colors.pageBackground : Colors.Boxbackground,
+          backgroundColor: Colors.pageBackground,
         },
       }}
     />
   );
 };
 
-export default CustomerOrdersLayout;
+export default AdminUserSLayout;
 
 const styles = StyleSheet.create({});

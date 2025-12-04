@@ -80,10 +80,10 @@ const Splash = () => {
 
       if (access && role === "Customer")
         route = AppRoutes.customer.getOrder.index;
-      // route = AppRoutes.driver.orders.index;
+      // route = AppRoutes.admin.statistics.index;
       else if (access && role === "Driver")
         route = AppRoutes.driver.orders.index;
-
+      // route = AppRoutes.admin.statistics.index;
       dispatch({ type: "READY", route });
     };
 

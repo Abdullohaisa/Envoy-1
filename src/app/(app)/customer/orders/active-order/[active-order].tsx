@@ -36,14 +36,12 @@ const ActiveOrder = () => {
   const fetchOrders = useFetchCustomerOrders();
   const { order, isLoading, error, refetch } = useFetchSingleOrder(orderId);
 
-  /* 🔁 Yangilash */
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   }, [refetch]);
 
-  /* ❌ Buyurtmani o‘chirish */
   const deleteOrder = useCallback(async () => {
     try {
       setDeleteLoading(true);

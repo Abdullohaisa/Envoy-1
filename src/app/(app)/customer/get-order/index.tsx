@@ -19,9 +19,7 @@ import OrderReviewSheet from "@/widget/customer/get-order/order-review-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { AppRoutes } from "@/constants/routes";
 import { useTranslation } from "react-i18next";
-import MaterialsIcon from "@/assets/icon/materials";
 import MapIcon from "@/assets/icon/map";
-import RightTruckIcon from "@/assets/icon/right-truck";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TimeIcon from "@/assets/icon/time";
 import CommentIcon from "@/assets/icon/comment";
@@ -185,7 +183,6 @@ const GetOrder = () => {
 
 export default React.memo(GetOrder);
 
-// 🔹 Wrappers for icons to move inline styles to StyleSheet
 const MaterialsIconWrapper = ({ color, size, Colors }: any) => (
   <View
     style={[
@@ -196,6 +193,7 @@ const MaterialsIconWrapper = ({ color, size, Colors }: any) => (
     <PalletIcon color={color} size={40} />
   </View>
 );
+
 const MapIconWrapper = ({ color, size, Colors }: any) => (
   <View
     style={[
@@ -206,6 +204,7 @@ const MapIconWrapper = ({ color, size, Colors }: any) => (
     <MapIcon color={color} size={35} />
   </View>
 );
+
 const TruckIconWrapper = ({ color, size, Colors }: any) => (
   <View
     style={[
@@ -223,6 +222,7 @@ const TruckIconWrapper = ({ color, size, Colors }: any) => (
     </View>
   </View>
 );
+
 const PriceIconWrapper = ({ color, size, Colors }: any) => (
   <View
     style={[
@@ -233,6 +233,7 @@ const PriceIconWrapper = ({ color, size, Colors }: any) => (
     <FontAwesome6 name="coins" size={25} color={color} />
   </View>
 );
+
 const TimeIconWrapper = ({ color, size, Colors }: any) => (
   <View
     style={[
@@ -243,6 +244,7 @@ const TimeIconWrapper = ({ color, size, Colors }: any) => (
     <TimeIcon color={color} size={size} />
   </View>
 );
+
 const CommentIconWrapper = ({ color, size, Colors }: any) => (
   <View
     style={[

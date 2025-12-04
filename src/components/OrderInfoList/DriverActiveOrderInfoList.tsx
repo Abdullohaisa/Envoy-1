@@ -39,7 +39,7 @@ const DriverActiveOrderInfoList = ({
       scrollIndicatorInsets={{ right: -4 }}
       style={styles.scrollView}
       indicatorStyle={indicatorStyle}
-      contentContainerStyle={{ paddingBottom: 1000 }}
+      contentContainerStyle={{ paddingBottom: 300, flexGrow: 1 }}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -128,7 +128,7 @@ const WarningBox = () => {
 /* ====================== STYLES ====================== */
 const styles = StyleSheet.create({
   scrollView: {
-    overflow: "hidden",
+    // overflow: "hidden",
   },
   scrollContent: {
     gap: 10,

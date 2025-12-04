@@ -63,4 +63,18 @@ export const AppRoutes = {
       },
     },
   },
+  admin: {
+    orders: {
+      index: "/(app)/admin/orders/",
+    },
+    users: {
+      index: "/(app)/admin/users/",
+    },
+    actions: {
+      index: "/(app)/admin/actions/",
+    },
+    statistics: {
+      index: "/(app)/admin/statistics",
+    },
+  },
 };
